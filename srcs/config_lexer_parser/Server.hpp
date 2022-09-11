@@ -1,14 +1,15 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-class Server {
+# include "AContext.hpp"
+
+class Server : public AContext {
 
 public:
-	typedef std::map<std::string, Location>	locationMap;
-	typedef locationMap::iterator			locationIterator;
 
 private:
-	locationMap	m_locations;
+	locationMap		m_locations;
+	directiveMap	m_serverDirectives;
 
 };
 

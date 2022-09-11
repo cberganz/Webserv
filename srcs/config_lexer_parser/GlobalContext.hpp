@@ -1,26 +1,25 @@
 #ifndef GLOBALCONTEXT_HPP
 # define GLOBALCONTEXT_HPP
 
-# include <utility>
+# include "AContext.hpp"
 
-const std::string serverDirectives[] = {"root", ""};
+const std::string globalDirectives[] = {"root", ""};
+const std::string globalPossibleBlocs[] = {"server", ""};
 
-class GlobalContext {
+class GlobalContext : public AContext {
 
 public:
-	typedef std::map<std::string, std::string>	serverDirectiveMap;
-	typedef std::map<int, Server>				serverMap;
-	typedef serverMap::iterator					serverIterator;
-
 	GlobalContext(const Lexer &lexer);
 	~GlobalContext();
 
+	const serverMap		&getServers() const;
+	const directiveMap	&getDirectives() const;
+
 private:
-	serverMap			m_servers;
-	serverDirectiveMap	m_directives;
+	serverMap		m_servers;
+	directiveMap	m_globalDirectives;
 
 	void getGlobalContext(const Lexer &lexer);
-	bool directiveExists(const std::string &directive);
 
 };
 
