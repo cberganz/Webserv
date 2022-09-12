@@ -1,4 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   AContext.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/12 18:17:28 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "AContext.hpp"
+
+AContext::AContext()
+{}
 
 bool AContext::keywordExistsInContext(const std::string *context, const std::string &keyword)
 {
@@ -8,4 +23,21 @@ bool AContext::keywordExistsInContext(const std::string *context, const std::str
 			return true;
 	}
 	return false;
+}
+
+bool AContext::checkMandatoryDirectives(const std::string *context, directiveMap &directives)
+{
+	for (int i = 0 ; not context[i].empty() ; i++)
+	{
+		directiveIterator it = directives.begin();
+		while (it < directives.end())
+		{
+			if (context[i] == (*it).first)
+				break;
+			it++;
+		}
+		if (it == directives.end())
+			return false;
+	}
+	return true;
 }

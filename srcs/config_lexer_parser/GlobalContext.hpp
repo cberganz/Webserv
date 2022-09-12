@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   GlobalContext.hpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/12 11:10:25 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/12 18:25:51 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GLOBALCONTEXT_HPP
 # define GLOBALCONTEXT_HPP
 
@@ -5,6 +17,8 @@
 
 const std::string globalDirectives[] = {"root", ""};
 const std::string globalPossibleBlocs[] = {"server", ""};
+
+class AContext;
 
 class GlobalContext : public AContext {
 
@@ -24,18 +38,3 @@ private:
 };
 
 #endif
-
-
-Global:
-root
-server
-
-Server:
-Listen
-Location
-root
-server_name
-
-Location:
-Location
-root
