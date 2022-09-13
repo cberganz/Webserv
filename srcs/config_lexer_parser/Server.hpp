@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:11:00 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/12 18:25:57 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/13 22:16:23 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,30 @@
 # define SERVER_HPP
 
 # include "AContext.hpp"
+# include "Location.hpp"
 
-const std::string serverPossibleDirectives[] = {"root", "listen", "server_name", ""};
-const std::string serverMandatoryDirectives[] = {"root", "listen", "server_name", ""};
+const std::string serverPossibleDirectives[] = {"root", "listen", "server_name", "index", ""};
+const std::string serverMandatoryDirectives[] = {"root", "listen", "server_name", ""}; //server name pas oblig?
 const std::string serverPossibleBlocs[] = {"location", ""};
-
-class AContext;
 
 class Server : public AContext {
 
 public:
-	Server(const directiveMap &globalDirectives, const lexerVector &tokens, lexerIterator &it);
+	#include "tools/ServerTypes.hpp"
+
+	Server(const directiveMap &globalDirectives,
+		   const tokensVector &tokens,
+		   tokensConstIterator &it);
 	~Server();
 
-	const locationMap	&getlocations() const;
-	const directiveMap	&getDirectives() const;
+	const Location::locationMap		&getLocations() const;
+	const AContext::directiveMap	&getDirectives() const;
 
 private:
-	locationMap		m_locations;
-	directiveMap	m_serverDirectives;
+	Location::locationMap	m_locations;
+	directiveMap			m_serverDirectives;
 
-	void getServerContext(const lexerVector &tokens, lexerIterator &it);
+	void getServerContext(const tokensVector &tokens, tokensConstIterator &it);
 
 };
 

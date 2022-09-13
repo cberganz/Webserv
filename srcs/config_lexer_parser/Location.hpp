@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:43 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/12 18:26:12 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/13 22:11:08 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,23 @@
 
 # include "AContext.hpp"
 
-const std::string locationPossibleDirectives[] = {"root", "index", ""};
+const std::string locationPossibleDirectives[] = {"root", "index", ""}; //autoindex methodsrequetesdispo cgi
 const std::string locationMandatoryDirectives[] = {"root", "index", ""};
-
-class AContext;
 
 class Location : public AContext {
 
 public:
-	Location(const directiveMap &serverDirectives, const lexerVector &tokens, lexerIterator &it);
+	#include "tools/LocationTypes.hpp"
+
+	Location(const directiveMap &serverDirectives, const tokensVector &tokens, tokensConstIterator &it);
 	~Location();
 
-	const directiveMap	&getDirectives() const;
+	const AContext::directiveMap	&getDirectives() const;
 
 private:
 	directiveMap	m_locationDirectives;
 
-	void getLocationContext(const lexerVector &tokens, lexerIterator &it);
+	void getLocationContext(const tokensVector &tokens, tokensConstIterator &it);
 
 };
 

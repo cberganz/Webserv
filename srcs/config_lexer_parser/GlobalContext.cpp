@@ -6,43 +6,44 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:20 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/12 18:27:05 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/13 21:55:58 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GlobalContext.hpp"
 
-GlobalContext::GlobalContext(const Lexer &lexer)
-	: m_contextName("Global")
+GlobalContext::GlobalContext()
+	: AContext("Global")
+{}
+
+GlobalContext::GlobalContext(const tokensVector &tokens)
+	: AContext("Global")
 {
-	getGlobalContext(lexer);
+	getGlobalContext(tokens);
 }
 
 GlobalContext::~GlobalContext()
 {}
 
-const serverMap &GlobalContext::getServers() const
+const Server::serverMap &GlobalContext::getServers() const
 { return this->m_servers; }
 
-const directiveMap &GlobalContext::getDirectives() const
+const AContext::directiveMap &GlobalContext::getDirectives() const
 { return this->m_globalDirectives; }
 
-void GlobalContext::getGlobalContext(const Lexer &lexer)
+void GlobalContext::getGlobalContext(const tokensVector &tokens)
 {
-	for (Lexer::iterator it = lexer.begin() ; it < lexer.end() ; it++)
+	tokensConstIterator it = tokens.begin();
+	while (it != tokens.end())
 	{
 		if (keywordExistsInContext(globalDirectives, *it))
 		{
-			m_globalDirectives.erase(*it);
-			m_globalDirectives.insert(make_pair(*it, *(++it)));
-			if (*(++it) == ";")
-				it++;
-			else
-				throw ParsingErrorException(*this, NO_SEMICOLON);
+			containerReplaceInserter(m_globalDirectives, *it, std::make_pair(*it, *++it));
+			*(++it) == ";" ? it++ : throw ParsingErrorException(*this, NO_SEMICOLON, *(it - 2));
 		}
 		else if (keywordExistsInContext(globalPossibleBlocs, *it))
-			m_servers.insert(make_pair(m_servers.size(), Server(m_globalDirectives, lexer, it)));
+			m_servers.insert(std::make_pair(m_servers.size(), Server(m_globalDirectives, tokens, it)));
 		else
-			throw ParsingErrorException(*this, UNAVAILABLE_DIRECTIVE);
+			throw ParsingErrorException(*this, UNAVAILABLE_DIRECTIVE, *it);
 	}
 }
