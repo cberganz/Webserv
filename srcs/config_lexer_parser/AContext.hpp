@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/13 22:15:29 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/14 01:33:52 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,12 @@ class AContext {
 public:
 	#include "tools/AContextTypes.hpp"
 
-	AContext(const std::string &contextName);
+	AContext(const std::string &contextName, const int &contextNumber);
 	virtual ~AContext();
 
 protected:
-	std::string m_contextName;
+	const std::string	m_contextName;
+	const int			m_contextNumber;
 
 	bool keywordExistsInContext(const std::string *context, const std::string &keyword);
 	bool checkMandatoryDirectives(const std::string *context, directiveMap &directives);

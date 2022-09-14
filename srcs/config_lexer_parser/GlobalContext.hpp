@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:25 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/13 22:16:53 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/14 01:18:46 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 
 # include "AContext.hpp"
 # include "Server.hpp"
-
-const std::string globalDirectives[] = {"root", ""};
-const std::string globalPossibleBlocs[] = {"server", ""};
 
 class GlobalContext : public AContext {
 
