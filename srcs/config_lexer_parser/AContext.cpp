@@ -6,42 +6,48 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/13 10:31:24 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/15 22:24:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AContext.hpp"
 
+AContext::AContext()
+	: ParserConfig("")
+{}
+
 AContext::AContext(const std::string &contextName)
-	: m_contextName(contextName)
+	: ParserConfig(contextName)
 {}
 
 AContext::~AContext()
 {}
 
-bool AContext::keywordExistsInContext(const std::string *context, const std::string &keyword)
+void AContext::directiveReplaceInserter(directivesContainer &container, tokensIterator &it)
 {
-	for (int i = 0 ; not context[i].empty() ; i++)
-	{
-		if (context[i] == keyword)
-			return true;
-	}
-	return false;
+	container.erase(*it);
+	container.insert(std::make_pair(*it, *++it));
+	if (*++it == ";")
+		it++;
+	else
+		throw ParsingErrorException(m_contextName, NO_SEMICOLON, *(it - 2));
 }
 
-bool AContext::checkMandatoryDirectives(const std::string *context, directiveMap &directives)
+void AContext::directiveInserter(directivesContainer &container, directivesIterator &it)
 {
-	for (int i = 0 ; not context[i].empty() ; i++)
-	{
-		directiveIterator it = directives.begin();
-		while (it != directives.end())
-		{
-			if (context[i] == (*it).first)
-				break;
-			it++;
-		}
-		if (it == directives.end())
-			return false;
-	}
-	return true;
+	container.erase((*it).first);
+	container.insert(std::make_pair((*it).first, (*it).second));
 }
+
+AContext::ParsingErrorException::ParsingErrorException(const std::string &contextName, const char *errorDetails, const std::string &token)
+	: message("Error while parsing configuration file: Inside context: "
+			  + contextName
+			  + ": " + errorDetails
+			  + ": \'" + token + "\'.")
+{}
+
+AContext::ParsingErrorException::~ParsingErrorException() throw()
+{}
+
+const char* AContext::ParsingErrorException::what() const throw()
+{ return message.c_str(); }

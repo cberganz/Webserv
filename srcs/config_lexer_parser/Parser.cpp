@@ -6,46 +6,44 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:30 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/13 11:43:18 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/15 22:25:01 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Parser.hpp"
 
 Parser::Parser(const std::string &fileName)
-{
-	getTokens(fileName);
-	m_globalContext = GlobalContext(m_tokens);
-}
+	: m_tokens(readTokensFromFile(fileName)),
+	  m_global(m_tokens)
+{}
 
 Parser::~Parser()
 {}
 
-const std::vector<std::string> &Parser::getTokens()
+const std::vector<std::string> &Parser::getTokens() const
 { return this->m_tokens; }
 
-const GlobalContext &Parser::getGlobal()
-{ return this->m_globalContext; }
+const Context &Parser::getGlobal() const
+{ return this->m_global; }
 
-void Parser::handleSpace(std::string::iterator &it)
-{ it++; }
-
-void Parser::handleCharToken(std::string::iterator &it)
+std::string Parser::handleSpace(std::string::iterator &it)
 {
-	std::string tmp;
-	tmp += *it;
-	m_tokens.push_back(tmp);
 	it++;
+	return "";
 }
 
-void Parser::handleComment(std::string::iterator &it)
+std::string Parser::handleCharToken(std::string::iterator &it)
+{ return std::string(1, *it++); }
+
+std::string Parser::handleComment(std::string::iterator &it)
 {
 	while (*it != '\0' and *it != '\n')
 		it++;
 	it++;
+	return "";
 }
 
-void Parser::handleVar(std::string::iterator &it)
+std::string Parser::handleVar(std::string::iterator &it)
 {
 	std::string tmp;
 	while (*it != '\0' and not std::isspace(*it) and not isKeyChar(it))
@@ -53,10 +51,10 @@ void Parser::handleVar(std::string::iterator &it)
 		tmp += *it;
 		it++;
 	}
-	m_tokens.push_back(tmp);
+	return tmp;
 }
 
-void Parser::handleKeyword(std::string::iterator &it)
+std::string Parser::handleKeyword(std::string::iterator &it)
 {
 	std::string tmp;
 	while (*it != '\0'
@@ -66,7 +64,7 @@ void Parser::handleKeyword(std::string::iterator &it)
 		tmp += *it;
 		it++;
 	}
-	m_tokens.push_back(tmp);
+	return tmp;
 }
 
 bool Parser::isKeyChar(const std::string::iterator &it) const
@@ -78,7 +76,7 @@ bool Parser::isKeyChar(const std::string::iterator &it) const
 		 or *it == '$');
 }
 
-void Parser::getTokens(const std::string &fileName)
+std::vector<std::string> Parser::readTokensFromFile(const std::string &fileName)
 {
 	std::string	line, save;
 	Parser::t_funcPtr funcPtrs[] =
@@ -102,6 +100,8 @@ void Parser::getTokens(const std::string &fileName)
 		throw std::invalid_argument("File not found or can't be opened.");
 	while (std::getline(fileIn, line))
 		save.append(line.append("\n"));
+
+	std::vector<std::string> tokens;
 	std::string::iterator it = save.begin();
 	while (*it != '\0')
 	{
@@ -109,9 +109,13 @@ void Parser::getTokens(const std::string &fileName)
 		{
 			if (*it == funcPtrs[i].pattern[0] || funcPtrs[i].pattern == "EOA")
 			{
-				(this->*funcPtrs[i].ptr)(it);
+				std::string tmp((this->*funcPtrs[i].ptr)(it));
+				if (not tmp.empty())
+					tokens.push_back(tmp);
 				break;
 			}
 		}
 	}
+	tokens.push_back("");
+	return tokens;
 }
