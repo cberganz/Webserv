@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/16 18:31:31 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -26,10 +38,11 @@ void RContextsContainer(const Parser::contextsContainer &contexts, int tabCount)
 		 it != contexts.end() ; it++)
 	{
 		printTab(tabCount);
-		std::cout << "[" << (*it).second.getContextName() << "]" << std::endl;
+		std::cout << "[" << (*it).second.getContextName() << "]"
+				  << "[" << (*it).first << "]" << std::endl;
 		printDirectives((*it).second.getDirectives(), tabCount);
-		if (not (*it).second.getContexts().empty() and )
-			RContextsContainer((*it).second.getContexts(), ++tabCount);
+		if (not (*it).second.getContexts().empty())
+			RContextsContainer((*it).second.getContexts(), tabCount + 1);
 	}
 }
 
@@ -43,6 +56,5 @@ int main()
 	} catch(const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
-
 	return 0;
 }

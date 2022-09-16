@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   keywordsTable.hpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/16 22:36:56 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef KEYWORDSTABLE_HPP
 # define KEYWORDSTABLE_HPP
 
@@ -28,14 +40,16 @@ enum contexts {
 };
 
 /*
-**	@brief String array allowing constructor to perform string convertion
-**		   to context enum index.
+**	@brief String array allowing ParserConfig class constructor to perform string
+**		   convertion to context enum index.
 **	@category std::string array
 **
 **	For abstraction purpose in the Context class, string convertion to context
 **	enum index is performed while contructing a ParserConfig object. This array
 **	MUST be updated with any change in the context enum and keywords table. The
 **	order of the strings must be the same as the enum.
+**
+**	@warning Case matters.
 */
 
 const std::string enumIndexes[] = {
@@ -47,7 +61,7 @@ const std::string enumIndexes[] = {
 
 /*
 **	@brief Structure containing the settings for a specified keyword.
-**	@category Structure
+**	@category Structure typedef
 */
 
 typedef struct s_keywords {
@@ -55,8 +69,9 @@ typedef struct s_keywords {
 	bool			mandatory;	//.....Defines whether the keyword is mandatory in the context..............
 	bool			possible;	//.....Defines whether the keyword is possible in the context...............
 	bool			isDirective;//.....Defines whether the keyword represents a directive...................
-	bool			isBlock;	//.....Defines whether the keyword represents a new block...................
+	bool			isBloc;		//.....Defines whether the keyword represents a new bloc....................
 	bool			hasUri;		//.....Defines whether an URI is neccessary for a bloc (ie. for location)...
+	std::string		dfault;		//.....Default value for a directive if not set. Blank string if no default.
 }	t_keywords;
 
 /*
@@ -69,7 +84,7 @@ typedef struct s_keywords {
 
 /*
 **	@brief Two dimensional array containing possible and/or mandatory directives
-**		   and blocks inside any context specified in the contexts enum, and the
+**		   and blocs inside any context specified in the contexts enum, and the
 **		   corresponding settings.
 **	@category Two dimensional array
 **
@@ -80,30 +95,30 @@ typedef struct s_keywords {
 
 const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 
-	{   /*..........................GLOBAL CONTEXT........................*/
-	    /*.Keyword.....Mandatory...Possible..IsDirective..IsBlock..hasUri.*/
-		{ "server",		false,		true,		false,		true,	false }, //.....Sets configuration for a virtual server................
-		{ "root",		false,		true,		true,		false,	false }, //.....Sets the root directory for requests...................
-		{ "",			false,		false,		false,		false,	false }, //.....Default settings if no keyword was found...............
-	},
+{   /*...........................GLOBAL CONTEXT..........................*/
+    /*.Keyword......Manda...Possi...Direc...Bloc....URI.....Default......*/
+	{ "server",		false,	true,	false,	true,	false,	""			 }, //.Sets configuration for a virtual server...............
+	{ "root",		false,	true,	true,	false,	false,	""			 }, //.Sets the root directory for requests..................
+	{ "",			false,	false,	false,	false,	false,	""			 }, //.Default settings if keyword was not found.............
+},
 
-	{   /*..........................SERVER CONTEXT........................*/ 
-	    /*.Keyword.....Mandatory...Possible..IsDirective..IsBlock..hasUri.*/ 
-		{ "location",	false,		true,		false,		true,	true  }, //.....Sets configuration depending on a request URI..........
-		{ "root",		true,		true,		true,		false,	false }, //.....Sets the root directory for requests...................
-		{ "listen",		true,		true,		true,		false,	false }, //.....Sets address:port IP, or the UNIX-domain socket path...
-		{ "server_name",false,		true,		true,		false,	false }, //.....Sets names of a virtual server.........................
-		{ "index",		false,		true,		true,		false,	false }, //.....Defines files that will be used as an index............
-		{ "",			false,		false,		false,		false,	false }, //.....Default settings if no keyword was found...............
-	},
+{   /*...........................SERVER CONTEXT..........................*/
+    /*.Keyword......Manda...Possi...Direc...Bloc....URI.....Default......*/
+	{ "location",	false,	true,	false,	true,	true,	""			 }, //.Sets configuration depending on a request URI.........
+	{ "root",		true, 	true,	true,	false,	false,	""			 }, //.Sets the root directory for requests..................
+	{ "listen",		true, 	true,	true,	false,	false,	"0.0.0.0:80" }, //.Sets address:port IP, or the UNIX-domain socket path..
+	{ "server_name",false,	true,	true,	false,	false,	""			 }, //.Sets names of a virtual server........................
+	{ "index",		false,	true,	true,	false,	false,	""			 }, //.Defines files that will be used as an index...........
+	{ "",			false,	false,	false,	false,	false,	""			 }, //.Default settings if keyword was not found.............
+},
 
-	{   /*.........................LOCATION CONTEXT.......................*/ 
-	    /*.Keyword.....Mandatory...Possible..IsDirective..IsBlock..hasUri.*/ 
-		{ "root",		true,		true,		true,		false,	false }, //.....Sets the root directory for requests...................
-		{ "index",		true,		true,		true,		false,	false }, //.....Defines files that will be used as an index............
-		{ "",			false,		false,		false,		false,	false }, //.....Default settings if no keyword was found...............
-	},
+{   /*..........................LOCATION CONTEXT.........................*/
+    /*.Keyword......Manda...Possi...Direc...Bloc....URI.....Default......*/
+	{ "root",		true,	true,	true,	false,	false,	""			 }, //.Sets the root directory for requests..................
+	{ "index",		true,	true,	true,	false,	false,	""			 }, //.Defines files that will be used as an index...........
+	{ "",			false,	false,	false,	false,	false,	""			 }, //.Default settings if keyword was not found.............
+},
 
-};
+}; // KEYWORDS
 
-#endif
+#endif // KEYWORDSTABLE_HPP

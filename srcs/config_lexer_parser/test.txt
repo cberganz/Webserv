@@ -19,6 +19,19 @@ server {
 	listen 80;
 	server_name cberganz.21.fr;
 
+	location /test {
+		root TEST3;
+		index index.html;	
+	}
+
+	location ./what {
+		index what.html;	
+	}	
+}
+
+server {
+	server_name cberganz.21.fr;
+
 	location ./path {
 		root TEST3;
 		index index.html;	

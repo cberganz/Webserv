@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ParserConfig.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/16 17:12:25 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/16 18:22:02 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ParserConfig.hpp"
 
 ParserConfig::ParserConfig()
@@ -22,9 +34,10 @@ ParserConfig::ParserConfig(const ParserConfig &src)
 **			 thrown but this case should not happen.
 */
 
-ParserConfig::ParserConfig(const std::string &context)
+ParserConfig::ParserConfig(const std::string &context, const std::string &parentName)
 	: m_contextIndex(getContextIndex(context)),
-	  m_contextName(context)
+	  m_contextName(context),
+	  m_parentName(parentName)
 {}
 
 /*
@@ -40,6 +53,7 @@ ParserConfig &ParserConfig::operator=(const ParserConfig &rhs)
 	{
 		this->m_contextIndex = rhs.m_contextIndex;
 		this->m_contextName = rhs.m_contextName;
+		this->m_parentName = rhs.m_parentName;
 	}
 	return *this;
 }
@@ -49,6 +63,9 @@ const int &ParserConfig::getContextIndex() const
 
 const std::string &ParserConfig::getContextName() const
 { return this->m_contextName; }
+
+const std::string &ParserConfig::getParentName() const
+{ return this->m_parentName; }
 
 /*
 **	@brief Return the index of a keyword in the specified context.
@@ -97,8 +114,8 @@ bool ParserConfig::isMandatory(const std::string &keyword)
 bool ParserConfig::isDirective(const std::string &keyword)
 { return keywords[m_contextIndex][getIndex(keyword)].isDirective; }
 
-bool ParserConfig::isBlock(const std::string &keyword)
-{ return keywords[m_contextIndex][getIndex(keyword)].isBlock; }
+bool ParserConfig::isBloc(const std::string &keyword)
+{ return keywords[m_contextIndex][getIndex(keyword)].isBloc; }
 
 bool ParserConfig::isPossibleDirective(const std::string &keyword)
 { return isPossible(keyword) and isDirective(keyword); }
@@ -106,11 +123,11 @@ bool ParserConfig::isPossibleDirective(const std::string &keyword)
 bool ParserConfig::isMandatoryDirective(const std::string &keyword)
 { return isMandatory(keyword) and isDirective(keyword); }
 
-bool ParserConfig::isPossibleBlock(const std::string &keyword)
-{ return isPossible(keyword) and isBlock(keyword); }
+bool ParserConfig::isPossibleBloc(const std::string &keyword)
+{ return isPossible(keyword) and isBloc(keyword); }
 
-bool ParserConfig::isMandatoryBlock(const std::string &keyword)
-{ return isMandatory(keyword) and isBlock(keyword); }
+bool ParserConfig::isMandatoryBloc(const std::string &keyword)
+{ return isMandatory(keyword) and isBloc(keyword); }
 
 bool ParserConfig::contextNameRequiresURI(const std::string &parentContext, const std::string &context)
 {

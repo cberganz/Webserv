@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Context.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/16 17:28:26 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CONTEXT_HPP
 # define CONTEXT_HPP
 
 # include <map>
-# include "AContext.hpp"
+# include "ContextBase.hpp"
 
-class Context : public AContext {
+class Context : public ContextBase {
 
 public:
-	using typename AContext::tokensContainer;
-	using typename AContext::tokensIterator;
-	using typename AContext::directivesContainer;
-	using typename AContext::directivesIterator;
+	using typename ContextBase::tokensContainer;
+	using typename ContextBase::tokensIterator;
+	using typename ContextBase::directivesContainer;
+	using typename ContextBase::directivesIterator;
 
 	typedef std::map<std::string, Context>	contextsContainer;
 	typedef contextsContainer::iterator		contextsIterator;
@@ -24,13 +36,11 @@ public:
 	Context &operator=(const Context &rhs);
 
 	const std::map<std::string, Context>	&getContexts()	 const;
-	const AContext::directivesContainer		&getDirectives() const;
+	const ContextBase::directivesContainer	&getDirectives() const;
 
 protected:
 	contextsContainer		m_contexts;
 	directivesContainer		m_directives;
-	std::string				m_parentContext;
-	static tokensIterator	tokensIt;
 
 	void getContextInformations();
 	void copyParentDirectives(directivesContainer &parentDirectives);

@@ -1,6 +1,16 @@
-#include "Context.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Context.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/16 20:53:17 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-Context::tokensIterator Context::tokensIt;
+#include "Context.hpp"
 
 Context::Context()
 {}
@@ -9,26 +19,18 @@ Context::Context(const Context &src)
 { *this = src; }
 
 Context::Context(tokensContainer &tokens)
-	: AContext("global"), m_parentContext("None")
+	: ContextBase(tokens)
 {
-	tokensIt = tokens.begin();
 	getContextInformations();
 	checkMandatoryDirectives();
 	checkMandatoryContexts();
 }
 
 Context::Context(Context &parentContext)
-	: AContext(*tokensIt), m_parentContext(parentContext.m_contextName)
+	: ContextBase(*tokensIt, parentContext.m_contextName)
 {
 	copyParentDirectives(parentContext.m_directives);
-	if (*(tokensIt + 1) != "{" and contextNameRequiresURI(m_parentContext, m_contextName))
-		tokensIt++;
-	//else if (*(tokensIt + 1) == "{" and contextNameRequiresURI(m_parentContext, m_contextName))
-		//ERROR URI NOT SPECIFIED
-	if (*++tokensIt == "{")
-		tokensIt++;
-	else
-		throw ParsingErrorException(m_contextName, NO_BLOC_OPEN, m_contextName);
+	jumpBlocOpening();
 	getContextInformations();
 	checkMandatoryDirectives();
 	checkMandatoryContexts();
@@ -41,10 +43,9 @@ Context &Context::operator=(const Context &rhs)
 {
 	if (this != &rhs)
 	{
-		AContext::operator=(rhs);
+		ContextBase::operator=(rhs);
 		this->m_contexts = rhs.m_contexts;
 		this->m_directives = rhs.m_directives;
-		this->m_parentContext = rhs.m_parentContext;
 	}
 	return *this;
 }
@@ -52,7 +53,7 @@ Context &Context::operator=(const Context &rhs)
 const std::map<std::string, Context> &Context::getContexts() const
 { return this->m_contexts; }
 
-const AContext::directivesContainer &Context::getDirectives() const
+const ContextBase::directivesContainer &Context::getDirectives() const
 { return this->m_directives; }
 
 void Context::getContextInformations()
@@ -60,18 +61,15 @@ void Context::getContextInformations()
 	while (not (*tokensIt).empty() and *tokensIt != "}")
 	{
 		if (isPossibleDirective(*tokensIt))
-			directiveReplaceInserter(m_directives, tokensIt);
-		else if (isPossibleBlock(*tokensIt) and contextNameRequiresURI(*tokensIt))
+			directiveReplaceInserter(m_directives);
+		else if (isPossibleBloc(*tokensIt) and contextNameRequiresURI(*tokensIt))
 			m_contexts.insert(std::make_pair(*(tokensIt + 1), Context(*this)));
-		else if (isPossibleBlock(*tokensIt))
+		else if (isPossibleBloc(*tokensIt))
 			m_contexts.insert(std::make_pair(ft::lexical_cast<std::string>(m_contexts.size()), Context(*this)));
 		else
 			throw ParsingErrorException(m_contextName, UNAVAILABLE_DIRECTIVE, *tokensIt);
 	}
-	if (m_contextIndex != GLOBAL and *tokensIt == "}")
-		tokensIt++;
-	else if (m_contextIndex != GLOBAL)
-		throw ParsingErrorException(m_contextName, UNEXPECTED_EOF, m_contextName);
+	jumpBlocEnding();
 }
 
 void Context::copyParentDirectives(directivesContainer &parentDirectives)
@@ -95,7 +93,12 @@ void Context::checkMandatoryDirectives()
 			it++;
 		}
 		if (it == m_directives.end())
-			throw ParsingErrorException(m_contextName, MANDATORY_DIRECTIVE_NOT_FOUND, keywords[m_contextIndex][i].keyword);
+		{
+			if (keywords[m_contextIndex][i].dfault.empty())
+				throw ParsingErrorException(m_contextName, MANDATORY_DIRECTIVE_NOT_FOUND, keywords[m_contextIndex][i].keyword);
+			else
+				m_directives.insert(std::make_pair(keywords[m_contextIndex][i].keyword, keywords[m_contextIndex][i].dfault));
+		}
 	}
 }
 
@@ -103,7 +106,7 @@ void Context::checkMandatoryContexts()
 {
 	for (int i = 0 ; not keywords[m_contextIndex][i].keyword.empty() ; i++)
 	{
-		if (keywords[m_contextIndex][i].mandatory == false or keywords[m_contextIndex][i].isBlock == false)
+		if (keywords[m_contextIndex][i].mandatory == false or keywords[m_contextIndex][i].isBloc == false)
 			continue ;
 		contextsIterator it = m_contexts.begin();
 		while (it != m_contexts.end())
