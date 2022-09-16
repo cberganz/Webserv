@@ -6,15 +6,17 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/15 22:24:28 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/16 05:10:59 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AContext.hpp"
 
 AContext::AContext()
-	: ParserConfig("")
 {}
+
+AContext::AContext(const AContext &src)
+{ *this = src; }
 
 AContext::AContext(const std::string &contextName)
 	: ParserConfig(contextName)
@@ -22,6 +24,13 @@ AContext::AContext(const std::string &contextName)
 
 AContext::~AContext()
 {}
+
+AContext &AContext::operator=(const AContext &rhs)
+{
+	if (this != &rhs)
+		ParserConfig::operator=(rhs);
+	return *this;
+}
 
 void AContext::directiveReplaceInserter(directivesContainer &container, tokensIterator &it)
 {

@@ -23,6 +23,8 @@ Context::Context(Context &parentContext)
 	copyParentDirectives(parentContext.m_directives);
 	if (*(tokensIt + 1) != "{" and contextNameRequiresURI(m_parentContext, m_contextName))
 		tokensIt++;
+	//else if (*(tokensIt + 1) == "{" and contextNameRequiresURI(m_parentContext, m_contextName))
+		//ERROR URI NOT SPECIFIED
 	if (*++tokensIt == "{")
 		tokensIt++;
 	else
@@ -38,7 +40,12 @@ Context::~Context()
 Context &Context::operator=(const Context &rhs)
 {
 	if (this != &rhs)
-		*this = rhs;
+	{
+		AContext::operator=(rhs);
+		this->m_contexts = rhs.m_contexts;
+		this->m_directives = rhs.m_directives;
+		this->m_parentContext = rhs.m_parentContext;
+	}
 	return *this;
 }
 

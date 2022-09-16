@@ -1,9 +1,10 @@
 #include "ParserConfig.hpp"
 
 ParserConfig::ParserConfig()
-	: m_contextIndex(-1),
-	  m_contextName("")
 {}
+
+ParserConfig::ParserConfig(const ParserConfig &src)
+{ *this = src; }
 
 /*
 **	@brief ParserConfig constructor.
@@ -32,6 +33,22 @@ ParserConfig::ParserConfig(const std::string &context)
 
 ParserConfig::~ParserConfig()
 {}
+
+ParserConfig &ParserConfig::operator=(const ParserConfig &rhs)
+{
+	if (this != &rhs)
+	{
+		this->m_contextIndex = rhs.m_contextIndex;
+		this->m_contextName = rhs.m_contextName;
+	}
+	return *this;
+}
+
+const int &ParserConfig::getContextIndex() const
+{ return this->m_contextIndex; }
+
+const std::string &ParserConfig::getContextName() const
+{ return this->m_contextName; }
 
 /*
 **	@brief Return the index of a keyword in the specified context.

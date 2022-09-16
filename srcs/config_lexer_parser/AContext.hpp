@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/16 00:44:37 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/16 05:01:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,11 @@ public:
 	typedef directivesContainer::iterator		directivesIterator;
 
 	AContext();
+	AContext(const AContext &src);
 	AContext(const std::string &contextName);
 	virtual ~AContext();
+
+	AContext &operator=(const AContext &rhs);
 
 protected:
 	void directiveReplaceInserter(directivesContainer &container, tokensIterator &it);

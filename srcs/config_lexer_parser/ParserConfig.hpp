@@ -16,12 +16,18 @@ class ParserConfig {
 
 public:
 	ParserConfig();
+	ParserConfig(const ParserConfig &src);
 	ParserConfig(const std::string &contextName);
 	~ParserConfig();
 
+	ParserConfig &operator=(const ParserConfig &rhs);
+
+	const int		  &getContextIndex() const;
+	const std::string &getContextName() const;
+
 protected:
 	int				  m_contextIndex;
-	const std::string m_contextName;
+	std::string		  m_contextName;
 
 	int	getIndex(const std::string &keyword);
 	int	getContextIndex(const std::string &context);
