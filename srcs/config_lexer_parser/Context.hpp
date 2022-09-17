@@ -25,7 +25,7 @@ public:
 	using typename ContextBase::directivesIterator;
 
 	typedef std::map<std::string, Context>	contextsContainer;
-	typedef contextsContainer::iterator		contextsIterator;
+	typedef contextsContainer::iterator			contextsIterator;
 
 	Context();
 	Context(const Context &src);
