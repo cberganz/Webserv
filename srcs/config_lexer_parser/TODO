@@ -1,0 +1,17 @@
+-> Store parent context ptr inside ContextBase
+-> Make keywords table a static private member of ParserConfig
+-> Add a default value to directives in the keywords table
+
+
+ParserConfig:
+- fonctions duplicates to find an index not a str
+- method that checks if a keyword or index has a dfault (dfault.empty())
+- method that checks if an index match a specific str
+- methods to check if an str or an index is the end of the keywords table (so it does not exist inside it)
+
+ContextBase:
+- 
+
+Context:
+
+
