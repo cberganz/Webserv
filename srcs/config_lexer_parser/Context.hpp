@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/17 21:30:51 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 04:38:35 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,11 @@ public:
 	using typename ContextBase::tokensIterator;
 	using typename ContextBase::directivesContainer;
 	using typename ContextBase::directivesIterator;
+	using typename ContextBase::directivesConstIterator;
 
-	typedef std::map<std::string, Context>	contextsContainer;
-	typedef contextsContainer::iterator		contextsIterator;
+	typedef std::map<std::string, Context>	  contextsContainer;
+	typedef contextsContainer::iterator		  contextsIterator;
+	typedef contextsContainer::const_iterator contextsConstIterator;
 
 	Context();
 	Context(const Context &src);
@@ -60,7 +62,7 @@ protected:
 	void getContextInformations();
 
 	void checkMandatoryDirectives();
-	void checkMandatoryContexts();
+	void checkMandatoryContexts() const;
 
 }; // class Context
 

@@ -1,6 +1,7 @@
 -> Store parent context ptr inside ContextBase
 -> Make keywords table a static private member of ParserConfig
 -> Add a default value to directives in the keywords table
+-> Is it possible to insert default blocs if they are mandatory but not present ?
 
 
 ParserConfig:

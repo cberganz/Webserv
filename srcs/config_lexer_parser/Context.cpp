@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 02:53:15 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 04:42:00 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,8 @@ void Context::getContextInformations()
 	{
 		if (isPossibleDirective(*tokensIt))
 			directiveReplaceInserter(m_directives);
-		else if (isPossibleBloc(*tokensIt) and contextNameRequiresURI(*tokensIt))
-			m_contexts.insert(std::make_pair(*(tokensIt + 1), Context(*this)));
 		else if (isPossibleBloc(*tokensIt))
-			m_contexts.insert(std::make_pair(ft::lexical_cast<std::string>(m_contexts.size()), Context(*this)));
+			m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
 		else
 			throwException(UNAVAILABLE_DIRECTIVE, *tokensIt);
 	}
@@ -135,7 +133,7 @@ void Context::checkMandatoryDirectives()
 	{
 		if (not isMandatoryDirective(index))
 			continue ;
-		directivesIterator it = m_directives.begin();
+		directivesConstIterator it = m_directives.begin();
 		while (it != m_directives.end())
 		{
 			if (indexMatchKeyword(index, (*it).first))
@@ -143,12 +141,7 @@ void Context::checkMandatoryDirectives()
 			it++;
 		}
 		if (it == m_directives.end())
-		{
-			if (hasDefault(index))
-				m_directives.insert(std::make_pair(getKeyword(index), getDefault(index)));
-			else
-				throwException(MANDATORY_DIRECTIVE_NOT_FOUND, getKeyword(index));
-		}
+			insertDefaultIfExistingOrThrowException(m_directives, index);
 	}
 }
 
@@ -157,13 +150,13 @@ void Context::checkMandatoryDirectives()
 **		   Throw an exception if a bloc is missing.
 */
 
-void Context::checkMandatoryContexts()
+void Context::checkMandatoryContexts() const
 {
 	for (int index = 0 ; not indexIsDefault(index) ; index++)
 	{
 		if (not isMandatoryBloc(index))
 			continue ;
-		contextsIterator it = m_contexts.begin();
+		contextsConstIterator it = m_contexts.begin();
 		while (it != m_contexts.end())
 		{
 			if (indexMatchKeyword(index, (*it).second.m_contextName))

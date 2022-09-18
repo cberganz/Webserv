@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 02:37:44 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 04:38:22 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,16 @@
 **	@category class
 */
 
+class Context;
+
 class ContextBase : public ParserConfig {
 
 public:
 	typedef std::vector<std::string>			tokensContainer;
-	typedef tokensContainer::iterator			tokensIterator;
+	typedef tokensContainer::const_iterator		tokensIterator;
 	typedef std::map<std::string, std::string>	directivesContainer;
 	typedef directivesContainer::iterator		directivesIterator;
+	typedef directivesContainer::const_iterator	directivesConstIterator;
 
 	ContextBase();
 	ContextBase(const ContextBase &src);
@@ -57,6 +60,13 @@ protected:
 	void directiveReplaceInserter(directivesContainer &container);
 	void copyParentDirectives(directivesContainer &parentContainer,
 							  directivesContainer &container);
+	void insertDefaultIfExistingOrThrowException(directivesContainer &container,
+												 const int &index);
+
+	template <typename Container>
+	const std::string getKeyIdentifier(const Container &container)
+	{ return (contextNameRequiresURI(*tokensIt) ? *(tokensIt + 1)
+			 : ft::lexical_cast<std::string>(container.size())); }
 
 	class ParsingErrorException : public std::exception
     {

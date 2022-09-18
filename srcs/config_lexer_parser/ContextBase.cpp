@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 02:38:03 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 04:37:07 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,15 @@ void ContextBase::copyParentDirectives(directivesContainer &parentContainer,
 	for (directivesIterator it = parentContainer.begin() ; it != parentContainer.end() ; it++)
 		if (isPossibleDirective((*it).first))
 			container.insert(std::make_pair((*it).first, (*it).second));
+}
+
+void ContextBase::insertDefaultIfExistingOrThrowException(directivesContainer &container,
+														  const int &index)
+{
+	if (hasDefault(index))
+		container.insert(std::make_pair(getKeyword(index), getDefault(index)));
+	else
+		throwException(MANDATORY_DIRECTIVE_NOT_FOUND, getKeyword(index));
 }
 
 /*
