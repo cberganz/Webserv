@@ -6,7 +6,7 @@
 #    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/09/18 21:16:25 by cberganz         ###   ########.fr        #
+#    Updated: 2022/09/19 01:27:37 by charles          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,12 @@ SRC_NAME	= Config.cpp		\
 			  Context.cpp		\
 			  ContextBase.cpp	\
 			  ParserConfig.cpp
+
+TEST_FILES	= simpleTest1.conf \
+			  simpleTest2.conf
+
+TEST_DIR		= ParsingTester/confFiles/
+TEST_PATHS		= ${addprefix ${TEST_DIR}, ${TEST_FILES}}
 
 SRC_DIR		= srcs/
 SRC			= ${addprefix ${SRC_DIR}, ${SRC_NAME}}
@@ -46,10 +52,8 @@ ${OBJ}: | ${OBJ_DIRS}
 ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
 	@${CC} ${CFLAGS} -c $< -o $@
 
-test: all
-	@${CC} ${CFLAGS} -Isrcs unit-tests/main.cpp ${NAME}
-	@./a.out
-	@rm a.out
+ParsingTester: all
+	@bash ParsingTester/ParsingTester.sh
 
 clean:
 	rm -rf ${OBJ_DIR}
@@ -59,4 +63,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY : all clean fclean re
+.PHONY : all clean fclean test re

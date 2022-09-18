@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 21:15:27 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 00:26:05 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,15 @@ void RContextsContainer(const Config::contextsContainer &contexts, int tabCount)
 	}
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+	if (argc != 2)
+	{
+		std::cout << "Wrong arguments." << std::endl;
+		return 1;
+	}
 	try {
-		Config config("unit-tests/test.txt");
+		Config config(argv[1]);
 		Config::contextsContainer cont;
 		cont.insert(std::make_pair("global", config.getParser().getRoot()));
 		RContextsContainer(cont, 0);
