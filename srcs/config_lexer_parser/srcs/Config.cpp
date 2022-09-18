@@ -1,35 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tools.hpp                                          :+:      :+:    :+:   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/17 18:25:34 by cberganz         ###   ########.fr       */
+/*   Created: 2022/09/18 20:22:35 by cberganz          #+#    #+#             */
+/*   Updated: 2022/09/18 20:28:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOOLS_HPP
-# define TOOLS_HPP
+#include "Config.hpp"
 
-# include <sstream>
+Config::Config()
+{}
 
-namespace ft {
+Config::Config(const Config &src)
+{ *this = src; }
 
-/*
-**	@brief Perform type conversion from any type to the type specified as T1.
-**	@usage lexical_cast<out_type>(in_type)
-*/
+Config::Config(const std::string &fileName)
+	: m_parser(fileName)
+{}
 
-template <typename T1, typename T2>
-inline T1 lexical_cast(const T2 &to_cast)
+Config::~Config()
+{}
+
+Config &Config::operator=(const Config &rhs)
 {
-	std::ostringstream oss;
-	oss << to_cast;
-	return oss.str();
+	if (this != &rhs)
+		m_parser = rhs.m_parser;
+	return *this;
 }
 
-}; // NAMESPACE FT
-
-#endif // TOOLS_HPP
+const Parser &Config::getParser() const
+{ return this->m_parser; }

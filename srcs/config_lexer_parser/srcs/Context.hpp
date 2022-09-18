@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 04:38:35 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 18:10:56 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
 
 	Context();
 	Context(const Context &src);
-	Context(tokensContainer &tokens);
+	Context(const tokensContainer &tokens);
 	Context(Context &parentContext);
 	~Context();
 

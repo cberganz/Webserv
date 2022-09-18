@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 04:42:00 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 18:11:16 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Context::Context(const Context &src)
 **	as there is no parent for the global context.
 */
 
-Context::Context(tokensContainer &tokens)
+Context::Context(const tokensContainer &tokens)
 	: ContextBase(tokens)
 {
 	getContextInformations();

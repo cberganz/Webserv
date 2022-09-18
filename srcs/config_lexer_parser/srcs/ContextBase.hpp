@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 04:38:22 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 18:11:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define BLOC_START "{"
 # define BLOC_END "}"
 # define DIRECTIVE_END ";"
+
 /*
 **	@brief The purpose of this class is to make abstraction of the Context class
 **		   inherent complexity. It implements low level methods and manipulates
@@ -44,7 +45,7 @@ public:
 
 	ContextBase();
 	ContextBase(const ContextBase &src);
-	ContextBase(tokensContainer &tokens);
+	ContextBase(const tokensContainer &tokens);
 	ContextBase(const std::string &contextName,
 				const std::string &parentName);
 	virtual ~ContextBase();
@@ -56,7 +57,6 @@ protected:
 
 	void handleBlocOpening();
 	void handleBlocEnding();
-
 	void directiveReplaceInserter(directivesContainer &container);
 	void copyParentDirectives(directivesContainer &parentContainer,
 							  directivesContainer &container);

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 04:37:07 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 18:11:46 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ ContextBase::ContextBase(const ContextBase &src)
 **	of the tokens container so it MUST be called only once.
 */
 
-ContextBase::ContextBase(tokensContainer &tokens)
+ContextBase::ContextBase(const tokensContainer &tokens)
 	: ParserConfig("global", "None")
 { tokensIt = tokens.begin(); }
 
@@ -92,7 +92,7 @@ ContextBase &ContextBase::operator=(const ContextBase &rhs)
 void ContextBase::handleBlocOpening()
 {
 	if (contextNameRequiresURI(m_parentName, m_contextName))
-		*(tokensIt + 1) != BLOC_START ? (void)tokensIt++ : throwException(UNSPECIFIED_URI, m_contextName);
+		*(tokensIt + 1) != BLOC_START ? static_cast<void>(tokensIt++) : throwException(UNSPECIFIED_URI, m_contextName);
 	if (*++tokensIt == BLOC_START)
 		tokensIt++;
 	else
@@ -149,6 +149,14 @@ void ContextBase::copyParentDirectives(directivesContainer &parentContainer,
 		if (isPossibleDirective((*it).first))
 			container.insert(std::make_pair((*it).first, (*it).second));
 }
+
+/*
+**	@brief Performs insertion of default value for mandatory directives that
+**		   was not found in the configuration file. Throw an exception if no
+**		   default is set.
+**	@param container: The directives container in wich insertion should be done.
+**	@param index: The index of the directive in the keywords table.
+*/
 
 void ContextBase::insertDefaultIfExistingOrThrowException(directivesContainer &container,
 														  const int &index)

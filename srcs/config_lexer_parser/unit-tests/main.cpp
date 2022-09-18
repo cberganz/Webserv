@@ -6,14 +6,14 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/16 18:31:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/18 21:15:27 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include "Parser.hpp"
+#include "Config.hpp"
 
 void printTab(int tabCount)
 {
@@ -21,9 +21,9 @@ void printTab(int tabCount)
 		std::cout << "\t";
 }
 
-void printDirectives(const Parser::directivesContainer &directives, int tabCount)
+void printDirectives(const Config::directivesContainer &directives, int tabCount)
 {
-	for (Parser::directivesContainer::const_iterator it = directives.begin() ;
+	for (Config::directivesContainer::const_iterator it = directives.begin() ;
 		 it != directives.end() ; it++)
 	{
 		printTab(tabCount);
@@ -32,9 +32,9 @@ void printDirectives(const Parser::directivesContainer &directives, int tabCount
 	std::cout << std::endl;
 }
 
-void RContextsContainer(const Parser::contextsContainer &contexts, int tabCount)
+void RContextsContainer(const Config::contextsContainer &contexts, int tabCount)
 {
-	for (Parser::contextsContainer::const_iterator it = contexts.begin() ;
+	for (Config::contextsContainer::const_iterator it = contexts.begin() ;
 		 it != contexts.end() ; it++)
 	{
 		printTab(tabCount);
@@ -49,9 +49,9 @@ void RContextsContainer(const Parser::contextsContainer &contexts, int tabCount)
 int main()
 {
 	try {
-		Parser parser("test.txt");
-		Parser::contextsContainer cont;
-		cont.insert(std::make_pair("global", parser.getGlobal()));
+		Config config("unit-tests/test.txt");
+		Config::contextsContainer cont;
+		cont.insert(std::make_pair("global", config.getParser().getRoot()));
 		RContextsContainer(cont, 0);
 	} catch(const std::exception &e) {
 		std::cerr << e.what() << std::endl;
