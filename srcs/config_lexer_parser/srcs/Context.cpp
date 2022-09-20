@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/20 01:09:51 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/20 18:50:27 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,13 +120,13 @@ void Context::getContextInformations()
 	handleBlocEnding();
 }
 
-void Context::blocInserter()
-{
-	//if (m_contexts.find(getFollowingToken(1)) == m_contexts.end())
-	//m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
-	//else
-	//throwException(DUPLICATE, getCurrentToken());
-}
+//void Context::blocInserter()
+//{
+//	if (contextNameRequiresURI(getCurrentToken()) and m_contexts.find(getFollowingToken(1)) == m_contexts.end())
+//		m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
+//	else
+//		throwException(DUPLICATE, getCurrentToken());
+//}
 
 /*
 **	@brief Checker whether all the mandatory directives of the context were found.

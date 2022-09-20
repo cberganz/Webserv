@@ -6,14 +6,14 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/19 15:24:14 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/20 17:53:57 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include "Config.hpp"
+#include "../srcs/Config.hpp"
 
 void printTab(int tabCount)
 {

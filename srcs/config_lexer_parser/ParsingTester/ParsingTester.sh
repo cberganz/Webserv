@@ -24,7 +24,7 @@ fi
 
 echo
 errors=0
-clang++ ${CFLAGS} -Isrcs ParsingTester/Tester.cpp ConfigParser.a
+clang++ ${CFLAGS} ParsingTester/Tester.cpp ConfigParser.a
 rm -f ParsingTester/outfiles/*.out ParsingTester/outfiles/*.debug
 files=`ls ./ParsingTester/confFiles`
 files=`echo $files | sed 's/\n/ /g'`
