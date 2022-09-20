@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 18:11:16 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/20 01:09:51 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ Context::Context(const tokensContainer &tokens)
 */
 
 Context::Context(Context &parentContext)
-	: ContextBase(*tokensIt, parentContext.m_contextName)
+	: ContextBase(parentContext.getCurrentToken(), parentContext.m_contextName)
 {
 	copyParentDirectives(parentContext.m_directives, m_directives);
 	handleBlocOpening();
@@ -107,16 +107,25 @@ const ContextBase::directivesContainer &Context::getDirectives() const
 
 void Context::getContextInformations()
 {
-	while (not (*tokensIt).empty() and *tokensIt != BLOC_END)
+	while (not getCurrentToken().empty() and getCurrentToken() != BLOC_END)
 	{
-		if (isPossibleDirective(*tokensIt))
-			directiveReplaceInserter(m_directives);
-		else if (isPossibleBloc(*tokensIt))
+		if (isPossibleDirective(getCurrentToken()))
+			directiveInserter(m_directives);
+		else if (isPossibleBloc(getCurrentToken()))
 			m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
+			//blocInserter();
 		else
-			throwException(UNAVAILABLE_DIRECTIVE, *tokensIt);
+			throwException(UNAVAILABLE_DIRECTIVE, getCurrentToken());
 	}
 	handleBlocEnding();
+}
+
+void Context::blocInserter()
+{
+	//if (m_contexts.find(getFollowingToken(1)) == m_contexts.end())
+	//m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
+	//else
+	//throwException(DUPLICATE, getCurrentToken());
 }
 
 /*

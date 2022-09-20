@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 17:50:09 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 20:41:04 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 11:27:23 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ private:
 	std::string handleCharToken(std::string::iterator &it);
 	std::string handleComment(std::string::iterator &it);
 	std::string handleVar(std::string::iterator &it);
+	std::string handleQuoting(std::string::iterator &it);
 	std::string handleKeyword(std::string::iterator &it);
 
 	bool isKeyChar(const std::string::iterator &it) const;

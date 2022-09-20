@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Tester.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/19 00:26:05 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/19 15:24:14 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,16 @@ void RContextsContainer(const Config::contextsContainer &contexts, int tabCount)
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2)
+	std::string path = "default.conf";
+	if (argc == 2)
+		path = argv[1];
+	else if (argc > 2)
 	{
-		std::cout << "Wrong arguments." << std::endl;
+		std::cout << "Too many arguments." << std::endl;
 		return 1;
 	}
 	try {
-		Config config(argv[1]);
+		Config config(path);
 		Config::contextsContainer cont;
 		cont.insert(std::make_pair("global", config.getParser().getRoot()));
 		RContextsContainer(cont, 0);

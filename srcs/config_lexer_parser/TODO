@@ -15,4 +15,9 @@ ContextBase:
 
 Context:
 
-
+Errors handling:
+ok - cannot have two identical location in the same bloc: nginx: [emerg] duplicate location "www/data" in /home/cberganz/ex.conf:8
+- cannot have two server listening the same address. Or ignore it and take the first by default : nginx: [warn] conflicting server name "" on 0.0.0.0:80, ignored
+- the context map should contain the ip and port or socket as key
+- cannot have duplicate directives inside the same context (also for global context): nginx: [emerg] "root" directive is duplicate in /home/cberganz/ex.conf:10
+- root should have a default value

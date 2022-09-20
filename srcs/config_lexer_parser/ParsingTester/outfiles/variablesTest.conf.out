@@ -1,0 +1,16 @@
+[global][global]
+root -> $default_root
+
+	[server][0]
+	listen -> $listen_port
+	root -> $default_root
+	server_name -> $name_server
+
+		[location][$path]
+		index -> $default_index
+		root -> $default_root
+
+		[location][$path2]
+		index -> $index_default
+		root -> $default_root
+

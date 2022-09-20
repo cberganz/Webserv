@@ -6,7 +6,7 @@
 #    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/09/19 01:27:37 by charles          ###   ########.fr        #
+#    Updated: 2022/09/19 15:54:22 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ ${OBJ}: | ${OBJ_DIRS}
 ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
 	@${CC} ${CFLAGS} -c $< -o $@
 
-ParsingTester: all
+test: all
 	@bash ParsingTester/ParsingTester.sh
 
 clean:

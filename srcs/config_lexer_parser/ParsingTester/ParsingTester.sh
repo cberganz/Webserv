@@ -2,7 +2,7 @@
 
 #
 #	This script MUST be launch from the parent directory
-#	with the command `make ParsingTester`.
+#	with the command `make test`.
 #
 
 CFLAGS="-Wall -Wextra -Werror -std=c++98 -g"
@@ -31,18 +31,18 @@ files=`echo $files | sed 's/\n/ /g'`
 for test in $files
 do
 	printf "${Cyan}${test}	${Purple}${reset}"
-    ./a.out "ParsingTester/confFiles/$test" > ParsingTester/outfiles/${test}.out
+    ./a.out "ParsingTester/confFiles/$test" > ParsingTester/outfiles/${test}.out 2>&1
 	ret_diff=`diff ParsingTester/outfiles/${test}.out ParsingTester/outfiles/${test}.model`
 	if [ "$ret_diff" != "" ]
 	then
-		errors+=1
+		errors = $(($errors+1))
 		echo $ret_diff > ParsingTester/outfiles/${test}.debug
     	printf "❌${red} Check diff at ParsingTester/outfiles/${test}.debug\n"
     else
     	printf "✅\n"
 	fi
 done
-rm a.out
+#rm a.out
 if [ $errors == 0 ]; then
 	printf "${Purple}Number of errors: ${green}${errors}${reset}\n\n"
 	exit 0

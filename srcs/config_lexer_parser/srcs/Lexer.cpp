@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>	        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 18:00:44 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 20:40:40 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 16:17:29 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,31 @@ std::string Lexer::handleComment(std::string::iterator &it)
 std::string Lexer::handleVar(std::string::iterator &it)
 {
 	std::string tmp;
-	while (*it != EOF and not std::isspace(*it) and not isKeyChar(it))
+	tmp += *it++;
+	while (*it != EOF
+		   and not std::isspace(*it)
+		   and not isKeyChar(it))
 	{
 		tmp += *it;
 		it++;
 	}
+	return tmp;
+}
+
+std::string Lexer::handleQuoting(std::string::iterator &it)
+{
+	std::string tmp;
+	char startChar = *it;
+	it++;
+	while (*it != EOF
+		   and *it != startChar)
+	{
+		tmp += *it;
+		it++;
+	}
+	it++;
+	if (*it == EOF and *(it - 1) != startChar)
+		throw std::invalid_argument("Parsing error: unclosed quotes in configuration file.");
 	return tmp;
 }
 
@@ -99,6 +119,8 @@ std::vector<std::string> Lexer::readTokensFromFile(const std::string &fileName)
 		{std::string(";"), &Lexer::handleCharToken},
 	    {std::string("{"), &Lexer::handleCharToken},
 		{std::string("}"), &Lexer::handleCharToken},
+		{std::string("\""), &Lexer::handleQuoting},
+		{std::string("\'"), &Lexer::handleQuoting},
 		{std::string("#"), &Lexer::handleComment},
 		{std::string("$"), &Lexer::handleVar},
 		{std::string("EOA"), &Lexer::handleKeyword}
@@ -114,7 +136,7 @@ std::vector<std::string> Lexer::readTokensFromFile(const std::string &fileName)
 	std::string::iterator it = save.begin();
 	while (*it != EOF)
 	{
-		for (int i = 0 ; i <= 11 ; i++)
+		for (int i = 0 ; i <= 13 ; i++)
 		{
 			if (*it == funcPtrs[i].pattern[0] || funcPtrs[i].pattern == "EOA")
 			{

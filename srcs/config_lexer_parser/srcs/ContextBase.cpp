@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 18:11:46 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/20 01:10:10 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,16 @@ ContextBase &ContextBase::operator=(const ContextBase &rhs)
 }
 
 /*
+**	@brief Return current static token which is a private member.
+*/
+
+const std::string &ContextBase::getCurrentToken()
+{ return *tokensIt; }
+
+const std::string &ContextBase::getFollowingToken(const int &offset)
+{ return *(tokensIt + offset); }
+
+/*
 **	@brief Allows secure jump of the bloc opening bracket.
 **
 **	Verify whether the syntax of the bloc opening is correct, even in the case
@@ -124,9 +134,8 @@ void ContextBase::handleBlocEnding()
 **	next token is not a semicolon.
 */
 
-void ContextBase::directiveReplaceInserter(directivesContainer &container)
+void ContextBase::directiveInserter(directivesContainer &container)
 {
-	container.erase(*tokensIt);
 	container.insert(std::make_pair(*tokensIt, *++tokensIt));
 	if (*++tokensIt == DIRECTIVE_END)
 		tokensIt++;
@@ -147,7 +156,7 @@ void ContextBase::copyParentDirectives(directivesContainer &parentContainer,
 {
 	for (directivesIterator it = parentContainer.begin() ; it != parentContainer.end() ; it++)
 		if (isPossibleDirective((*it).first))
-			container.insert(std::make_pair((*it).first, (*it).second));
+				container.insert(std::make_pair((*it).first, (*it).second));
 }
 
 /*
@@ -177,11 +186,11 @@ void ContextBase::insertDefaultIfExistingOrThrowException(directivesContainer &c
 
 ContextBase::ParsingErrorException::ParsingErrorException(const std::string &contextName,
 														  const char *errorDetails,
-														  const std::string &token)
+														  const std::string &word)
 	: message("Error while parsing configuration file: Inside context: "
 			  + contextName
 			  + ": " + errorDetails
-			  + ": \'" + token + "\'.")
+			  + ": \'" + word + "\'.")
 {}
 
 ContextBase::ParsingErrorException::~ParsingErrorException() throw()
@@ -190,6 +199,5 @@ ContextBase::ParsingErrorException::~ParsingErrorException() throw()
 const char* ContextBase::ParsingErrorException::what() const throw()
 { return message.c_str(); }
 
-void ContextBase::throwException(const char *errorDetails,
-								 const std::string &token) const
-{ throw ParsingErrorException(m_contextName, errorDetails, token); }
+void ContextBase::throwException(const char *errorDetails, const std::string &word) const
+{ throw ParsingErrorException(m_contextName, errorDetails, word); }

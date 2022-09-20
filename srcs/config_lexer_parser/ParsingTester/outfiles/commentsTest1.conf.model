@@ -1,0 +1,17 @@
+[global][global]
+root -> TEST
+
+	[server][0]
+	index -> index.php
+	listen -> 443
+	root -> TEST3
+	server_name -> cberganz.42.fr
+
+		[location][/path sfsaf asdfsda]
+		index -> index.html
+		root ->  Ceci 'est' un 'test'
+
+		[location][/what]
+		index -> what.html
+		root -> 'Blorp' 'baba'
+

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 18:10:56 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 21:52:41 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ protected:
 	directivesContainer		m_directives;
 
 	void getContextInformations();
+	void blocInserter();
 
 	void checkMandatoryDirectives();
 	void checkMandatoryContexts() const;

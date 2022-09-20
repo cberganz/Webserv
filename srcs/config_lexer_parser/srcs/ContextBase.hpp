@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 18:11:28 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 23:52:21 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string>
 # include <vector>
 # include <map>
+# include <utility>
 # include "ParserConfig.hpp"
 # include "tools.hpp"
 
@@ -52,12 +53,14 @@ public:
 
 	ContextBase &operator=(const ContextBase &rhs);
 
+
 protected:
-	static tokensIterator tokensIt;
+	const std::string &getCurrentToken();
+	const std::string &getFollowingToken(const int &offset);
 
 	void handleBlocOpening();
 	void handleBlocEnding();
-	void directiveReplaceInserter(directivesContainer &container);
+	void directiveInserter(directivesContainer &container);
 	void copyParentDirectives(directivesContainer &parentContainer,
 							  directivesContainer &container);
 	void insertDefaultIfExistingOrThrowException(directivesContainer &container,
@@ -84,6 +87,9 @@ protected:
 
 	void throwException(const char *errorDetails,
 						const std::string &token) const;
+
+private:
+	static tokensIterator tokensIt;
 
 }; // class ContextBase
 

@@ -1,5 +1,5 @@
 [global][global]
-root -> TEST2
+root -> TEST
 
 	[server][0]
 	listen -> 443
@@ -16,27 +16,27 @@ root -> TEST2
 
 	[server][1]
 	listen -> 80
-	root -> TEST2
+	root -> TEST
 	server_name -> cberganz.21.fr
 
 		[location][./what]
 		index -> what.html
-		root -> TEST2
+		root -> TEST
 
 		[location][/test]
 		index -> index.html
-		root -> TEST3
+		root -> TEST
 
 	[server][2]
 	listen -> 0.0.0.0:80
-	root -> TEST2
+	root -> TEST
 	server_name -> cberganz.21.fr
 
 		[location][./path]
 		index -> index.html
-		root -> TEST3
+		root -> TEST
 
 		[location][./what]
 		index -> what.html
-		root -> TEST2
+		root -> TEST
 

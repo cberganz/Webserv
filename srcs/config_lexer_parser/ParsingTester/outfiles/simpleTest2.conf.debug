@@ -1,0 +1,1 @@
+7c7 < root -> TEST --- > root -> TEST3 11,12c11,12 < index -> index.php < root -> TEST --- > index -> index.html > root -> TEST2 15,16c15,16 < index -> index.php < root -> TEST --- > index -> what.html > root -> blala

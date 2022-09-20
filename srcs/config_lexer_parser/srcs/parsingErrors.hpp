@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:41 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/17 15:55:37 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/19 18:15:39 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@
 # define NO_SEMICOLON "Directive ends without semicolon"
 # define UNSPECIFIED_URI "URI not specified while context requires it"
 # define PARSERCONFIG_MISUSE "Misuse of ParserConfig constructor. See @warning for more details."
+# define DUPLICATE "Duplicate bloc reached"
 
 #endif // PARSINGERRORS_HPP
