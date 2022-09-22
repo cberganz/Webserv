@@ -61,7 +61,7 @@ void            PollingManager::init_epoll_events() {
 }
 
 int             PollingManager::wait_for_connexions() {
-    std::cout << "\rPolling for input: " << std::flush;
+    std::cout << "\rPollinginit_epoll_events() for input: " << std::flush;
 
     int nfds = epoll_wait(m_epfd, m_ready_events, MAX_EVENTS, 5000); // check timeoout et MAX_EVENTS -> que mettre ?
 

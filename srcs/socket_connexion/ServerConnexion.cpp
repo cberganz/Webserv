@@ -38,6 +38,7 @@ std::string	create_response(std::string file) {
 
 void    ServerConnexion::connexion_loop()
 {
+    m_polling.init_epoll_events();
     while(1)
     {
         int nfds;
