@@ -13,6 +13,7 @@ jobs:
       run:
         working-directory: ./srcs/config_lexer_parser/
     steps:
+      - uses: actions/checkout@v2
       - run: sudo apt install -y clang++
       - run: make test
 
