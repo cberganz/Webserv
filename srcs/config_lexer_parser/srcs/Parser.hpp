@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:34 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 20:39:51 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/23 02:30:10 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,12 @@ class Parser : public Lexer {
 public:
 	using typename Lexer::tokensContainer;
 	using typename Lexer::tokensIterator;
-	typedef Context::directivesContainer	directivesContainer;
-	typedef Context::directivesIterator		directivesIterator;
-	typedef Context::contextsContainer		contextsContainer;
-	typedef Context::contextsIterator		contextsIterator;
+	typedef Context::directivesContainer		directivesContainer;
+	typedef Context::directivesIterator			directivesIterator;
+	typedef Context::directivesConstIterator	directivesConstIterator;
+	typedef Context::contextsContainer			contextsContainer;
+	typedef Context::contextsIterator			contextsIterator;
+	typedef Context::contextsConstIterator		contextsConstIterator;
 
 	Parser();
 	Parser(const Parser &src);
@@ -48,6 +50,7 @@ public:
 
 private:
 	Context	m_root;
+	void checkMandatories(Context &context);
 
 };
 

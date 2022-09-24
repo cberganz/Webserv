@@ -21,3 +21,7 @@ ok - cannot have two identical location in the same bloc: nginx: [emerg] duplica
 - the context map should contain the ip and port or socket as key
 - cannot have duplicate directives inside the same context (also for global context): nginx: [emerg] "root" directive is duplicate in /home/cberganz/ex.conf:10
 - root should have a default value
+
+
+
+-> handle double directives in same context : from directivesInserter and the above fction

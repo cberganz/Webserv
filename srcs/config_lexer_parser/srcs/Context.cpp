@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/20 18:50:27 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/23 15:58:29 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ Context::Context(const tokensContainer &tokens)
 	: ContextBase(tokens)
 {
 	getContextInformations();
-	checkMandatoryDirectives();
-	checkMandatoryContexts();
 }
 
 /*
@@ -55,11 +53,9 @@ Context::Context(const tokensContainer &tokens)
 Context::Context(Context &parentContext)
 	: ContextBase(parentContext.getCurrentToken(), parentContext.m_contextName)
 {
-	copyParentDirectives(parentContext.m_directives, m_directives);
 	handleBlocOpening();
 	getContextInformations();
-	checkMandatoryDirectives();
-	checkMandatoryContexts();
+	copyParentDirectives(parentContext.m_directives, m_directives);
 }
 
 /*
@@ -88,6 +84,12 @@ Context &Context::operator=(const Context &rhs)
 **	@brief Context accessors.
 */
 
+std::map<std::string, Context> &Context::getContexts()
+{ return this->m_contexts; }
+
+ContextBase::directivesContainer &Context::getDirectives()
+{ return this->m_directives; }
+
 const std::map<std::string, Context> &Context::getContexts() const
 { return this->m_contexts; }
 
@@ -112,21 +114,26 @@ void Context::getContextInformations()
 		if (isPossibleDirective(getCurrentToken()))
 			directiveInserter(m_directives);
 		else if (isPossibleBloc(getCurrentToken()))
-			m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
-			//blocInserter();
+			blocInserter();
 		else
 			throwException(UNAVAILABLE_DIRECTIVE, getCurrentToken());
 	}
 	handleBlocEnding();
 }
 
-//void Context::blocInserter()
-//{
-//	if (contextNameRequiresURI(getCurrentToken()) and m_contexts.find(getFollowingToken(1)) == m_contexts.end())
-//		m_contexts.insert(std::make_pair(getKeyIdentifier(m_contexts), Context(*this)));
-//	else
-//		throwException(DUPLICATE, getCurrentToken());
-//}
+/*
+**	@brief Context container insertion tool. Also throw exception if the bloc
+**		   was previously encontered in the same context whith the same key
+**		   identifier.
+*/
+
+void Context::blocInserter()
+{
+	if (not m_contexts.count(getKeyIdentifier()))
+		m_contexts.insert(std::make_pair(getKeyIdentifier(), Context(*this)));
+	else
+		throwException(DUPLICATE_BLOC, getCurrentToken());
+}
 
 /*
 **	@brief Checker whether all the mandatory directives of the context were found.
@@ -168,7 +175,7 @@ void Context::checkMandatoryContexts() const
 		contextsConstIterator it = m_contexts.begin();
 		while (it != m_contexts.end())
 		{
-			if (indexMatchKeyword(index, (*it).second.m_contextName))
+			if (indexMatchKeyword(index, (*it).second.getContextName()))
 				break ;
 			it++;
 		}

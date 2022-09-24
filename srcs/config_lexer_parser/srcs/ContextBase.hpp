@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/19 23:52:21 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/23 16:55:10 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ public:
 
 	ContextBase &operator=(const ContextBase &rhs);
 
+	void copyParentDirectives(directivesContainer &parentContainer,
+							  directivesContainer &container);
+
 
 protected:
 	const std::string &getCurrentToken();
@@ -61,15 +64,10 @@ protected:
 	void handleBlocOpening();
 	void handleBlocEnding();
 	void directiveInserter(directivesContainer &container);
-	void copyParentDirectives(directivesContainer &parentContainer,
-							  directivesContainer &container);
 	void insertDefaultIfExistingOrThrowException(directivesContainer &container,
 												 const int &index);
 
-	template <typename Container>
-	const std::string getKeyIdentifier(const Container &container)
-	{ return (contextNameRequiresURI(*tokensIt) ? *(tokensIt + 1)
-			 : ft::lexical_cast<std::string>(container.size())); }
+	const std::string getKeyIdentifier();
 
 	class ParsingErrorException : public std::exception
     {

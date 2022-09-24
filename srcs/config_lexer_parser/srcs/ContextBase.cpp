@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/20 01:10:10 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/23 12:37:49 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,30 @@ const std::string &ContextBase::getFollowingToken(const int &offset)
 { return *(tokensIt + offset); }
 
 /*
+**	@brief Get the keyword that should identify the context in the Contexts
+**		   container.
+**
+**	Whenever a Context requires an URI specifier after the context name in the
+**	configuration fie (ie. 'location / {}'), the Context will be identified by
+**	it. If the context does not requires an URI, the keyword table MUST specify
+**	a directive keyword to get this role so the following method can find it. If
+**	there is no specified keyword, an exception is thrown.
+*/
+
+const std::string ContextBase::getKeyIdentifier()
+{
+	if (contextNameRequiresURI(*tokensIt))
+		return *(tokensIt + 1);
+	else
+	{
+		for (int offset = 0 ; *(tokensIt + offset) != "}" and *(tokensIt + offset) != "" ; offset++)
+			if (*(tokensIt + offset) == "listen")
+				return (*(tokensIt + offset + 1));
+	}
+	return "";
+}
+
+/*
 **	@brief Allows secure jump of the bloc opening bracket.
 **
 **	Verify whether the syntax of the bloc opening is correct, even in the case
@@ -136,7 +160,10 @@ void ContextBase::handleBlocEnding()
 
 void ContextBase::directiveInserter(directivesContainer &container)
 {
-	container.insert(std::make_pair(*tokensIt, *++tokensIt));
+	if (container.find(*tokensIt) == container.end())
+		container.insert(std::make_pair(*tokensIt, *++tokensIt));
+	else
+		throwException(DUPLICATE_DIRECTIVE, *tokensIt);
 	if (*++tokensIt == DIRECTIVE_END)
 		tokensIt++;
 	else
@@ -155,7 +182,7 @@ void ContextBase::copyParentDirectives(directivesContainer &parentContainer,
 									   directivesContainer &container)
 {
 	for (directivesIterator it = parentContainer.begin() ; it != parentContainer.end() ; it++)
-		if (isPossibleDirective((*it).first))
+		if (isPossibleDirective((*it).first) and container.count((*it).first) == 0)
 				container.insert(std::make_pair((*it).first, (*it).second));
 }
 

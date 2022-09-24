@@ -1,17 +1,16 @@
 [global][global]
 root -> TEST
 
-	[server][0]
-	index -> index.php
+	[server][443]
 	listen -> 443
 	root -> TEST
 	server_name -> cberganz.42.fr
 
-		[location][/path sfsaf asdfsda]
-		index -> index.php
-		root -> TEST
+		[location][/path]
+		index -> index.html
+		root -> test2
 
 		[location][/what]
-		index -> index.php
+		index -> what.html
 		root -> TEST
 

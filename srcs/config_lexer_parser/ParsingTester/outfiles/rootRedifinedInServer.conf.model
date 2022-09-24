@@ -1,0 +1,16 @@
+[global][global]
+root -> TEST
+
+	[server][443]
+	listen -> 443
+	root -> test2
+	server_name -> cberganz.42.fr
+
+		[location][/path]
+		index -> index.html
+		root -> test2
+
+		[location][/what]
+		index -> what.html
+		root -> test2
+
