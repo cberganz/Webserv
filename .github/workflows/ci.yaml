@@ -16,4 +16,3 @@ jobs:
       - uses: actions/checkout@v2
       - run: sudo apt install -y clang
       - run: make test
-

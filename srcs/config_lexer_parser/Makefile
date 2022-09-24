@@ -6,7 +6,7 @@
 #    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/09/19 15:54:22 by cberganz         ###   ########.fr        #
+#    Updated: 2022/09/24 17:55:16 by charles          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,6 +60,7 @@ clean:
 
 fclean: clean
 	rm -f ${NAME}
+	rm -f a.out
 
 re: fclean all
 

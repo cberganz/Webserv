@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/23 16:59:57 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/24 17:50:16 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ public:
 	void checkMandatoryDirectives();
 	void checkMandatoryContexts() const;
 
-	const std::string &operator[](const std::string &directiveName)
-	{ return m_directives[directiveName]; }
+	const std::string &operator[](const std::string &directiveName) const
+	{ return m_directives.at(directiveName); }
 
 
 protected:
