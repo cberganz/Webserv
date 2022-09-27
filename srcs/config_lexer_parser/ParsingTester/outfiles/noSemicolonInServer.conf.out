@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: server: Directive ends without semicolon: 'server_name'.
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

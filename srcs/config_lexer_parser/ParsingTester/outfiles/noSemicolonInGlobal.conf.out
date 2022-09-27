@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: global: Directive ends without semicolon: 'root'.
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

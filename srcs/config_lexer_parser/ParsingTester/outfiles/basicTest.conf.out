@@ -1,16 +1,1 @@
-[global][global]
-root -> TEST
-
-	[server][443]
-	listen -> 443
-	root -> TEST
-	server_name -> cberganz.42.fr
-
-		[location][/path]
-		index -> index.html
-		root -> TEST
-
-		[location][/what]
-		index -> what.html
-		root -> TEST
-
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

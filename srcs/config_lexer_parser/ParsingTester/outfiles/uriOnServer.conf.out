@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: server: Bloc starts without opening bracket: 'server'.
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

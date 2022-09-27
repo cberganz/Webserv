@@ -1,16 +1,1 @@
-[global][global]
-root -> $default_root
-
-	[server][$listen_port]
-	listen -> $listen_port
-	root -> $default_root
-	server_name -> $name_server
-
-		[location][$path]
-		index -> $default_index
-		root -> $default_root
-
-		[location][$path2]
-		index -> $index_default
-		root -> $default_root
-
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

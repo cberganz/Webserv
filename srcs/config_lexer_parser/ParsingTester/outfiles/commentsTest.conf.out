@@ -1,17 +1,1 @@
-[global][global]
-root -> TEST
-
-	[server][443]
-	index -> index.php
-	listen -> 443
-	root ->  Ceci 'est' un 'test'
-	server_name -> cberganz.42.fr
-
-		[location][/path sfsaf asdfsda]
-		index -> index.html
-		root ->  Ceci 'est' un 'test'
-
-		[location][/what]
-		index -> what.html
-		root -> 'Blorp' 'baba'
-
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

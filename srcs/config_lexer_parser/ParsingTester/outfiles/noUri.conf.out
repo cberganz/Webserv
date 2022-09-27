@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: location: URI not specified while context requires it: 'location'.
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory

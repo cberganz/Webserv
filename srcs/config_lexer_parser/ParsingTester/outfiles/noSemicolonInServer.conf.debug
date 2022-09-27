@@ -1,0 +1,1 @@
+1c1 < ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory --- > Error while parsing configuration file: Inside context: server: Directive ends without semicolon: 'server_name'.

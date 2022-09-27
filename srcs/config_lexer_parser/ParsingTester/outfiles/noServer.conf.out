@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: global: Context mandatory child context not found: 'server'.
+ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory
