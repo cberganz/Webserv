@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/23 15:58:29 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/29 11:57:12 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,12 @@ const std::map<std::string, Context> &Context::getContexts() const
 
 const ContextBase::directivesContainer &Context::getDirectives() const
 { return this->m_directives; }
+
+const Context &Context::getContext(const std::string &contextName) const
+{ return m_contexts.at(contextName); }
+
+const std::string &Context::getDirective(const std::string &directiveName) const
+{ return m_directives.at(directiveName); }
 
 /*
 **	@brief Parse the context informations inside the tokens container.

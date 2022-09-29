@@ -1,1 +1,0 @@
-1c1,16 < ParsingTester/ParsingTester.sh: line 34: ./a.out: No such file or directory --- > [global][global] > root -> TEST > > [server][] > listen -> 0.0.0.0:80 > root -> TEST > server_name -> cberganz.42.fr > > [location][/path] > index -> index.html > root -> TEST > > [location][/what] > index -> what.html > root -> TEST >

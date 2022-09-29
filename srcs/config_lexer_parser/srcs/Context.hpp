@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/26 09:44:47 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/29 11:57:41 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,11 @@ public:
 	ContextBase::directivesContainer		&getDirectives();
 	const std::map<std::string, Context>	&getContexts() const;
 	const ContextBase::directivesContainer	&getDirectives() const;
+	const Context							&getContext(const std::string &contextName) const;
+	const std::string						&getDirective(const std::string &directiveName) const;
 
 	void checkMandatoryDirectives();
 	void checkMandatoryContexts() const;
-
-	const std::string &operator[](const std::string &keyword) const
-	{
-		try {
-			return m_contexts.at(keyword);
-		} catch (const std::out_of_range &e) {
-			return m_directives.at(keyword);
-		}
-	}
-
 
 protected:
 	contextsContainer		m_contexts;
