@@ -30,3 +30,8 @@ git pull
 git merge myBranch
 ```
 -> Then resolv conflicts if needed
+
+Once everithing is good, delete the branch:
+```
+git branch -d myBranch
+```
