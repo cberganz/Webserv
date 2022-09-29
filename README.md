@@ -1,6 +1,7 @@
 # Webserv
 
-Branching process:
+## Branching process:
+
 from main:
 ```
 git branch myBranch
