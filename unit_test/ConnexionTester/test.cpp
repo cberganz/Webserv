@@ -1,4 +1,4 @@
-#include "ServerConnexion.hpp"
+#include "../../srcs/socket_connexion/ServerConnexion.hpp"
 
 int main(int argc, char const *argv[])
 {

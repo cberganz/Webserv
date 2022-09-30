@@ -11,7 +11,7 @@
 # include <fcntl.h>
 # include <iostream>
 
-# include "../config_lexer_parser/srcs/Config.hpp"
+# include "../config_lexer_parser/Config.hpp"
 # include "../tools/utility.hpp"
 
 # define INITSOCKERR            "Socket() failed."

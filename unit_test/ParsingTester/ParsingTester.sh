@@ -7,6 +7,8 @@
 
 CFLAGS="-Wall -Wextra -Werror -std=c++98 -g"
 
+TESTER_PATH="ParsingTester/"
+
 Blue='\033[0;34m'
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
@@ -24,20 +26,20 @@ fi
 
 echo
 errors=0
-clang++ ${CFLAGS} ParsingTester/Tester.cpp ConfigParser.a
-rm -f ParsingTester/outfiles/*.out ParsingTester/outfiles/*.debug
-files=`ls ./ParsingTester/confFiles`
+clang++ ${CFLAGS} ${TESTER_PATH}Tester.cpp -L.. -lWebserv
+rm -f ${TESTER_PATH}outfiles/*.out ${TESTER_PATH}outfiles/*.debug
+files=`ls ./${TESTER_PATH}confFiles`
 files=`echo $files | sed 's/\n/ /g'`
 for test in $files
 do
 	printf "${Cyan}${test}	${Purple}${reset}"
-    ./a.out "ParsingTester/confFiles/$test" > ParsingTester/outfiles/${test}.out 2>&1
-	ret_diff=`diff ParsingTester/outfiles/${test}.out ParsingTester/outfiles/${test}.model`
+    ./a.out "${TESTER_PATH}confFiles/$test" > ${TESTER_PATH}outfiles/${test}.out 2>&1
+	ret_diff=`diff ${TESTER_PATH}outfiles/${test}.out ${TESTER_PATH}outfiles/${test}.model`
 	if [ "$ret_diff" != "" ]
 	then
 		errors = $(($errors+1))
-		echo $ret_diff > ParsingTester/outfiles/${test}.debug
-    	printf "❌${red} Check diff at ParsingTester/outfiles/${test}.debug\n"
+		echo $ret_diff > ${TESTER_PATH}outfiles/${test}.debug
+    	printf "❌${red} Check diff at ${TESTER_PATH}outfiles/${test}.debug\n"
     else
     	printf "✅\n"
 	fi

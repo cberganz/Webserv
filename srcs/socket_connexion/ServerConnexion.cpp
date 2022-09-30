@@ -52,7 +52,7 @@ void    ServerConnexion::connexion_loop()
             event = m_polling.get_ready_event(i);
             new_socket = m_polling.accept_connexion(event.data.fd);
             m_polling.receive_request(new_socket);
-            m_polling.send_request(create_response("page.html"), new_socket);
+            m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), new_socket);
 			
 			close(new_socket);				
 		}

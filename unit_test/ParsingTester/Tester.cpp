@@ -6,14 +6,14 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 05:12:50 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 17:37:06 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include "../srcs/Config.hpp"
+#include "../../srcs/config_lexer_parser/Config.hpp"
 
 void printTab(int tabCount)
 {

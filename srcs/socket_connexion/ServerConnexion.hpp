@@ -16,7 +16,7 @@
 # include <errno.h>
 # include <exception>
 
-# include "../config_lexer_parser/srcs/Config.hpp"
+# include "../config_lexer_parser/Config.hpp"
 # include "PollingManager.hpp"
 
 class ServerConnexion {

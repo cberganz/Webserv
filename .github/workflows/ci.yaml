@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./srcs/config_lexer_parser/
+        working-directory: ./
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt install -y clang
