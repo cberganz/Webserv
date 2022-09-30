@@ -6,28 +6,28 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:30 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 02:54:33 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 05:11:21 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Parser.hpp"
 
 Parser::Parser()
-	: Context(),
-	  m_lexer()
+	: Lexer(),
+	  m_root()
 {}
 
 Parser::Parser(const Parser &src)
 { *this = src; }
 
 Parser::Parser(const std::string &fileName)
-	: m_lexer(fileName)
+	: Lexer(fileName),
+	  m_root(getTokens())
 {
-	Context::operator=(Context(m_lexer.getTokens()));
-	checkMandatories(*this);
-	checkMandatoryDirectives();
-	checkMandatoryContexts();
-	setServersIpsAndPorts(*this);
+	checkMandatories(m_root);
+	m_root.checkMandatoryDirectives();
+	m_root.checkMandatoryContexts();
+	setServersIpsAndPorts(m_root);
 }
 
 Parser::~Parser()
@@ -37,17 +37,20 @@ Parser &Parser::operator=(const Parser &rhs)
 {
 	if (this != &rhs)
 	{
-		Context::operator=(rhs);
-		m_lexer = rhs.m_lexer;
+		Lexer::operator=(rhs);
+		m_root = rhs.m_root;
 	}
 	return *this;
 }
+
+const Context &Parser::getRoot() const
+{ return this->m_root; }
 
 void Parser::checkMandatories(Context &context)
 {
 	for (contextsIterator it = context.getContexts().begin() ; it != context.getContexts().end() ; it++)
 	{
-		copyParentDirectives(context.getDirectives(), (*it).second.getDirectives());
+		m_root.copyParentDirectives(context.getDirectives(), (*it).second.getDirectives());
 		checkMandatories((*it).second);
 		(*it).second.checkMandatoryDirectives();
 		(*it).second.checkMandatoryContexts();

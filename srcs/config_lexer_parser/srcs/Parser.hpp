@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:34 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 04:02:48 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 05:11:23 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,18 @@
 **	@TODO: IN PROGRESS... Please come back later.
 */
 
-class Parser : public Context {
+class Parser : public Lexer {
 
 public:
-	using typename Context::tokensContainer;
-	using typename Context::tokensIterator;
-	using typename Context::directivesContainer;
-	using typename Context::directivesIterator;
-	using typename Context::directivesConstIterator;
-	using typename Context::contextsContainer;
-	using typename Context::contextsIterator;
-	using typename Context::contextsConstIterator;
+	using typename Lexer::tokensContainer;
+	using typename Lexer::tokensIterator;
+
+	typedef Context::directivesContainer		directivesContainer;
+	typedef Context::directivesIterator			directivesIterator;
+	typedef Context::directivesConstIterator	directivesConstIterator;
+	typedef Context::contextsContainer			contextsContainer;
+	typedef Context::contextsIterator			contextsIterator;
+	typedef Context::contextsConstIterator		contextsConstIterator;
 
 	Parser();
 	Parser(const Parser &src);
@@ -46,8 +47,10 @@ public:
 
 	Parser &operator=(const Parser &rhs);
 
+	const Context &getRoot() const;
+
 private:
-	Lexer	m_lexer;
+	Context	m_root;
 
 	void checkMandatories(Context &context);
 	void setServersIpsAndPorts(Context &context);

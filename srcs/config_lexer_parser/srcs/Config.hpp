@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 19:39:47 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 03:55:05 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 05:09:43 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ public:
 	const Context &operator[](const std::string &contextName) const
 	{
 		if (contextName == "global")
-			return m_parser;
+			return m_parser.getRoot();
 		else
-			return m_parser.getContexts().at(contextName);
+			return m_parser.getRoot().getContexts().at(contextName);
 	}
 
 private:
