@@ -15,6 +15,7 @@ all: test
 
 test:
 	@bash ParsingTester/ParsingTester.sh
+	@bash ConnexionTester/ConnexionTester.sh
 
 clean:
 
