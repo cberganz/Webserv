@@ -30,6 +30,9 @@ git pull
 git merge myBranch
 ```
 -> Then resolv conflicts if needed
+```
+git push
+```
 
 Once everything is good, delete the branch:
 ```
