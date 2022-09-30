@@ -2,7 +2,9 @@
 root -> TEST
 
 	[server][443]
+	ip -> 443
 	listen -> 443
+	port -> 443
 	root -> test2
 	server_name -> cberganz.42.fr
 

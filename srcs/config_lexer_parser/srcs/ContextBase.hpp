@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/23 16:55:10 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/30 04:06:00 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <map>
 # include <utility>
 # include "ParserConfig.hpp"
-# include "tools.hpp"
 
 # define BLOC_START "{"
 # define BLOC_END "}"
@@ -55,7 +54,6 @@ public:
 
 	void copyParentDirectives(directivesContainer &parentContainer,
 							  directivesContainer &container);
-
 
 protected:
 	const std::string &getCurrentToken();

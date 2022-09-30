@@ -2,7 +2,9 @@
 root -> TEST
 
 	[server][]
+	ip -> 0.0.0.0
 	listen -> 0.0.0.0:80
+	port -> 80
 	root -> TEST
 	server_name -> cberganz.42.fr
 

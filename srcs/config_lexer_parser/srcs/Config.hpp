@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 19:39:47 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/24 17:54:29 by charles          ###   ########.fr       */
+/*   Updated: 2022/09/30 03:55:05 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@
 class Config {
 
 public:
-	typedef Parser::directivesContainer	directivesContainer;
-	typedef Parser::directivesIterator	directivesIterator;
-	typedef Parser::contextsContainer	contextsContainer;
-	typedef Parser::contextsIterator	contextsIterator;
+	typedef Parser::directivesContainer		directivesContainer;
+	typedef Parser::directivesIterator		directivesIterator;
+	typedef Parser::directivesConstIterator	directivesConstIterator;
+	typedef Parser::contextsContainer		contextsContainer;
+	typedef Parser::contextsIterator		contextsIterator;
+	typedef Parser::contextsConstIterator	contextsConstIterator;
 
 	Config();
 	Config(const Config &src);
@@ -42,27 +44,19 @@ public:
 	Config &operator=(const Config &rhs);
 
 	const Parser &getParser() const;
+	const contextsContainer &getGlobalContextsContainer() const;
 
 	const Context &operator[](const std::string &contextName) const
 	{
 		if (contextName == "global")
-			return m_parser.getRoot();
+			return m_parser;
 		else
-			return m_parser.getRoot().getContexts().at(contextName);
+			return m_parser.getContexts().at(contextName);
 	}
 
 private:
 	Parser m_parser;
 
-};
+}; // class Config
 
-// Bad ideas...
-//operator[]: inside Config
-//"global": return root context
-//"server": return server contexts map in root
-//ie. Config["server"][0] should return the first server of the global context as we are in a map
-//
-//operator[]: inside context
-
-
-#endif
+#endif // CONFIG_HPP

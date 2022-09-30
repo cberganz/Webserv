@@ -16,18 +16,22 @@
 # include <errno.h>
 # include <exception>
 
+# include "../config_lexer_parser/srcs/Config.hpp"
 # include "PollingManager.hpp"
 
 class ServerConnexion {
-    protected:
-        PollingManager  m_polling;
-    public:
-        ServerConnexion();
-        ServerConnexion(std::vector<int> ports); // remplacer par l'objet parseconfig
-        ServerConnexion(const ServerConnexion &copy);
-        ~ServerConnexion();
-        ServerConnexion &operator=(const ServerConnexion &copy);
-        void    connexion_loop();
+
+protected:
+	Config			m_config;
+    PollingManager  m_polling;
+
+public:
+    ServerConnexion();
+    ServerConnexion(const std::string &path); // remplacer par l'objet parseconfig
+    ServerConnexion(const ServerConnexion &copy);
+    ~ServerConnexion();
+    ServerConnexion &operator=(const ServerConnexion &copy);
+    void    connexion_loop();
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:22:35 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 20:28:28 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 04:02:40 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,3 +34,6 @@ Config &Config::operator=(const Config &rhs)
 
 const Parser &Config::getParser() const
 { return this->m_parser; }
+
+const Config::contextsContainer &Config::getGlobalContextsContainer() const
+{ return this->m_parser.getContexts(); }

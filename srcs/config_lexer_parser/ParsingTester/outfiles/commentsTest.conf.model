@@ -3,7 +3,9 @@ root -> TEST
 
 	[server][443]
 	index -> index.php
+	ip -> 443
 	listen -> 443
+	port -> 443
 	root ->  Ceci 'est' un 'test'
 	server_name -> cberganz.42.fr
 

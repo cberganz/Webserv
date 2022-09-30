@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/29 12:02:09 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 02:29:40 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 		Config config(path);
 		//std::cout << "TEST: " << config["443"].getDirective("server_name") << std::endl;
 		Config::contextsContainer cont;
-		cont.insert(std::make_pair("global", config.getParser().getRoot()));
+		cont.insert(std::make_pair("global", config.getParser()));
 		RContextsContainer(cont, 0);
 	} catch(const std::exception &e) {
 		std::cerr << e.what() << std::endl;

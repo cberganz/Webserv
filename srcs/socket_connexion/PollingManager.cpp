@@ -111,10 +111,10 @@ struct epoll_event  PollingManager::get_ready_event( int index ) const
 
 PollingManager::PollingManager() {}
 
-PollingManager::PollingManager(std::vector<int> ports) { // remplacer par l'objet parseconfig
-    for (std::vector<int>::iterator it = ports.begin(); it != ports.end(); it++) {
-        m_sockets_fds.push_back(create_socket(*it));
-    }
+PollingManager::PollingManager(const Context::contextsContainer &container)
+{
+    for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
+        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>((*it).second.getDirective("port"))));
 }
 
 PollingManager::PollingManager(const PollingManager &copy) {

@@ -2,7 +2,9 @@
 root -> $default_root
 
 	[server][$listen_port]
+	ip -> $listen_port
 	listen -> $listen_port
+	port -> $listen_port
 	root -> $default_root
 	server_name -> $name_server
 

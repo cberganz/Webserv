@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tools.hpp                                          :+:      :+:    :+:   */
+/*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 20:41:42 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 04:18:36 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOOLS_HPP
-# define TOOLS_HPP
+#ifndef UTILITY_HPP
+# define UTILITY_HPP
 
 # include <sstream>
 
@@ -25,11 +25,12 @@ namespace ft {
 template <typename T1, typename T2>
 inline T1 lexical_cast(const T2 &to_cast)
 {
-	std::ostringstream oss;
-	oss << to_cast;
-	return oss.str();
+	T1 ret;
+	std::stringstream oss(to_cast);
+	oss >> ret;
+	return ret;
 }
 
 }; // NAMESPACE FT
 
-#endif // TOOLS_HPP
+#endif // UTILITY_HPP

@@ -1,11 +1,11 @@
 #include "ServerConnexion.hpp"
 
+ServerConnexion::ServerConnexion() : m_polling(), m_config() {}
 
-ServerConnexion::ServerConnexion() : m_polling() {}
-
-ServerConnexion::ServerConnexion(std::vector<int> ports) : m_polling(ports) {
-
-}
+ServerConnexion::ServerConnexion(const std::string &path)
+	: m_config(path),
+	  m_polling(m_config.getGlobalContextsContainer())
+{}
 
 ServerConnexion::ServerConnexion(const ServerConnexion &copy) {
     if (this != &copy)

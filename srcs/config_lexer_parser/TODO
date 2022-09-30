@@ -25,3 +25,7 @@ ok - cannot have two identical location in the same bloc: nginx: [emerg] duplica
 
 
 -> handle double directives in same context : from directivesInserter and the above fction
+
+
+TODO CONNEXION:
+- ip and port should be separated in the directive map for servers contexts

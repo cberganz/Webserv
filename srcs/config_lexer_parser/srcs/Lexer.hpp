@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 17:50:09 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/19 11:27:23 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/09/30 02:17:33 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ public:
 
 	Lexer &operator=(const Lexer &rhs);
 
-protected:
 	const tokensContainer &getTokens() const;
 
 private:

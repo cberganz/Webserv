@@ -11,6 +11,9 @@
 # include <fcntl.h>
 # include <iostream>
 
+# include "../config_lexer_parser/srcs/Config.hpp"
+# include "../tools/utility.hpp"
+
 # define INITSOCKERR            "Socket() failed."
 # define SETSOCKOPTERR          "setsockopt() failed."
 # define FCNTLERR               "fcntl() failed : could not set socket to be non blocking."
@@ -52,7 +55,7 @@ class PollingManager {
     
     public:
         PollingManager();
-        PollingManager(const std::vector<int> ports);
+        PollingManager(const Context::contextsContainer &container);
         PollingManager(const PollingManager &copy);
         ~PollingManager();
         PollingManager  &operator=(const PollingManager &copy);
