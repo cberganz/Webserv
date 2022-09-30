@@ -27,7 +27,7 @@ protected:
 
 public:
     ServerConnexion();
-    ServerConnexion(const std::string &path); // remplacer par l'objet parseconfig
+    ServerConnexion(const std::string &path);
     ServerConnexion(const ServerConnexion &copy);
     ~ServerConnexion();
     ServerConnexion &operator=(const ServerConnexion &copy);

@@ -6,7 +6,7 @@
 #    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/09/24 17:55:16 by charles          ###   ########.fr        #
+#    Updated: 2022/09/30 05:25:17 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,12 +24,6 @@ SRC_NAME	= Config.cpp		\
 			  Context.cpp		\
 			  ContextBase.cpp	\
 			  ParserConfig.cpp
-
-TEST_FILES	= simpleTest1.conf \
-			  simpleTest2.conf
-
-TEST_DIR		= ParsingTester/confFiles/
-TEST_PATHS		= ${addprefix ${TEST_DIR}, ${TEST_FILES}}
 
 SRC_DIR		= srcs/
 SRC			= ${addprefix ${SRC_DIR}, ${SRC_NAME}}
