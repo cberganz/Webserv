@@ -49,7 +49,7 @@ class PollingManager {
 
             public:
                 SocketCreationException(std::string msg);
-                ~SocketCreationException();
+                ~SocketCreationException() throw();
                 const char *what() const throw();
         };
     
