@@ -88,6 +88,7 @@ std::string     PollingManager::receive_request(int client_socket) {
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer[ret] = '\0';
+	std::cout << buffer << std::endl;
     return (std::string(buffer));
 }
 
