@@ -4,7 +4,9 @@
 # include <map>
 # include <vector>
 # include <string>
-
+# include <iostream>
+# include <sstream>
+# include <utility>
 
 typedef struct sockaddr_in  t_sockaddr_in;// voir la bonne position
 
@@ -13,11 +15,14 @@ class ClientRequest {
 		std::string											m_method;
 		std::string											m_path;
 		std::string											m_http_version;
-		std::map<std::string, std::vector<std::string>> 	m_header;
 		std::string											m_body;
+		std::map<std::string, std::vector<std::string> > 	m_header;
 
 
 	private:
+		std::vector<std::string>	tokenise(std::string str, char sep);
+		void						parse_request_line(std::string str);
+		void						print();
 
 
 		class ClientRequestException : public std::exception {
@@ -26,7 +31,7 @@ class ClientRequest {
 
 			public:
 				ClientRequestException(std::string msg);
-				~ClientRequestException();
+				~ClientRequestException() throw();
 				const char *what() const throw();
 		};
 
