@@ -18,12 +18,14 @@
 
 # include "../config_lexer_parser/Config.hpp"
 # include "PollingManager.hpp"
+# include "ChunkedRequests.hpp"
 
 class ServerConnexion {
 
 protected:
 	Config			m_config;
     PollingManager  m_polling;
+    ChunkedRequests m_chunks;
 
 public:
     ServerConnexion();
