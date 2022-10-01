@@ -18,6 +18,7 @@ test:
 	@bash ConnexionTester/ConnexionTester.sh
 
 clean:
+	rm -f ParsingTester/outfiles/*.out
 
 fclean: clean
 	rm -f a.out
