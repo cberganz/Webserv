@@ -36,10 +36,9 @@ files=`echo $files | sed 's/\n/ /g'`
 for test in $files
 do
     clang++ ${CFLAGS} ${TESTER_PATH}mains/$test -L.. -lWebserv
-    # ulimit -n 5
     ./a.out ../config_files/default.conf > /dev/null 2>&1 &
     WEBSERV_PID=$!
-    ret_curl=`curl "http://localhost:8080" 2>&1`
+    ret_curl=`curl http://localhost:8080 2>&1`
     if (( $? != 0 )); then
 		errors=$(($errors+1))
     	printf "❌ ${Cyan}${test}	${reset}\n"
