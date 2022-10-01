@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 04:18:36 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/01 23:49:17 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define UTILITY_HPP
 
 # include <sstream>
+# include <stdio.h>
+# include <time.h>
 
 namespace ft {
 
@@ -26,9 +28,25 @@ template <typename T1, typename T2>
 inline T1 lexical_cast(const T2 &to_cast)
 {
 	T1 ret;
-	std::stringstream oss(to_cast);
-	oss >> ret;
+	std::stringstream ss(to_cast);
+	ss >> ret;
 	return ret;
+}
+
+inline std::string itostr(const int &n)
+{
+	std::ostringstream oss;
+	oss << n;
+	return oss.str();
+}
+
+inline std::string getTimeFormated()
+{
+	char buf[1000];
+	time_t now = time(0);
+	struct tm tm = *gmtime(&now);
+	strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
+	return buf;
 }
 
 }; // NAMESPACE FT
