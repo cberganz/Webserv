@@ -149,7 +149,7 @@ PollingManager &PollingManager::operator=(const PollingManager &copy) {
 
 PollingManager::SocketCreationException::SocketCreationException(std::string msg) : m_msg(msg) {}
 
-PollingManager::SocketCreationException::~SocketCreationException() {}
+PollingManager::SocketCreationException::~SocketCreationException() throw() {}
 
 const char *PollingManager::SocketCreationException::what() const throw() {
     return (m_msg.c_str());
