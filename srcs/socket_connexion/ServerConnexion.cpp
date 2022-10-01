@@ -38,6 +38,8 @@ std::string	create_response(std::string file) {
 
 void    ServerConnexion::connexion_loop()
 {
+    std::string client_req;
+
     m_polling.init_epoll_events();
     while(1)
     {
@@ -47,16 +49,15 @@ void    ServerConnexion::connexion_loop()
 		for(int i = 0; i < nfds; i++) {
             struct epoll_event  event;
 
-            // Accept the connection
             event = m_polling.get_ready_event(i);
-
+            // erreur dans la connexion client
             if ((event.events & EPOLLERR) ||
                 (event.events & EPOLLHUP) ||
                 (!(event.events & EPOLLIN))) {
                 close (event.data.fd);
                 continue;
             }
-
+            // nouvelle connexion client
             else if (m_polling.is_existing_socket_fd(event.data.fd)) {
                 int new_socket = m_polling.accept_connexion(event.data.fd);
 
@@ -64,11 +65,25 @@ void    ServerConnexion::connexion_loop()
                 m_polling.add_socket_to_epoll(new_socket);
                 continue ;
             }
-            
+            // data dispo pour la lecture dans une connexion client
             else {
-                m_polling.receive_request(event.data.fd);
-                m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
-			    close(event.data.fd);				
+                bool    is_chunk = false;
+
+                client_req = m_polling.receive_request(event.data.fd);
+                if (m_chunks.is_chunk(event.data.fd, client_req)) {
+                    is_chunk = true;
+                    m_chunks.add_chunk(event.data.fd, client_req);
+                    if (client_req[0] == '\0' || m_chunks.is_end_of_chunk(client_req)) {
+                        client_req = m_chunks.get_unchunked_request(event.data.fd);
+                        is_chunk = false;
+                    }
+                }
+                if (!is_chunk) {
+                    std::cout << "AAAAAAAAAAAAAAA\n" << client_req << std::endl;
+                    // traitement de la requete ici
+                    m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
+			        close(event.data.fd);				
+                }
             }
 		}
     }
