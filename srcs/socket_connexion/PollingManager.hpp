@@ -20,6 +20,7 @@
 # define BINDERR                "bind() failed."
 # define LISTENERR              "listen() failed."
 # define EPOLLCREATEERR         "epoll_create() failed."
+# define EPOLLCTLERR            "epoll_ctl() failed."
 # define EPOLLWAITERR           "epoll_wait() failed."
 # define ACCEPTERR              "accept() failed."
 # define RECEIVEERR             "receive() failed."
@@ -62,7 +63,10 @@ class PollingManager {
 
         /** EPOLL - TRAITEMENT DES REQUETES **/
         void                init_epoll_events();
+        void                set_socket(int fd);
+        void                add_socket_to_epoll(int fd);
         int                 wait_for_connexions();
+        bool                is_existing_socket_fd(int fd);
         int                 accept_connexion(int ready_fd);
         std::string         receive_request(int client_socket);
         void                send_request(std::string request, int client_socket);

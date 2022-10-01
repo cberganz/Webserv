@@ -12,52 +12,63 @@ t_sockaddr_in  PollingManager::init_address_structure(int port) {
     return (serv_addr);
 }
 
-int PollingManager::create_socket(int port) {
+void            PollingManager::set_socket(int fd) {
     int    on = 1;
-    int    listen_sd = -1;
-	t_sockaddr_in serv_addr;
 
-    listen_sd = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_sd < 0)
-        throw (SocketCreationException(INITSOCKERR));
-
-    serv_addr = init_address_structure(port);
-    if (setsockopt(listen_sd, SOL_SOCKET,  SO_REUSEADDR | SO_REUSEPORT, 
+    if (setsockopt(fd, SOL_SOCKET,  SO_REUSEADDR | SO_REUSEPORT, 
                     &on, sizeof(int)) < 0) {
-        close(listen_sd);
+        close(fd);
         throw (SocketCreationException(SETSOCKOPTERR));
     }
 
-    if(fcntl(listen_sd, F_SETFL, O_NONBLOCK) < 0) {
-        close(listen_sd);
+    if(fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
+        close(fd);
         throw (SocketCreationException(FCNTLERR));
     }
+}
 
-    if (bind(listen_sd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        close(listen_sd);
+int PollingManager::create_socket(int port) {
+    int    listen_fd = -1;
+	t_sockaddr_in serv_addr;
+
+    listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (listen_fd < 0)
+        throw (SocketCreationException(INITSOCKERR));
+
+    set_socket(listen_fd);
+
+    serv_addr = init_address_structure(port);
+    if (bind(listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        close(listen_fd);
         throw (SocketCreationException(BINDERR));
     }
 
-    if (listen(listen_sd, 100) < 0) {
-        close(listen_sd);
+    if (listen(listen_fd, 100) < 0) {
+        close(listen_fd);
         throw (SocketCreationException(LISTENERR));
     }
 
-    return (listen_sd);
+    return (listen_fd);
 }
 
 /** EPOLL - TRAITEMENT DES REQUETES **/
+
+void                PollingManager::add_socket_to_epoll(int fd) {
+    struct epoll_event conf_event;
+
+    conf_event.events = EPOLLIN;
+    conf_event.data.fd = fd;
+    if (epoll_ctl(m_epfd, EPOLL_CTL_ADD, conf_event.data.fd, &conf_event) == -1) {
+        close(fd);
+        throw (SocketCreationException(EPOLLCTLERR));
+    }
+}
+
 void            PollingManager::init_epoll_events() {
     if ((m_epfd = epoll_create(10)) < 0)
         throw (SocketCreationException(EPOLLCREATEERR));
 	for (size_t i = 0; i < m_sockets_fds.size(); i++)
-	{
-		struct epoll_event conf_event;
-
-		conf_event.events = EPOLLIN;
-		conf_event.data.fd = m_sockets_fds[i];
-		epoll_ctl(m_epfd, EPOLL_CTL_ADD, conf_event.data.fd, &conf_event);
-	}
+        add_socket_to_epoll(m_sockets_fds[i]);
 }
 
 int             PollingManager::wait_for_connexions() {
@@ -68,6 +79,14 @@ int             PollingManager::wait_for_connexions() {
     if (nfds == -1) 
         throw (SocketCreationException(EPOLLWAITERR));
     return (nfds);
+}
+
+bool                PollingManager::is_existing_socket_fd(int fd) {
+    for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
+        if (fd == *it)
+            return (true);
+    }
+    return (false);
 }
 
 int            PollingManager::accept_connexion(int ready_fd) {
@@ -149,7 +168,7 @@ PollingManager &PollingManager::operator=(const PollingManager &copy) {
 
 PollingManager::SocketCreationException::SocketCreationException(std::string msg) : m_msg(msg) {}
 
-PollingManager::SocketCreationException::~SocketCreationException() {}
+PollingManager::SocketCreationException::~SocketCreationException() throw() {}
 
 const char *PollingManager::SocketCreationException::what() const throw() {
     return (m_msg.c_str());

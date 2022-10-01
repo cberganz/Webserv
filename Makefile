@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
+#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/09/30 17:39:04 by cberganz         ###   ########.fr        #
+#    Updated: 2022/10/01 15:19:26 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,7 +59,12 @@ clean:
 
 fclean: clean
 	rm -f ${NAME}
+	rm a.out
 
 re: fclean all
 
-.PHONY : all clean fclean test re
+server_connexion: all
+	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
+	./a.out unit_test/ParsingTester/confFiles/basicTest.conf 	
+
+.PHONY : all clean fclean test re server_connexion

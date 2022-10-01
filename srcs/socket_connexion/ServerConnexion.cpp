@@ -46,15 +46,30 @@ void    ServerConnexion::connexion_loop()
 
 		for(int i = 0; i < nfds; i++) {
             struct epoll_event  event;
-			int                 new_socket;
 
             // Accept the connection
             event = m_polling.get_ready_event(i);
-            new_socket = m_polling.accept_connexion(event.data.fd);
-            m_polling.receive_request(new_socket);
-            m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), new_socket);
-			
-			close(new_socket);				
+
+            if ((event.events & EPOLLERR) ||
+                (event.events & EPOLLHUP) ||
+                (!(event.events & EPOLLIN))) {
+                close (event.data.fd);
+                continue;
+            }
+
+            else if (m_polling.is_existing_socket_fd(event.data.fd)) {
+                int new_socket = m_polling.accept_connexion(event.data.fd);
+
+                m_polling.set_socket(new_socket);
+                m_polling.add_socket_to_epoll(new_socket);
+                continue ;
+            }
+            
+            else {
+                m_polling.receive_request(event.data.fd);
+                m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
+			    close(event.data.fd);				
+            }
 		}
     }
 	m_polling.close_epfd();
