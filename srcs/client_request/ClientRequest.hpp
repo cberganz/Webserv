@@ -21,6 +21,7 @@ class ClientRequest {
 
 	private:
 		std::vector<std::string>	tokenise(std::string str, char sep);
+		void						trimNewLine(std::string &str);
 		void						parse_request_line(std::string str);
 		void						print();
 
@@ -40,7 +41,13 @@ class ClientRequest {
 		ClientRequest(const std::string client_request);
 		ClientRequest(const ClientRequest &copy);
 		~ClientRequest();
-		ClientRequest  &operator=(const ClientRequest &copy);
+		ClientRequest	&operator=(const ClientRequest &copy);
+		std::string											getPath() const;
+		std::string											getMethod() const;
+		std::string											getHttpVersion() const;
+		std::string											getBody() const;
+		std::map<std::string, std::vector<std::string> >	getHeader() const;
+
 };
 
 #endif
