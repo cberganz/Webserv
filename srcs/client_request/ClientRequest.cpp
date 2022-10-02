@@ -3,36 +3,33 @@
 ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_header(), m_body()
 {}
 
-ClientRequest::ClientRequest(const std::string client_request): m_header()
+ClientRequest::ClientRequest(std::string client_request): m_header()
 {
 	// check si string vide
+	trimNewLine(client_request);
 	std::string					line;
 	std::istringstream 			str_stream(client_request);
 	std::vector<std::string>	key_value_vector;
 
+
 	std::getline(str_stream, line);
 	this->parse_request_line(line);//check retour getline
 
-
-	while (std::getline(str_stream, line) && !line.empty()) // peut etre chercher des ':' avant de tokeniser
+	while (std::getline(str_stream, line)) // peut etre chercher des ':' avant de tokeniser
 	{
+		this->trimNewLine(line);		
+		if (line.empty())
+			break ;
+		// if (line.find(':') == std::string::npos)
+			// throw Error(400);
 		key_value_vector = tokenise(line, ':');
-		if (m_header.find(key_value_vector[0]) == m_header.end())
-			m_header[key_value_vector[0]] = tokenise(key_value_vector[1], ',');// trimer la value de tous les LWS(linear white space)
-		else
-		{
-			std::vector<std::string>	new_content = tokenise(key_value_vector[1], ',');
-			for (size_t i = 0; i < new_content.size(); i++)
-				m_header[key_value_vector[0]].push_back(new_content[i]);
-		}
+		m_header[key_value_vector[0]] = tokenise(key_value_vector[1], ',');// trimer la value de tous les LWS(linear white space)
 	}
 	if (std::getline(str_stream, line))
 		m_body = line;
 	else
 		m_body = "";
-
 	this->print();
-
 }
 
 ClientRequest::ClientRequest(const ClientRequest &copy)
@@ -88,6 +85,41 @@ void	ClientRequest::parse_request_line(std::string request_line)
 	}
 }
 
+void	ClientRequest::trimNewLine(std::string &request)
+{
+	int last_new_line = 0;
+
+	while (last_new_line < request.length()
+			&& (request[last_new_line] == '\n'
+			|| request[last_new_line] == '\r'))
+		last_new_line++;
+	request.erase(0, last_new_line);
+}
+
+
+/*
+** Getter
+*/
+
+std::string	ClientRequest::getPath() const
+{ return (m_path); }
+
+std::string	ClientRequest::getMethod() const
+{ return (m_method); }
+
+std::string	ClientRequest::getHttpVersion() const
+{ return (m_http_version); }
+
+std::string	ClientRequest::getBody() const
+{ return (m_body); }
+
+std::map<std::string, std::vector<std::string> >	ClientRequest::getHeader() const
+{ return (m_header); }
+
+/*
+** To Delete
+*/
+
 void	ClientRequest::print()
 {
 	std::cout << m_method + " " + m_path + " " + m_http_version << std::endl;
@@ -98,5 +130,5 @@ void	ClientRequest::print()
 			std::cout << it->second[i];
 		std::cout << std::endl;
 	}
-	std::cout << "\n\n" << m_body << std::endl;
+	std::cout << "\n\nBody:\n\n" << m_body << std::endl;
 }
