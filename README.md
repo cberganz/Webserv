@@ -19,6 +19,7 @@ git commit -m "message"
 ```
 git push -u origin myBranch
 ```
+-> You can stop the process here if you just want to save your files. You can get it back later with `git checkout myBranch` from anywhere.
 ```
 git checkout main
 ```
