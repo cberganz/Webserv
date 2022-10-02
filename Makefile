@@ -6,7 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/01 19:25:12 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/02 20:45:09 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SRC_NAME	= srcs/config_lexer_parser/Config.cpp		\
 			  srcs/config_lexer_parser/ParserConfig.cpp	\
 			  srcs/socket_connexion/PollingManager.cpp	\
 			  srcs/socket_connexion/ServerConnexion.cpp	\
-			  srcs/socket_connexion/ChunkedRequests.cpp	\
+			  srcs/socket_connexion/Chunks.cpp	\
 			  #unit_test/test.cpp
 
 #SRC_DIR		= srcs/

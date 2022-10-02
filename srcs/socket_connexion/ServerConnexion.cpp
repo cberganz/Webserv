@@ -72,14 +72,13 @@ void    ServerConnexion::connexion_loop()
                 client_req = m_polling.receive_request(event.data.fd);
                 if (m_chunks.is_chunk(event.data.fd, client_req)) {
                     is_chunk = true;
-                    m_chunks.add_chunk(event.data.fd, client_req);
+                    m_chunks.add_chunk_request(event.data.fd, client_req);
                     if (client_req[0] == '\0' || m_chunks.is_end_of_chunk(client_req)) {
                         client_req = m_chunks.get_unchunked_request(event.data.fd);
                         is_chunk = false;
                     }
                 }
                 if (!is_chunk) {
-                    std::cout << "AAAAAAAAAAAAAAA\n" << client_req << std::endl;
                     // traitement de la requete ici
                     m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
 			        close(event.data.fd);				

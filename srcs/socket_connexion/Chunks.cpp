@@ -1,25 +1,27 @@
-#include "ChunkedRequests.hpp"
+#include "Chunks.hpp"
 
 /** COPLIEN **/
 
-ChunkedRequests::ChunkedRequests( void ) {}
+Chunks::Chunks( void ) {}
 
-ChunkedRequests::ChunkedRequests(const ChunkedRequests &copy) {
+Chunks::Chunks(const Chunks &copy) {
     if (this != &copy)
         *this = copy;
 }
 
-ChunkedRequests::~ChunkedRequests() {}
+Chunks::~Chunks() {}
 
-ChunkedRequests &ChunkedRequests::operator=(const ChunkedRequests &copy) {
-    if (this != &copy)
+Chunks &Chunks::operator=(const Chunks &copy) {
+    if (this != &copy) {
         m_chunked_requests = copy.m_chunked_requests;
+        m_chunked_responses = copy.m_chunked_responses;
+    }
     return (*this);
 }
 
-/** CHUNK FUNCTIONS **/
+/** CHUNKED REQUEST FUNCTIONS **/
 
-void    ChunkedRequests::add_chunk(int fd, std::string chunk) {
+void    Chunks::add_chunk_request(int fd, std::string chunk) {
     std::map<int, std::string>::iterator it = m_chunked_requests.find(fd);
 
     if (it == m_chunked_requests.end())
@@ -28,7 +30,7 @@ void    ChunkedRequests::add_chunk(int fd, std::string chunk) {
         it->second += chunk;
 }
 
-std::string     ChunkedRequests::get_unchunked_request(int fd) {
+std::string     Chunks::get_unchunked_request(int fd) {
     std::string request = m_chunked_requests.find(fd)->second;
     size_t      find_i = 0;
     bool        first = true;
@@ -58,7 +60,37 @@ std::string     ChunkedRequests::get_unchunked_request(int fd) {
     return (request);
 }
 
-bool            ChunkedRequests::is_chunk(int fd, std::string chunk) {
+/** CHUNK RESPONSE FUNCTIONS **/
+
+// returns header which will be sent first straight after receipt of request
+std::string     Chunks::add_headerless_response_to_chunk(int fd, std::string response) {
+    size_t        end_header = response.find("\r\n\r\n");
+    std::string   header = response.substr(0, end_header + 4);
+
+    m_chunked_responses.insert(std::make_pair(fd, response.substr(end_header + 4)));
+    return (header);
+}
+
+std::string     Chunks::get_next_chunk(int fd) {
+    std::string response = (m_chunked_responses.find(fd))->second;
+    std::string chunk = response.substr(0, MAX_CHUNK_LEN);
+
+    response = response.substr(MAX_CHUNK_LEN); 
+    m_chunked_responses.erase(fd);
+    if (response.size())
+        m_chunked_responses.insert(std::make_pair(fd, response));
+    
+    std::stringstream   ss;
+    std::string         size_chunk; 
+    ss << chunk.size();
+    ss >> size_chunk;
+    chunk =  size_chunk + "\r\n" + chunk + "\r\n";
+    return (chunk);
+}
+
+
+/** UTILS **/
+bool            Chunks::is_chunk(int fd, std::string chunk) {
     if (m_chunked_requests.find(fd) != m_chunked_requests.end())
         return (true);
     if (chunk.find("Transfer-Encoding: chunked") != std::string::npos)
@@ -66,7 +98,7 @@ bool            ChunkedRequests::is_chunk(int fd, std::string chunk) {
     return (false);
 }
 
-bool            ChunkedRequests::is_end_of_chunk(std::string chunk) {
+bool            Chunks::is_end_of_chunk(std::string chunk) {
     if (chunk.find("0\r\n\r\n") != std::string::npos)
         return (true);
     return (false);
