@@ -64,6 +64,17 @@ void                PollingManager::add_socket_to_epoll(int fd) {
     }
 }
 
+void                PollingManager::edit_socket_in_epoll(int fd) {
+    struct epoll_event conf_event;
+
+    conf_event.events = EPOLLOUT;
+    conf_event.data.fd = fd;
+    if (epoll_ctl(m_epfd, EPOLL_CTL_MOD, conf_event.data.fd, &conf_event) == -1) {
+        close(fd);
+        throw (SocketCreationException(EPOLLCTLERR));
+    }
+}
+
 void            PollingManager::init_epoll_events() {
     if ((m_epfd = epoll_create(10)) < 0)
         throw (SocketCreationException(EPOLLCREATEERR));
@@ -107,7 +118,7 @@ std::string     PollingManager::receive_request(int client_socket) {
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer[ret] = '\0';
-	std::cout << buffer << std::endl;
+	// std::cout << buffer << std::endl;
     return (std::string(buffer));
 }
 

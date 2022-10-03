@@ -7,7 +7,7 @@
 # include <sstream>
 # include <iostream>
 
-# define MAX_CHUNK_LEN  20
+# define MAX_CHUNK_LEN  1024
 
 class Chunks {
     private:

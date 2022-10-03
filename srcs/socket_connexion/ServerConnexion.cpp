@@ -28,9 +28,9 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
 std::string	create_response(std::string file) {
 	std::ifstream fs(file);
 	std::string	file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-	std::string header("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length:");
+	std::string header("HTTP/1.1 200 OK\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
 	header += std::to_string(file_content.length());
-	std::string http_request = header + "\r\n\n" + file_content;
+	std::string http_request = header + "\r\n\r\n" + file_content;
 
 	return (http_request);
 }
@@ -53,7 +53,7 @@ void    ServerConnexion::connexion_loop()
             // erreur dans la connexion client
             if ((event.events & EPOLLERR) ||
                 (event.events & EPOLLHUP) ||
-                (!(event.events & EPOLLIN))) {
+                (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))) {
                 close (event.data.fd);
                 continue;
             }
@@ -66,7 +66,7 @@ void    ServerConnexion::connexion_loop()
                 continue ;
             }
             // data dispo pour la lecture dans une connexion client
-            else {
+            else if (event.events & EPOLLIN) {
                 bool    is_chunk = false;
 
                 client_req = m_polling.receive_request(event.data.fd);
@@ -80,9 +80,24 @@ void    ServerConnexion::connexion_loop()
                 }
                 if (!is_chunk) {
                     // traitement de la requete ici
-                    m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
-			        close(event.data.fd);				
+                    std::string header = m_chunks.add_headerless_response_to_chunk(event.data.fd,
+                        create_response("unit_test/ConnexionTester/page.html"));
+                    m_polling.send_request(header, event.data.fd);
+                    m_polling.edit_socket_in_epoll(event.data.fd);
                 }
+            }
+            else if (event.events & EPOLLOUT) {
+                std::string chunk = m_chunks.get_next_chunk(event.data.fd);
+
+                std::stringstream   ss;
+                std::string         size_chunk; 
+                ss << std::hex << chunk.size();
+                ss >> size_chunk;
+
+                m_polling.send_request(size_chunk + "\r\n", event.data.fd);
+                m_polling.send_request(chunk + "\r\n", event.data.fd);
+                if (chunk == "")
+                    close(event.data.fd);
             }
 		}
     }
