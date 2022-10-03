@@ -59,10 +59,7 @@ void    ServerConnexion::connexion_loop()
             }
             // nouvelle connexion client
             else if (m_polling.is_existing_socket_fd(event.data.fd)) {
-                int new_socket = m_polling.accept_connexion(event.data.fd);
-
-                m_polling.set_socket(new_socket);
-                m_polling.add_socket_to_epoll(new_socket);
+                m_polling.new_client_connexion(event.data.fd);
                 continue ;
             }
             // data dispo pour la lecture dans une connexion client

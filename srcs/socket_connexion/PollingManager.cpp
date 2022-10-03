@@ -51,7 +51,7 @@ int PollingManager::create_socket(int port) {
     return (listen_fd);
 }
 
-/** EPOLL - TRAITEMENT DES REQUETES **/
+/** EPOLL CONFIG **/
 
 void                PollingManager::add_socket_to_epoll(int fd) {
     struct epoll_event conf_event;
@@ -82,6 +82,16 @@ void            PollingManager::init_epoll_events() {
         add_socket_to_epoll(m_sockets_fds[i]);
 }
 
+
+/** CONNEXION LOOP **/
+
+void               PollingManager::new_client_connexion(int fd) {
+    int new_socket = accept_connexion(fd);
+
+    set_socket(new_socket);
+    add_socket_to_epoll(new_socket);
+}
+
 int             PollingManager::wait_for_connexions() {
     std::cout << "\rPollinginit_epoll_events() for input: " << std::flush;
 
@@ -90,14 +100,6 @@ int             PollingManager::wait_for_connexions() {
     if (nfds == -1) 
         throw (SocketCreationException(EPOLLWAITERR));
     return (nfds);
-}
-
-bool                PollingManager::is_existing_socket_fd(int fd) {
-    for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
-        if (fd == *it)
-            return (true);
-    }
-    return (false);
 }
 
 int            PollingManager::accept_connexion(int ready_fd) {
@@ -134,9 +136,18 @@ void           PollingManager::close_epfd() {
     m_epfd = -1;
 }
 
+/** UTILS **/
+
 struct epoll_event  PollingManager::get_ready_event( int index ) const
 { return (m_ready_events[index]); }
 
+bool                PollingManager::is_existing_socket_fd(int fd) {
+    for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
+        if (fd == *it)
+            return (true);
+    }
+    return (false);
+}
 
 /** NORME DE COPLIEN **/
 
