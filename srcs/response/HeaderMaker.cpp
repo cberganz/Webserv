@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/02 19:48:26 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/03 05:55:00 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ std::string HeaderMaker::createHeader()
 			m_header += NEWLINE;
 		}
 	}
+	m_header += NEWLINE;
 	return m_header;
 }
 
