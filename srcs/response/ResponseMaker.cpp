@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:45:09 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/03 19:37:36 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,13 @@ ResponseMaker& ResponseMaker::operator=(const ResponseMaker &rhs)
 Response* ResponseMaker::createResponse(const std::string &uri, const std::string &ip, const std::string &port)
 {
 	Response*	response = new Response();
-	Context		location = m_config[ip + ":" + port].getContext(uri); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ??
-	std::string body = m_bodyMaker.createBody(location.getDirective("root") + "/" + location.getDirective("index"));
-	(*response).append(m_headerMaker.createHeader());
-	(*response).append(body);
+	try {
+		Context		location = m_config[ip + ":" + port].getContext(uri); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+		std::string body = m_bodyMaker.createBody(location.getDirective("root") + "/" + location.getDirective("index"));
+		(*response).append(m_headerMaker.createHeader());
+		(*response).append(body);
+	} catch (const std::out_of_range &e) {
+		throw ErrorException(404);
+	}
 	return response;
 }

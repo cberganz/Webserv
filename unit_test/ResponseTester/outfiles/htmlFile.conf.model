@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+date: Mon, 03 Oct 2022 17:37:30 GMT
+server: webserv-42
+retry-after: 120
+transfer-encoding: chunked
+content-type: text/html; charset=utf-8
+
+

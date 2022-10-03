@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	Config config(argv[1]);
 	ResponseMaker responseMaker(config);
 	try {
-		std::cout << (*responseMaker.createResponse("/", "127.0.0.1", "8080")).getResponse() << std::endl;
+		std::cout << (*responseMaker.createResponse("/", "0.0.0.0", "8080")).getResponse() << std::endl;
 	} catch (const ErrorException &e) {
 		std::cout << e.getCode() << std::endl; 
 	} catch (const std::exception &e) {
