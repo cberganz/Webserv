@@ -31,6 +31,7 @@ printf "${yell}---------------------------${reset}\n"
 
 errors=0
 clang++ ${CFLAGS} ${TESTER_PATH}ResponseMakerTester.cpp -L.. -lWebserv
+chmod -r ${TESTER_PATH}scripts/indexNoRead.html
 rm -f ${TESTER_PATH}outfiles/*.out
 # UNCOMMENT TO GENERATE MODELS
 #rm -f ${TESTER_PATH}outfiles/*.model
@@ -51,6 +52,7 @@ do
 		printf "✅ ${Cyan}${file}	${reset}\n"
 	fi
 done
+chmod +r ${TESTER_PATH}scripts/indexNoRead.html
 if [ $errors == 0 ]; then
 	printf "${Purple}Number of errors: ${green}${errors}${reset}\n\n"
 	exit 0
