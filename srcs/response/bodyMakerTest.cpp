@@ -4,6 +4,11 @@
 int main()
 {
 	BodyMaker body;
-	std::cout << body.createBody("BodyMaker.hpp") << std::endl;
+	try {
+		std::cout << body.createBody("test.php") << std::endl;
+		//body.createBody("test.php");
+	} catch (ErrorException &e) {
+		std::cout << e.getCode() << std::endl; 
+	}
 	return 0;
 }
