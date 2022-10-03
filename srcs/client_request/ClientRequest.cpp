@@ -1,4 +1,5 @@
 #include "ClientRequest.hpp"
+# include "../tools/AsciiTable.hpp"
 
 ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_header(), m_body()
 {}
@@ -13,16 +14,23 @@ ClientRequest::ClientRequest(std::string client_request): m_header()
 
 
 	std::getline(str_stream, line);
-	this->parse_request_line(line);//check retour getline
+	this->parse_request_line(line);
+	this->replace_encode_char(m_path);
+	if (!is_request_line_correct())
+		throw ErrorException(400);
 
-	while (std::getline(str_stream, line)) // peut etre chercher des ':' avant de tokeniser
+	while (std::getline(str_stream, line))
 	{
 		this->trimNewLine(line);		
 		if (line.empty())
 			break ;
-		// if (line.find(':') == std::string::npos)
-			// throw Error(400);
+		if (line.find(':') == std::string::npos)
+			throw ErrorException(400);
 		key_value_vector = tokenise(line, ':');
+		if (key_value_vector.size() != 2
+			|| key_value_vector[1].empty()
+			|| key_value_vector[0].find(' ') == std::string::npos)
+			throw ErrorException(400);
 		m_header[key_value_vector[0]] = tokenise(key_value_vector[1], ',');// trimer la value de tous les LWS(linear white space)
 	}
 	if (std::getline(str_stream, line))
@@ -77,12 +85,16 @@ void	ClientRequest::parse_request_line(std::string request_line)
 	std::istringstream 			str_stream(request_line);
 	std::string					line;
 
-
 	for (unsigned int i = 0; i < 3; i++)
 	{
-		std::getline(str_stream, line, ' ');// checker erreurs sur getline
+		getline(str_stream, line, ' ');// checker erreurs sur getline
+		if (line.empty() || !str_stream)
+			throw ErrorException(400);
 		*attributes[i] = line;
 	}
+	getline(str_stream, line);
+	if (str_stream)
+		throw ErrorException(400);
 }
 
 void	ClientRequest::trimNewLine(std::string &request)
@@ -96,6 +108,58 @@ void	ClientRequest::trimNewLine(std::string &request)
 	request.erase(0, last_new_line);
 }
 
+bool	ClientRequest::is_method_correct()
+{
+	std::string	accepted_methods[3] = {"GET", "POST", "DELETE"};
+
+	for (int i = 0; i < 3; i++)
+		if (m_method == accepted_methods[i])
+			return (true);
+	return (false);
+}
+
+bool	ClientRequest::is_path_correct()
+{
+	std::string	accepted_charset = "-._~!$&'()*+,;=:/";
+
+	for (size_t i = 0; i < m_path.length(); i++)
+		if (!isalnum(m_path[i])
+			&& accepted_charset.find(m_path[i]) == std::string::npos)
+			return (false);
+	return (true);
+}
+
+bool	ClientRequest::is_http_version_correct()
+{
+	if (m_http_version != "HTTP/1.1")
+		return (false);
+	return (true);
+}
+
+bool	ClientRequest::is_request_line_correct()
+{
+	if (!is_method_correct()
+		|| !is_path_correct()
+		|| !is_http_version_correct())
+		return (false);
+	return (true);
+}
+
+void	ClientRequest::replace_encode_char(std::string &str)
+{
+	std::string	charset_to_replace;
+
+	for (int i = 0; i < PRINTABLE_CHAR_COUNT; i++)
+	{
+		int pos = 0;
+		charset_to_replace = "%" + printable_char[i].hexa_code;
+		while ((pos = str.find(charset_to_replace, pos) ) != std::string::npos)
+		{
+			str.replace(pos, 3, 1, printable_char[i].c);
+			pos++;
+		}
+	}
+}
 
 /*
 ** Getter
@@ -122,7 +186,7 @@ std::map<std::string, std::vector<std::string> >	ClientRequest::getHeader() cons
 
 void	ClientRequest::print()
 {
-	std::cout << m_method + " " + m_path + " " + m_http_version << std::endl;
+	std::cout << "METHOD: " + m_method + "\n" + "PATH: " + m_path + "\n" + "VERSION: " + m_http_version << std::endl;
 	for (std::map<std::string, std::vector<std::string> >::iterator it = m_header.begin(); it != m_header.end(); it++)
 	{
 		std::cout << it->first << ": ";

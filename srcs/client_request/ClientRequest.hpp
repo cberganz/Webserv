@@ -7,6 +7,7 @@
 # include <iostream>
 # include <sstream>
 # include <utility>
+# include "../tools/ErrorException.hpp"
 
 typedef struct sockaddr_in  t_sockaddr_in;// voir la bonne position
 
@@ -21,8 +22,13 @@ class ClientRequest {
 
 	private:
 		std::vector<std::string>	tokenise(std::string str, char sep);
+		void						replace_encode_char(std::string &str);
 		void						trimNewLine(std::string &str);
 		void						parse_request_line(std::string str);
+		bool						is_request_line_correct();
+		bool						is_method_correct();
+		bool						is_path_correct();
+		bool						is_http_version_correct();
 		void						print();
 
 
