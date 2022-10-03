@@ -28,9 +28,9 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
 std::string	create_response(std::string file) {
 	std::ifstream fs(file);
 	std::string	file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-	std::string header("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length:");
+	std::string header("HTTP/1.1 200 OK\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
 	header += std::to_string(file_content.length());
-	std::string http_request = header + "\r\n\n" + file_content;
+	std::string http_request = header + "\r\n\r\n" + file_content;
 
 	return (http_request);
 }
@@ -53,37 +53,48 @@ void    ServerConnexion::connexion_loop()
             // erreur dans la connexion client
             if ((event.events & EPOLLERR) ||
                 (event.events & EPOLLHUP) ||
-                (!(event.events & EPOLLIN))) {
+                (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))) {
                 close (event.data.fd);
                 continue;
             }
             // nouvelle connexion client
             else if (m_polling.is_existing_socket_fd(event.data.fd)) {
-                int new_socket = m_polling.accept_connexion(event.data.fd);
-
-                m_polling.set_socket(new_socket);
-                m_polling.add_socket_to_epoll(new_socket);
+                m_polling.new_client_connexion(event.data.fd);
                 continue ;
             }
             // data dispo pour la lecture dans une connexion client
-            else {
+            else if (event.events & EPOLLIN) {
                 bool    is_chunk = false;
 
                 client_req = m_polling.receive_request(event.data.fd);
                 if (m_chunks.is_chunk(event.data.fd, client_req)) {
                     is_chunk = true;
-                    m_chunks.add_chunk(event.data.fd, client_req);
+                    m_chunks.add_chunk_request(event.data.fd, client_req);
                     if (client_req[0] == '\0' || m_chunks.is_end_of_chunk(client_req)) {
                         client_req = m_chunks.get_unchunked_request(event.data.fd);
                         is_chunk = false;
                     }
                 }
                 if (!is_chunk) {
-                    std::cout << "AAAAAAAAAAAAAAA\n" << client_req << std::endl;
                     // traitement de la requete ici
-                    m_polling.send_request(create_response("unit_test/ConnexionTester/page.html"), event.data.fd);
-			        close(event.data.fd);				
+                    std::string header = m_chunks.add_headerless_response_to_chunk(event.data.fd,
+                        create_response("unit_test/ConnexionTester/page.html"));
+                    m_polling.send_request(header, event.data.fd);
+                    m_polling.edit_socket_in_epoll(event.data.fd);
                 }
+            }
+            else if (event.events & EPOLLOUT) {
+                std::string chunk = m_chunks.get_next_chunk(event.data.fd);
+
+                std::stringstream   ss;
+                std::string         size_chunk; 
+                ss << std::hex << chunk.size();
+                ss >> size_chunk;
+
+                m_polling.send_request(size_chunk + "\r\n", event.data.fd);
+                m_polling.send_request(chunk + "\r\n", event.data.fd);
+                if (chunk == "")
+                    close(event.data.fd);
             }
 		}
     }
