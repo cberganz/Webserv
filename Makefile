@@ -6,11 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-<<<<<<< HEAD
-#    Updated: 2022/10/03 18:03:38 by cberganz         ###   ########.fr        #
-=======
-#    Updated: 2022/10/02 20:45:09 by cdine            ###   ########.fr        #
->>>>>>> chunked_response
+#    Updated: 2022/10/03 21:47:21 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +31,7 @@ SRC_NAME	= srcs/config_lexer_parser/Config.cpp		\
 			  srcs/response/HeaderMaker.cpp				\
 			  srcs/response/HttpCodes.cpp				\
 			  srcs/response/Response.cpp				\
-			  srcs/response/ResponseMaker.cpp			\
+			  srcs/response/ResponseMaker.cpp			
 
 #SRC_DIR		= srcs/
 SRC			= ${SRC_NAME} #${addprefix ${SRC_DIR}, ${SRC_NAME}}
