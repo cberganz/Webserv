@@ -6,7 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/01 19:25:12 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/03 18:03:38 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,14 +20,18 @@ CFLAGS		= #-Wall -Wextra -Werror -std=c++98 -g
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp		\
 			  srcs/config_lexer_parser/Parser.cpp		\
-			  srcs/config_lexer_parser/Lexer.cpp			\
+			  srcs/config_lexer_parser/Lexer.cpp		\
 			  srcs/config_lexer_parser/Context.cpp		\
 			  srcs/config_lexer_parser/ContextBase.cpp	\
 			  srcs/config_lexer_parser/ParserConfig.cpp	\
 			  srcs/socket_connexion/PollingManager.cpp	\
 			  srcs/socket_connexion/ServerConnexion.cpp	\
 			  srcs/socket_connexion/ChunkedRequests.cpp	\
-			  #unit_test/test.cpp
+			  srcs/response/BodyMaker.cpp				\
+			  srcs/response/HeaderMaker.cpp				\
+			  srcs/response/HttpCodes.cpp				\
+			  srcs/response/Response.cpp				\
+			  srcs/response/ResponseMaker.cpp			\
 
 #SRC_DIR		= srcs/
 SRC			= ${SRC_NAME} #${addprefix ${SRC_DIR}, ${SRC_NAME}}
@@ -53,14 +57,13 @@ ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
 
 test: all
 	@make -sC ./unit_test
-	@make fclean -sC ./unit_test
 
 clean:
 	rm -rf ${OBJ_DIR}
 
 fclean: clean
 	rm -f ${NAME}
-	rm a.out
+	@make fclean -sC ./unit_test
 
 re: fclean all
 

@@ -7,7 +7,7 @@
 
 CFLAGS="-Wall -Wextra -Werror -std=c++98 -g"
 
-TESTER_PATH="ParsingTester/"
+TESTER_PATH="ResponseTester/"
 
 Blue='\033[0;34m'
 Purple='\033[0;35m'
@@ -19,32 +19,36 @@ red='\033[0;31m'
 yell='\033[0;33m'
 reset='\033[0m'
 
-if [ "${PWD##*/}" == "ParsingTester" ]; then
+if [ "${PWD##*/}" == "ResponseTester" ]; then
 	printf "${red}Error:${white} This script must be launch from the makefile in the root directory using the command \`make test\`.${reset}"
 	exit 0
 fi
 
 echo
 printf "${yell}---------------------------${reset}\n"
-printf "${yell}|      Parsing Tester     |${reset}\n"
+printf "${yell}|     Response Tester     |${reset}\n"
 printf "${yell}---------------------------${reset}\n"
 
 errors=0
-clang++ ${CFLAGS} ${TESTER_PATH}Tester.cpp -L.. -lWebserv
+clang++ ${CFLAGS} ${TESTER_PATH}ResponseMakerTester.cpp -L.. -lWebserv
 rm -f ${TESTER_PATH}outfiles/*.out
-files=`ls ./${TESTER_PATH}confFiles`
+# UNCOMMENT TO GENERATE MODELS
+#rm -f ${TESTER_PATH}outfiles/*.model
+files=`ls ./${TESTER_PATH}conf`
 files=`echo $files | sed 's/\n/ /g'`
-for test in $files
+for file in $files
 do
-    ./a.out "${TESTER_PATH}confFiles/$test" > ${TESTER_PATH}outfiles/${test}.out 2>&1
-	ret_diff=`diff ${TESTER_PATH}outfiles/${test}.out ${TESTER_PATH}outfiles/${test}.model`
+	./a.out "${TESTER_PATH}conf/$file" > ${TESTER_PATH}outfiles/${file}.out 2>&1
+	# UNCOMMENT TO GENERATE MODELS
+	#./a.out "${TESTER_PATH}conf/$file" > ${TESTER_PATH}outfiles/${file}.model 2>&1
+	ret_diff=`diff -u -I 'date.*' ${TESTER_PATH}outfiles/${file}.out ${TESTER_PATH}outfiles/${file}.model`
 	if [ "$ret_diff" != "" ]; then
 		errors=$(($errors+1))
-    	printf "❌ ${Cyan}${test}	${reset}\n"
-    	printf "${red} Check ${test}.model and ${test}.out at ${TESTER_PATH}outfiles${reset}\n"
+		printf "❌ ${Cyan}${file}	${reset}\n"
+		printf "${red} Check ${file}.model and ${file}.out at ${TESTER_PATH}outfiles${reset}\n"
 		printf "${red}diff return:\n$ret_diff${reset}\n"
-    else
-    	printf "✅ ${Cyan}${test}	${reset}\n"
+	else
+		printf "✅ ${Cyan}${file}	${reset}\n"
 	fi
 done
 if [ $errors == 0 ]; then

@@ -1,0 +1,21 @@
+HTTP/1.1 200 OK
+date: Mon, 03 Oct 2022 15:57:15 GMT
+server: webserv-42
+retry-after: 120
+transfer-encoding: chunked
+content-type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cours PHP & MySQL</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="cours.css">
+    </head>
+    
+    <body>
+        <h1>Titre principal</h1>
+        Hello World <br>Bonjour le Monde        <p>Un paragraphe</p>
+    </body>
+</html>
+

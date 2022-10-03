@@ -16,9 +16,12 @@ all: test
 test:
 	@bash ParsingTester/ParsingTester.sh
 	@bash ConnexionTester/ConnexionTester.sh
+	@bash ResponseTester/ResponseMakerTester.sh
+	@rm -f a.out
 
 clean:
 	rm -f ParsingTester/outfiles/*.out
+	rm -f ResponseTester/outfiles/*.out
 
 fclean: clean
 	rm -f a.out
