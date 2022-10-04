@@ -64,10 +64,10 @@ void                PollingManager::add_socket_to_epoll(int fd) {
     }
 }
 
-void                PollingManager::edit_socket_in_epoll(int fd) {
+void                PollingManager::edit_socket_in_epoll(int fd, int event) {
     struct epoll_event conf_event;
 
-    conf_event.events = EPOLLOUT;
+    conf_event.events = event;
     conf_event.data.fd = fd;
     if (epoll_ctl(m_epfd, EPOLL_CTL_MOD, conf_event.data.fd, &conf_event) == -1) {
         close(fd);
@@ -93,7 +93,7 @@ void               PollingManager::new_client_connexion(int fd) {
 }
 
 int             PollingManager::wait_for_connexions() {
-    std::cout << "\rPollinginit_epoll_events() for input: " << std::flush;
+    std::cout << "\rPolling init_epoll_events() for input: " << std::flush;
 
     int nfds = epoll_wait(m_epfd, m_ready_events, MAX_EVENTS, 5000); // check timeoout et MAX_EVENTS -> que mettre ?
 
@@ -120,7 +120,7 @@ std::string     PollingManager::receive_request(int client_socket) {
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer[ret] = '\0';
-	// std::cout << buffer << std::endl;
+	std::cout << buffer << std::endl;
     return (std::string(buffer));
 }
 

@@ -69,8 +69,11 @@ void    ServerConnexion::connexion_loop()
                 client_req = m_polling.receive_request(event.data.fd);
                 if (m_chunks.is_chunk(event.data.fd, client_req)) {
                     is_chunk = true;
+                    if (!m_chunks.is_chunked_header(event.data.fd)) {
+                        client_req = m_polling.receive_request(event.data.fd);
+                    }
                     m_chunks.add_chunk_request(event.data.fd, client_req);
-                    if (client_req[0] == '\0' || m_chunks.is_end_of_chunk(client_req)) {
+                    if (client_req.find("0\r\n") != std::string::npos) {
                         client_req = m_chunks.get_unchunked_request(event.data.fd);
                         is_chunk = false;
                     }
@@ -80,9 +83,10 @@ void    ServerConnexion::connexion_loop()
                     std::string header = m_chunks.add_headerless_response_to_chunk(event.data.fd,
                         create_response("unit_test/ConnexionTester/page.html"));
                     m_polling.send_request(header, event.data.fd);
-                    m_polling.edit_socket_in_epoll(event.data.fd);
+                    m_polling.edit_socket_in_epoll(event.data.fd, EPOLLOUT);
                 }
             }
+            // socket client dispo pour l'ecriture
             else if (event.events & EPOLLOUT) {
                 std::string chunk = m_chunks.get_next_chunk(event.data.fd);
 
@@ -93,8 +97,8 @@ void    ServerConnexion::connexion_loop()
 
                 m_polling.send_request(size_chunk + "\r\n", event.data.fd);
                 m_polling.send_request(chunk + "\r\n", event.data.fd);
-                if (chunk == "")
-                    close(event.data.fd);
+                if (chunk == "") 
+                    m_polling.edit_socket_in_epoll(event.data.fd, EPOLLIN);
             }
 		}
     }

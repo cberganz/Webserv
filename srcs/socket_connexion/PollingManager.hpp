@@ -65,7 +65,7 @@ class PollingManager {
         void                init_epoll_events();
         void                set_socket(int fd);
         void                add_socket_to_epoll(int fd);
-        void                edit_socket_in_epoll(int fd);
+        void                edit_socket_in_epoll(int fd, int event);
         void                new_client_connexion(int fd);
         int                 wait_for_connexions();
         bool                is_existing_socket_fd(int fd);
