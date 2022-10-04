@@ -5,11 +5,8 @@
 # include <vector>
 # include <string>
 # include <iostream>
-# include <sstream>
 # include <utility>
 # include "../tools/ErrorException.hpp"
-
-typedef struct sockaddr_in  t_sockaddr_in;// voir la bonne position
 
 class ClientRequest {
 	protected:
@@ -20,43 +17,51 @@ class ClientRequest {
 		std::map<std::string, std::vector<std::string> > 	m_header;
 
 
-	private:
-		std::vector<std::string>	tokenise(std::string str, char sep);
-		void						replace_encode_char(std::string &str);
-		void						trimBegin(std::string &str, std::string charset);
-		void						trimEnd(std::string &str, std::string charset);
-		bool						is_request_line_correct();
-		bool						is_method_correct();
-		bool						is_path_correct();
-		bool						is_http_version_correct();
-		void						print();
-
-		void						parse_request_line(std::string str);
-		void						parse_header(std::string str);
-		void						parse_body(std::string str);
-
-		class ClientRequestException : public std::exception {
-			private:
-				std::string m_msg;
-
-			public:
-				ClientRequestException(std::string msg);
-				~ClientRequestException() throw();
-				const char *what() const throw();
-		};
-
 	public:
 		ClientRequest();
-		ClientRequest(const std::string client_request);
 		ClientRequest(const ClientRequest &copy);
 		~ClientRequest();
-		ClientRequest	&operator=(const ClientRequest &copy);
-		std::string											getPath() const;
-		std::string											getMethod() const;
-		std::string											getHttpVersion() const;
-		std::string											getBody() const;
-		std::map<std::string, std::vector<std::string> >	getHeader() const;
 
+		ClientRequest
+		&operator=(const ClientRequest &copy);
+
+		void	print();
+
+		/*
+		**	GETTER
+		*/
+		const std::string
+		getPath() const;
+
+		const std::string
+		getMethod() const;
+
+		const std::string
+		getHttpVersion() const;
+
+		const std::string
+		getBody() const;
+
+		const std::map<std::string, std::vector<std::string> >
+		getHeader() const;
+
+		/*
+		**	SETTER
+		*/
+		void
+		setPath(std::string path);
+
+		void
+		setMethod(std::string method);
+
+		void
+		setHttpVersion(std::string http_version);
+
+		void
+		setBody(std::string body);
+
+		void
+		setHeader(std::map<std::string, std::vector<std::string> > header);
 };
 
 #endif
