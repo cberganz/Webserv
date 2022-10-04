@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 18:54:56 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/04 17:08:48 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ typedef struct s_keywords {
 **	@warning This MUST be changed when adding new keywords to the table.
 */
 
-# define MAX_KEYWORDS 6
+# define MAX_KEYWORDS 7
 
 /*
 **	@brief Two dimensional array containing possible and/or mandatory directives
@@ -108,12 +108,14 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "listen",		true, 	true,	true,	false,	false,	"0.0.0.0:8080"	 }, //.Sets address:port IP, or the UNIX-domain socket path..
 	{ "server_name",false,	true,	true,	false,	false,	""				 }, //.Sets names of a virtual server........................
 	{ "index",		false,	true,	true,	false,	false,	""				 }, //.Defines files that will be used as an index...........
+	{ "autoindex",	true,	true,	true,	false,	false,	"off"			 }, //.Defines whether autoindex should be generated.........
 	{ "",			false,	false,	false,	false,	false,	""				 }, //.Default settings if keyword was not found.............
 },
 	/*..........................LOCATION CONTEXT.............................*/
 {	/*.Keyword......Manda...Possi...Direc...Bloc....URI.....Default..........*/
 	{ "root",		true,	true,	true,	false,	false,	""				 }, //.Sets the root directory for requests..................
 	{ "index",		true,	true,	true,	false,	false,	"index.html" 	 }, //.Defines files that will be used as an index...........
+	{ "autoindex",	true,	true,	true,	false,	false,	"off"			 }, //.Defines whether autoindex should be generated.........
 	{ "",			false,	false,	false,	false,	false,	""			 	 }, //.Default settings if keyword was not found.............
 },
 
