@@ -7,7 +7,7 @@ ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_header
 ClientRequest::ClientRequest(std::string client_request): m_header()
 {
 	// check si string vide
-	trimNewLine(client_request);
+	trimBegin(client_request, "\r\n");
 	std::string					line;
 	std::istringstream 			str_stream(client_request);
 	std::vector<std::string>	key_value_vector;
@@ -18,25 +18,10 @@ ClientRequest::ClientRequest(std::string client_request): m_header()
 	this->replace_encode_char(m_path);
 	if (!is_request_line_correct())
 		throw ErrorException(400);
+	client_request.erase(0, line.length() + 1); // verifier comportement si pas de \n a la fin
+	this->parse_header(client_request);
 
-	while (std::getline(str_stream, line))
-	{
-		this->trimNewLine(line);		
-		if (line.empty())
-			break ;
-		if (line.find(':') == std::string::npos)
-			throw ErrorException(400);
-		key_value_vector = tokenise(line, ':');
-		if (key_value_vector.size() != 2
-			|| key_value_vector[1].empty()
-			|| key_value_vector[0].find(' ') == std::string::npos)
-			throw ErrorException(400);
-		m_header[key_value_vector[0]] = tokenise(key_value_vector[1], ',');// trimer la value de tous les LWS(linear white space)
-	}
-	if (std::getline(str_stream, line))
-		m_body = line;
-	else
-		m_body = "";
+	this->parse_body(client_request);
 	this->print();
 }
 
@@ -69,12 +54,14 @@ ClientRequest  &ClientRequest::operator=(const ClientRequest &copy)
 std::vector<std::string>	ClientRequest::tokenise(std::string str, char sep)
 {
 	std::vector<std::string>	token_vector;
-	size_t						begin, end = 0;
+	std::string					token;
+	std::istringstream 			str_stream(str);
 
-	while ((begin = str.find_first_not_of(sep, end)) != std::string::npos)
+	while (getline(str_stream, token, sep))
 	{
-		end = str.find(sep, begin);
-		token_vector.push_back(str.substr(begin, end - begin));
+		token_vector.push_back(token);
+		if (token.empty())
+			throw ErrorException(400);
 	}
 	return (token_vector);
 }
@@ -87,7 +74,7 @@ void	ClientRequest::parse_request_line(std::string request_line)
 
 	for (unsigned int i = 0; i < 3; i++)
 	{
-		getline(str_stream, line, ' ');// checker erreurs sur getline
+		getline(str_stream, line, ' ');
 		if (line.empty() || !str_stream)
 			throw ErrorException(400);
 		*attributes[i] = line;
@@ -97,15 +84,73 @@ void	ClientRequest::parse_request_line(std::string request_line)
 		throw ErrorException(400);
 }
 
-void	ClientRequest::trimNewLine(std::string &request)
+void	ClientRequest::parse_header(std::string str)
+{
+	std::string					line;
+	std::istringstream 			str_stream(str);
+
+	while (std::getline(str_stream, line))
+	{
+		this->trimBegin(line, "\n\r");
+		if (line.empty())
+			break ;
+		if (line.find(':') == std::string::npos)
+			throw ErrorException(400);
+		
+		std::istringstream	line_stream(line);
+		std::string			header_key;
+		std::string			header_value;
+
+		getline(line_stream, header_key, ':');
+		if (header_key.empty() || !str_stream || header_key.find(' ') != std::string::npos)
+			throw ErrorException(400);
+		getline(line_stream, header_value);
+		if (header_value.empty() || !str_stream)
+			throw ErrorException(400);
+		this->trimBegin(header_value, " ");// trimer la value de tous les LWS(linear white space)
+		this->trimEnd(header_value, " ");// trimer la value de tous les LWS(linear white space)
+		m_header[header_key] = tokenise(header_value, ',');
+	}
+}
+
+void	ClientRequest::parse_body(std::string str)
+{
+	std::string					line;
+	int							header_length = 0;
+	std::istringstream 			str_stream(str);
+
+	while (std::getline(str_stream, line))
+	{
+		header_length += line.length() + 1;
+		this->trimBegin(line, "\r");
+		if (line.empty())
+			break ;
+	}
+	str.erase(0, header_length);
+	m_body = str;
+}
+
+void	ClientRequest::trimBegin(std::string &request, std::string charset)
 {
 	int last_new_line = 0;
 
 	while (last_new_line < request.length()
-			&& (request[last_new_line] == '\n'
-			|| request[last_new_line] == '\r'))
+			&& (charset.find(request[last_new_line]) != std::string::npos))
 		last_new_line++;
 	request.erase(0, last_new_line);
+}
+
+void	ClientRequest::trimEnd(std::string &request, std::string charset)
+{
+	int last_new_line = 0;
+
+	for (size_t i = request.length() - 1; i >= 0; i--)
+	{
+		if (charset.find(request[i]) == std::string::npos)
+			break ;
+		last_new_line++;
+	}
+	request.erase(request.length() - last_new_line, last_new_line);
 }
 
 bool	ClientRequest::is_method_correct()
@@ -187,6 +232,7 @@ std::map<std::string, std::vector<std::string> >	ClientRequest::getHeader() cons
 void	ClientRequest::print()
 {
 	std::cout << "METHOD: " + m_method + "\n" + "PATH: " + m_path + "\n" + "VERSION: " + m_http_version << std::endl;
+	std::cout << "\nHEADER:" << std::endl;
 	for (std::map<std::string, std::vector<std::string> >::iterator it = m_header.begin(); it != m_header.end(); it++)
 	{
 		std::cout << it->first << ": ";
@@ -194,5 +240,5 @@ void	ClientRequest::print()
 			std::cout << it->second[i];
 		std::cout << std::endl;
 	}
-	std::cout << "\n\nBody:\n\n" << m_body << std::endl;
+	std::cout << "\n\nBody:\n" << m_body << std::endl;
 }
