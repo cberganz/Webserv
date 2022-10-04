@@ -67,8 +67,6 @@ class PollingManager {
         /** EPOLL - TRAITEMENT DES REQUETES **/
         void                new_client_connexion(int fd);
         void                send_response(std::string header, int fd);
-        void                epoll_event_epollin(int fd, Chunks &chunks);
-        void                epoll_event_epollout(std::string chunk, int fd);
         void                init_epoll_events();
         void                edit_socket_in_epoll(int fd, int event);
         int                 wait_for_connexions();

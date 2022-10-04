@@ -21,20 +21,22 @@
 # include "Chunks.hpp"
 
 class ServerConnexion {
+    private:
+        void    write_to_client(std::string chunk, int fd);
+        void    read_from_client(int fd);
 
-protected:
-	Config			m_config;
-    PollingManager  m_polling;
-    Chunks          m_chunks;
+    protected:
+        Config			m_config;
+        PollingManager  m_polling;
+        Chunks          m_chunks;
 
-public:
-    ServerConnexion();
-    ServerConnexion(const std::string &path);
-    ServerConnexion(const ServerConnexion &copy);
-    ~ServerConnexion();
-    ServerConnexion &operator=(const ServerConnexion &copy);
-    void    connexion_loop();
-
+    public:
+        ServerConnexion();
+        ServerConnexion(const std::string &path);
+        ServerConnexion(const ServerConnexion &copy);
+        ~ServerConnexion();
+        ServerConnexion &operator=(const ServerConnexion &copy);
+        void    connexion_loop();
 };
 
 #endif
