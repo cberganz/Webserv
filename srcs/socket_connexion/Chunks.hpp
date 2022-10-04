@@ -30,7 +30,7 @@ class Chunks {
 
         /** UTILS **/
         bool            is_chunk(int fd, std::string chunk);
-        bool            is_end_of_chunk(std::string chunk);
+        bool            is_chunked_header(int fd);
 };
 
 #endif

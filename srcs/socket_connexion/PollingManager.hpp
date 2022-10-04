@@ -13,6 +13,7 @@
 
 # include "../config_lexer_parser/Config.hpp"
 # include "../tools/utility.hpp"
+# include "Chunks.hpp"
 
 # define INITSOCKERR            "Socket() failed."
 # define SETSOCKOPTERR          "setsockopt() failed."
@@ -43,6 +44,8 @@ class PollingManager {
         t_sockaddr_in   init_address_structure(int port);
         int             create_socket(int port);
         void            close_socket_fds();
+        void            set_socket(int fd);
+        void            add_socket_to_epoll(int fd);
         
         class SocketCreationException : public std::exception {
             private:
@@ -62,11 +65,12 @@ class PollingManager {
         PollingManager  &operator=(const PollingManager &copy);
 
         /** EPOLL - TRAITEMENT DES REQUETES **/
-        void                init_epoll_events();
-        void                set_socket(int fd);
-        void                add_socket_to_epoll(int fd);
-        void                edit_socket_in_epoll(int fd);
         void                new_client_connexion(int fd);
+        void                send_response(std::string header, int fd);
+        void                epoll_event_epollin(int fd, Chunks &chunks);
+        void                epoll_event_epollout(std::string chunk, int fd);
+        void                init_epoll_events();
+        void                edit_socket_in_epoll(int fd, int event);
         int                 wait_for_connexions();
         bool                is_existing_socket_fd(int fd);
         int                 accept_connexion(int ready_fd);
