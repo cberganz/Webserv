@@ -107,8 +107,8 @@ void	ClientRequest::parse_header(std::string str)
 		getline(line_stream, header_value);
 		if (header_value.empty() || !str_stream)
 			throw ErrorException(400);
-		this->trimBegin(header_value, " ");// trimer la value de tous les LWS(linear white space)
-		this->trimEnd(header_value, " ");// trimer la value de tous les LWS(linear white space)
+		this->trimBegin(header_value, " \f\t\n\r\v");
+		this->trimEnd(header_value, " \f\t\n\r\v");
 		m_header[header_key] = tokenise(header_value, ',');
 	}
 }
