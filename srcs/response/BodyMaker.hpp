@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:20:44 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/04 15:29:58 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <cstring>
 # include <unistd.h>
 # include <sys/wait.h>
-# include "ErrorException.hpp"
+# include "../tools/ErrorException.hpp"
 # include "extensionsTable.hpp"
 
 class BodyMaker {
