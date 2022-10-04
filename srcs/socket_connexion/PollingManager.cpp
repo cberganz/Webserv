@@ -1,5 +1,42 @@
 #include "PollingManager.hpp"
 
+/** NORME DE COPLIEN **/
+
+PollingManager::PollingManager() {}
+
+PollingManager::PollingManager(const Context::contextsContainer &container)
+{
+    for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
+        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>((*it).second.getDirective("port"))));
+}
+
+PollingManager::PollingManager(const PollingManager &copy) {
+    if (this != &copy)
+        *this = copy;
+}
+
+void    PollingManager::close_socket_fds()
+{
+    for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
+        close(*it);
+    }
+}
+
+PollingManager::~PollingManager() {
+    close_socket_fds();
+    if (m_epfd != -1)
+        close_epfd();
+}
+
+PollingManager &PollingManager::operator=(const PollingManager &copy) {
+    if (this != &copy)
+    {
+        close_socket_fds();
+        m_sockets_fds = copy.m_sockets_fds;
+    }
+    return (*this);
+}
+
 /** CREATION DE LA CONNEXION **/
 
 t_sockaddr_in  PollingManager::init_address_structure(int port) {
@@ -92,6 +129,51 @@ void               PollingManager::new_client_connexion(int fd) {
     add_socket_to_epoll(new_socket);
 }
 
+// a DELETE
+std::string	create_response(std::string file) {
+	std::ifstream fs(file);
+	std::string	file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
+	std::string header("HTTP/1.1 200 OK\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
+	header += std::to_string(file_content.length());
+	std::string http_request = header + "\r\n\r\n" + file_content;
+
+	return (http_request);
+}
+
+void                PollingManager::epoll_event_epollin(int fd, Chunks &chunks) {
+    bool    is_chunk = false;
+
+    std::string client_req = receive_request(fd);
+    if (chunks.is_chunk(fd, client_req)) {
+        is_chunk = true;
+        if (!chunks.is_chunked_header(fd))
+            client_req = receive_request(fd);
+        chunks.add_chunk_request(fd, client_req);
+        if (client_req.find("0\r\n") != std::string::npos) {
+            client_req = chunks.get_unchunked_request(fd);
+            is_chunk = false;
+        }
+    }
+    if (!is_chunk) {
+        // traitement de la requete ici
+        send_request(chunks.add_headerless_response_to_chunk(fd,
+            create_response("unit_test/ConnexionTester/page.html")), fd);
+        edit_socket_in_epoll(fd, EPOLLOUT);
+    }
+}
+
+void                PollingManager::epoll_event_epollout(std::string chunk, int fd) {
+    std::stringstream   ss;
+    std::string         size_chunk; 
+    ss << std::hex << chunk.size();
+    ss >> size_chunk;
+
+    send_request(size_chunk + "\r\n", fd);
+    send_request(chunk + "\r\n", fd);
+    if (chunk == "") 
+        edit_socket_in_epoll(fd, EPOLLIN);
+}
+
 int             PollingManager::wait_for_connexions() {
     std::cout << "\rPolling init_epoll_events() for input: " << std::flush;
 
@@ -147,43 +229,6 @@ bool                PollingManager::is_existing_socket_fd(int fd) {
             return (true);
     }
     return (false);
-}
-
-/** NORME DE COPLIEN **/
-
-PollingManager::PollingManager() {}
-
-PollingManager::PollingManager(const Context::contextsContainer &container)
-{
-    for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
-        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>((*it).second.getDirective("port"))));
-}
-
-PollingManager::PollingManager(const PollingManager &copy) {
-    if (this != &copy)
-        *this = copy;
-}
-
-void    PollingManager::close_socket_fds()
-{
-    for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
-        close(*it);
-    }
-}
-
-PollingManager::~PollingManager() {
-    close_socket_fds();
-    if (m_epfd != -1)
-        close_epfd();
-}
-
-PollingManager &PollingManager::operator=(const PollingManager &copy) {
-    if (this != &copy)
-    {
-        close_socket_fds();
-        m_sockets_fds = copy.m_sockets_fds;
-    }
-    return (*this);
 }
 
 /** EXCEPTIONS **/
