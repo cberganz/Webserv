@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/05 02:37:44 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/05 03:14:02 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,23 +132,23 @@ const std::string &BodyMaker::autoIndex(std::string &path)
 	dir = opendir(path.c_str());
 	if (dir == NULL)
 		throw ErrorException(404);
-	m_body += "<!DOCTYPE html>\n<html>\n\n<title>INDEX OF " + path + "</title>\n\n";
+	m_body += "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<title>\n\t\t\tAUTOINDEX\n\t\t</title>\n\t</head>\n\n\t<body>\n\t\t<h2>\n\t\t\tWEBSERV AUTOINDEX: ";
+	m_body += path;
+	m_body += "\n\t\t</h2>\n";
     while ((dirent = readdir(dir)) != NULL)
 	{
 		if (dirent->d_type == DT_DIR)
-			m_body += "<h4 style=\"color:blue;\"><a href=\"";
-		else if (dirent->d_type == DT_REG)
-			m_body += "<h5 style=\"color:black;\"><a href=\"";
+			m_body += "\t\t<h4 style=\"color:blue;\"><a href=\"";
 		else
-			m_body += "<h4>\t<a href=\"";
+			m_body += "\t\t<h4 style=\"color:black;\"><a href=\"";
 		m_body += dirent->d_name;
 		if (dirent->d_type == DT_DIR)
 			m_body += "/";
-		m_body += "\"></a>";
+		m_body += "\">\n\t\t\t";
 		m_body += dirent->d_name;
-		m_body += "</h4>\n";
+		m_body += "\n\t\t</a></h4>\n";
 	}
 	closedir(dir);
-	m_body += "</html>";
+	m_body += "\t</body>\n</html>";
 	return m_body;
 }
