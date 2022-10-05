@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/04 18:54:33 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/05 02:37:44 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,24 @@ BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 	return *this;
 }
 
-const std::string &BodyMaker::createBody(const Context& context)
+const std::string &BodyMaker::createBody(const Context& context, const std::string &uri)
 {
 	m_body.clear();
-	std::string path = context.getDirective("root");
-	if (*(path.end() - 1) == '/' and context.getDirective("autoindex") == "on")
+	std::string path;
+	if (context.directiveExist("root"))
+		path = context.getDirective("root");
+	path += uri;
+	if (path.back() == '/' and context.getDirective("autoindex") == "on")
 	{
 		path += context.getDirective("index");
 		if (access(path.c_str(), F_OK) == -1)
+		{
+			path = path.substr(0, path.find_last_of("/"));
 			return autoIndex(path);
+		}
 	}
-	path += "/" + context.getDirective("index");
+	else
+		path += "/" + context.getDirective("index");
 	if (access(path.c_str(), F_OK) == -1)
 		throw ErrorException(404);
 	if (requiresCGI(path))
@@ -76,7 +83,7 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-void BodyMaker::executeCGI(const std::string &path)
+void BodyMaker::executeCGI(std::string &path)
 {
 	int pid, stat, fd[2];
 
@@ -121,9 +128,7 @@ const std::string &BodyMaker::autoIndex(std::string &path)
 	struct dirent*	dirent;
 	char			buff[1024];
 
-	path = path.substr(0, path.find_last_of('/'));
-	getcwd(buff, 1024);
-	path.insert(0, buff + std::string("/"));
+	path.insert(0, getcwd(buff, 1024) + std::string("/"));
 	dir = opendir(path.c_str());
 	if (dir == NULL)
 		throw ErrorException(404);
@@ -133,10 +138,15 @@ const std::string &BodyMaker::autoIndex(std::string &path)
 		if (dirent->d_type == DT_DIR)
 			m_body += "<h4 style=\"color:blue;\"><a href=\"";
 		else if (dirent->d_type == DT_REG)
-			m_body += "<h4 style=\"color:black;\"><a href=\"";
+			m_body += "<h5 style=\"color:black;\"><a href=\"";
 		else
-			m_body += "<h4><a href=\"";
-		m_body += dirent->d_name + std::string("\"></a></h4>\n");
+			m_body += "<h4>\t<a href=\"";
+		m_body += dirent->d_name;
+		if (dirent->d_type == DT_DIR)
+			m_body += "/";
+		m_body += "\"></a>";
+		m_body += dirent->d_name;
+		m_body += "</h4>\n";
 	}
 	closedir(dir);
 	m_body += "</html>";

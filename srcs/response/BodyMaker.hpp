@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/04 18:32:50 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/05 02:28:17 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ public:
 
 	BodyMaker &operator=(const BodyMaker &rhs);
 
-	const std::string &createBody(const Context &context);
+	const std::string &createBody(const Context &context, const std::string &uri);
 
 private:
 	std::string m_body;
@@ -40,7 +40,7 @@ private:
 	const std::string &getProgName(const std::string &path);
 	bool requiresCGI(const std::string &path);
 	void readFile(const std::string &path);
-	void executeCGI(const std::string &path);
+	void executeCGI(std::string &path);
 	const std::string &autoIndex(std::string &path);
 
 };

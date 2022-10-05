@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/04 17:56:20 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/05 01:08:00 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ Response* ResponseMaker::createResponse(const std::string &uri, const std::strin
 	Response*	response = new Response();
 	try {
 		Context context = m_config[ip + ":" + port].getContext(uri); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
-		std::string body = m_bodyMaker.createBody(context);
+		std::string body = m_bodyMaker.createBody(context, uri);
 		(*response).append(m_headerMaker.createHeader());
 		(*response).append(body);
 	} catch (const std::out_of_range &e) {
