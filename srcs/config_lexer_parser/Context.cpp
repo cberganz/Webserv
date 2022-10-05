@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:16:33 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/05 00:58:29 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ const Context &Context::getContext(const std::string &contextName) const
 const std::string &Context::getDirective(const std::string &directiveName) const
 { return m_directives.at(directiveName); }
 
+bool Context::directiveExist(const std::string &directive) const
+{ return m_directives.count(directive); }
 /*
 **	@brief Parse the context informations inside the tokens container.
 **

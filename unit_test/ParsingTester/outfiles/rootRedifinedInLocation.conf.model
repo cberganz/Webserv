@@ -2,6 +2,7 @@
 root -> TEST
 
 	[server][443]
+	autoindex -> off
 	ip -> 443
 	listen -> 443
 	port -> 443
@@ -9,10 +10,12 @@ root -> TEST
 	server_name -> cberganz.42.fr
 
 		[location][/path]
+		autoindex -> off
 		index -> index.html
 		root -> test2
 
 		[location][/what]
+		autoindex -> off
 		index -> what.html
 		root -> TEST
 

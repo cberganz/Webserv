@@ -33,8 +33,6 @@ errors=0
 clang++ ${CFLAGS} ${TESTER_PATH}ResponseMakerTester.cpp -L.. -lWebserv
 chmod -r ${TESTER_PATH}scripts/indexNoRead.html
 rm -f ${TESTER_PATH}outfiles/*.out
-# UNCOMMENT TO GENERATE MODELS
-#rm -f ${TESTER_PATH}outfiles/*.model
 files=`ls ./${TESTER_PATH}conf`
 files=`echo $files | sed 's/\n/ /g'`
 for file in $files

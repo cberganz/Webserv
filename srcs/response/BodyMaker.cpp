@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 03:00:34 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/05 03:14:02 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,24 @@ BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 	return *this;
 }
 
-const std::string &BodyMaker::createBody(const std::string &path)
+const std::string &BodyMaker::createBody(const Context& context, const std::string &uri)
 {
 	m_body.clear();
+	std::string path;
+	if (context.directiveExist("root"))
+		path = context.getDirective("root");
+	path += uri;
+	if (path.back() == '/' and context.getDirective("autoindex") == "on")
+	{
+		path += context.getDirective("index");
+		if (access(path.c_str(), F_OK) == -1)
+		{
+			path = path.substr(0, path.find_last_of("/"));
+			return autoIndex(path);
+		}
+	}
+	else
+		path += "/" + context.getDirective("index");
 	if (access(path.c_str(), F_OK) == -1)
 		throw ErrorException(404);
 	if (requiresCGI(path))
@@ -68,7 +83,7 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-void BodyMaker::executeCGI(const std::string &path)
+void BodyMaker::executeCGI(std::string &path)
 {
 	int pid, stat, fd[2];
 
@@ -105,4 +120,35 @@ void BodyMaker::executeCGI(const std::string &path)
 	if (ret < 0)
 		throw ErrorException(500);
 	close(fd[0]);
+}
+
+const std::string &BodyMaker::autoIndex(std::string &path)
+{
+	DIR*			dir;
+	struct dirent*	dirent;
+	char			buff[1024];
+
+	path.insert(0, getcwd(buff, 1024) + std::string("/"));
+	dir = opendir(path.c_str());
+	if (dir == NULL)
+		throw ErrorException(404);
+	m_body += "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<title>\n\t\t\tAUTOINDEX\n\t\t</title>\n\t</head>\n\n\t<body>\n\t\t<h2>\n\t\t\tWEBSERV AUTOINDEX: ";
+	m_body += path;
+	m_body += "\n\t\t</h2>\n";
+    while ((dirent = readdir(dir)) != NULL)
+	{
+		if (dirent->d_type == DT_DIR)
+			m_body += "\t\t<h4 style=\"color:blue;\"><a href=\"";
+		else
+			m_body += "\t\t<h4 style=\"color:black;\"><a href=\"";
+		m_body += dirent->d_name;
+		if (dirent->d_type == DT_DIR)
+			m_body += "/";
+		m_body += "\">\n\t\t\t";
+		m_body += dirent->d_name;
+		m_body += "\n\t\t</a></h4>\n";
+	}
+	closedir(dir);
+	m_body += "\t</body>\n</html>";
+	return m_body;
 }

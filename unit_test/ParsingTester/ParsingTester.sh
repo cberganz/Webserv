@@ -37,6 +37,8 @@ files=`echo $files | sed 's/\n/ /g'`
 for test in $files
 do
     ./a.out "${TESTER_PATH}confFiles/$test" > ${TESTER_PATH}outfiles/${test}.out 2>&1
+	# Uncomment to recreate models. Check diff before to verify nothing is broken.
+    #./a.out "${TESTER_PATH}confFiles/$test" > ${TESTER_PATH}outfiles/${test}.model 2>&1
 	ret_diff=`diff ${TESTER_PATH}outfiles/${test}.out ${TESTER_PATH}outfiles/${test}.model`
 	if [ "$ret_diff" != "" ]; then
 		errors=$(($errors+1))
