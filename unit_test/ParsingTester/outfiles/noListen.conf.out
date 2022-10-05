@@ -1,0 +1,21 @@
+[global][global]
+root -> TEST
+
+	[server][]
+	autoindex -> off
+	ip -> 0.0.0.0
+	listen -> 0.0.0.0:8080
+	port -> 8080
+	root -> TEST
+	server_name -> cberganz.42.fr
+
+		[location][/path]
+		autoindex -> off
+		index -> index.html
+		root -> TEST
+
+		[location][/what]
+		autoindex -> off
+		index -> what.html
+		root -> TEST
+
