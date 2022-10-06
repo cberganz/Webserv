@@ -32,6 +32,7 @@ printf "${yell}---------------------------${reset}\n"
 errors=0
 clang++ ${CFLAGS} ${TESTER_PATH}Tester.cpp -L.. -lWebserv
 rm -f ${TESTER_PATH}outfiles/*.out
+# see find and fd instead of ls
 files=`ls ./${TESTER_PATH}confFiles`
 files=`echo $files | sed 's/\n/ /g'`
 for test in $files

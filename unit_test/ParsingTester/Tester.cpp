@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 17:08:59 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 01:56:01 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ void printDirectives(const Config::directivesContainer &directives, int tabCount
 		 it != directives.end() ; it++)
 	{
 		printTab(tabCount);
-		std::cout << (*it).first << " -> " << (*it).second << std::endl;
+		std::cout << (*it).first << " ->";
+		for (std::vector<std::string>::const_iterator it_vec = (*it).second.begin() ; it_vec != (*it).second.end() ; it_vec ++)
+			std::cout << " " << *it_vec << std::endl;
 	}
 	std::cout << std::endl;
 }

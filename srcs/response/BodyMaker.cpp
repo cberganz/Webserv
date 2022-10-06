@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/05 03:14:02 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/06 02:21:22 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ const std::string &BodyMaker::createBody(const Context& context, const std::stri
 	m_body.clear();
 	std::string path;
 	if (context.directiveExist("root"))
-		path = context.getDirective("root");
+		path = *context.getDirective("root").begin();
 	path += uri;
-	if (path.back() == '/' and context.getDirective("autoindex") == "on")
+	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
-		path += context.getDirective("index");
+		path += *context.getDirective("index").begin();
 		if (access(path.c_str(), F_OK) == -1)
 		{
 			path = path.substr(0, path.find_last_of("/"));
@@ -45,7 +45,7 @@ const std::string &BodyMaker::createBody(const Context& context, const std::stri
 		}
 	}
 	else
-		path += "/" + context.getDirective("index");
+		path += "/" + *context.getDirective("index").begin();
 	if (access(path.c_str(), F_OK) == -1)
 		throw ErrorException(404);
 	if (requiresCGI(path))

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/05 01:17:15 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/06 03:29:58 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <map>
 # include <utility>
 # include "ParserConfig.hpp"
+# include "../tools/utility.hpp"
 
 # define BLOC_START "{"
 # define BLOC_END "}"
@@ -37,11 +38,11 @@ class Context;
 class ContextBase : public ParserConfig {
 
 public:
-	typedef std::vector<std::string>			tokensContainer;
-	typedef tokensContainer::const_iterator		tokensIterator;
-	typedef std::map<std::string, std::string>	directivesContainer;
-	typedef directivesContainer::iterator		directivesIterator;
-	typedef directivesContainer::const_iterator	directivesConstIterator;
+	typedef std::vector<std::string>							tokensContainer;
+	typedef tokensContainer::const_iterator						tokensIterator;
+	typedef std::map<std::string, std::vector<std::string> >	directivesContainer;
+	typedef directivesContainer::iterator						directivesIterator;
+	typedef directivesContainer::const_iterator					directivesConstIterator;
 
 	ContextBase();
 	ContextBase(const ContextBase &src);
@@ -56,11 +57,14 @@ public:
 							  directivesContainer &container);
 
 protected:
+	static int m_fileLine;
+
 	const std::string &getCurrentToken();
 	const std::string &getFollowingToken(const int &offset);
 
 	void handleBlocOpening();
 	void handleBlocEnding();
+	void handleNewline();
 	void directiveInserter(directivesContainer &container);
 	void insertDefaultIfExistingOrThrowException(directivesContainer &container,
 												 const int &index);
@@ -75,7 +79,8 @@ protected:
     public:
 		ParsingErrorException(const std::string &contextName,
 							  const char *errorDetails, 
-							  const std::string &token);
+							  const std::string &token,
+							  const int &fileLine);
 		~ParsingErrorException() throw();
 
         const char* what() const throw();

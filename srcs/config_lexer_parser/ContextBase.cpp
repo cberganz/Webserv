@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 02:39:12 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 03:30:55 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 */
 
 ContextBase::tokensIterator ContextBase::tokensIt;
+int ContextBase::m_fileLine = 1;
 
 /*
 **	@brief ContextBase default contructor.
@@ -126,11 +127,17 @@ const std::string ContextBase::getKeyIdentifier()
 void ContextBase::handleBlocOpening()
 {
 	if (contextNameRequiresURI(m_parentName, m_contextName))
-		*(tokensIt + 1) != BLOC_START ? static_cast<void>(tokensIt++) : throwException(UNSPECIFIED_URI, m_contextName);
+	{
+		if (*(tokensIt + 1) != BLOC_START and *(tokensIt + 1) != "\n")
+			tokensIt++;
+		else
+			throwException(UNSPECIFIED_URI, m_contextName);
+	}
 	if (*++tokensIt == BLOC_START)
 		tokensIt++;
 	else
 		throwException(NO_BLOC_OPEN, m_contextName);
+	handleNewline();
 }
 
 /*
@@ -146,6 +153,16 @@ void ContextBase::handleBlocEnding()
 		tokensIt++;
 	else if (m_contextIndex != GLOBAL)
 		throwException(UNEXPECTED_EOF, m_contextName);
+	handleNewline();
+}
+
+void ContextBase::handleNewline()
+{
+	while (*tokensIt == "\n")
+	{
+		tokensIt++;
+		m_fileLine++;
+	}
 }
 
 /*
@@ -161,13 +178,22 @@ void ContextBase::handleBlocEnding()
 void ContextBase::directiveInserter(directivesContainer &container)
 {
 	if (container.find(*tokensIt) == container.end())
-		container.insert(std::make_pair(*tokensIt, *++tokensIt));
+	{
+		std::string directiveName = *tokensIt;
+		std::vector<std::string> vec;
+		vec.push_back(*++tokensIt);
+		if (isMultiple(*(tokensIt - 1)))
+			while (*(tokensIt + 1) != DIRECTIVE_END and *(tokensIt + 1) != "\n")
+				vec.push_back(*++tokensIt);
+		container.insert(std::make_pair(directiveName, vec));
+	}
 	else
 		throwException(DUPLICATE_DIRECTIVE, *tokensIt);
 	if (*++tokensIt == DIRECTIVE_END)
 		tokensIt++;
 	else
 		throwException(NO_SEMICOLON, *(tokensIt - 2));
+	handleNewline();
 }
 
 /*
@@ -198,7 +224,11 @@ void ContextBase::insertDefaultIfExistingOrThrowException(directivesContainer &c
 														  const int &index)
 {
 	if (hasDefault(index))
-		container.insert(std::make_pair(getKeyword(index), getDefault(index)));
+	{
+		std::vector<std::string> vec;
+		vec.push_back(getDefault(index));
+		container.insert(std::make_pair(getKeyword(index), vec));
+	}
 	else
 		throwException(MANDATORY_DIRECTIVE_NOT_FOUND, getKeyword(index));
 }
@@ -213,11 +243,13 @@ void ContextBase::insertDefaultIfExistingOrThrowException(directivesContainer &c
 
 ContextBase::ParsingErrorException::ParsingErrorException(const std::string &contextName,
 														  const char *errorDetails,
-														  const std::string &word)
+														  const std::string &word,
+														  const int &fileLine)
 	: message("Error while parsing configuration file: Inside context: "
 			  + contextName
 			  + ": " + errorDetails
-			  + ": \'" + word + "\'.")
+			  + ": \'" + word + "\'"
+			  + ": at line " + ft::itostr(fileLine) + ".")
 {}
 
 ContextBase::ParsingErrorException::~ParsingErrorException() throw()
@@ -227,4 +259,4 @@ const char* ContextBase::ParsingErrorException::what() const throw()
 { return message.c_str(); }
 
 void ContextBase::throwException(const char *errorDetails, const std::string &word) const
-{ throw ParsingErrorException(m_contextName, errorDetails, word); }
+{ throw ParsingErrorException(m_contextName, errorDetails, word, m_fileLine); }

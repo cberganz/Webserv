@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:29 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/20 18:50:29 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 02:10:39 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ protected:
 	bool isMandatoryDirective(const std::string &keyword) const;
 	bool isPossibleBloc(const std::string &keyword) const;
 	bool isMandatoryBloc(const std::string &keyword) const;
+	bool isMultiple(const std::string &keyword) const;
 
 	const std::string &getKeyword(const int &index) const;
 	const std::string &getDefault(const int &index) const;
@@ -66,6 +67,7 @@ protected:
 	bool isMandatoryDirective(const int &index) const;
 	bool isPossibleBloc(const int &index) const;
 	bool isMandatoryBloc(const int &index) const;
+	bool isMultiple(const int &index) const;
 
 	bool indexIsDefault(const int &index) const;
 

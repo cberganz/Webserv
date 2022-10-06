@@ -1,1 +1,1 @@
-Error while parsing configuration file: Inside context: location: Duplicate directive reached: 'index'.
+Error while parsing configuration file: Inside context: location: Duplicate directive reached: 'index': at line 9.

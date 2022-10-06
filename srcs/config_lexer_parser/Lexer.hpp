@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 17:50:09 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 02:17:33 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 02:55:17 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ private:
 	tokensContainer	m_tokens;
 
 	std::string handleSpace(std::string::iterator &it);
+	std::string handleNewline(std::string::iterator &it);
 	std::string handleCharToken(std::string::iterator &it);
 	std::string handleComment(std::string::iterator &it);
 	std::string handleVar(std::string::iterator &it);

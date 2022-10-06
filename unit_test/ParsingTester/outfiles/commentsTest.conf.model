@@ -3,6 +3,7 @@ root -> TEST
 
 	[server][443]
 	autoindex -> off
+	client_max_body_size -> 1m
 	index -> index.php
 	ip -> 443
 	listen -> 443
@@ -12,11 +13,13 @@ root -> TEST
 
 		[location][/path sfsaf asdfsda]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> index.html
 		root ->  Ceci 'est' un 'test'
 
 		[location][/what]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> what.html
 		root -> 'Blorp' 'baba'
 

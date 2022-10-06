@@ -2,6 +2,7 @@
 
 	[server][443]
 	autoindex -> off
+	client_max_body_size -> 1m
 	ip -> 443
 	listen -> 443
 	port -> 443
@@ -9,9 +10,11 @@
 
 		[location][/path]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> index.html
 
 		[location][/what]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> what.html
 

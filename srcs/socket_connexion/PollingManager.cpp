@@ -7,7 +7,7 @@ PollingManager::PollingManager() {}
 PollingManager::PollingManager(const Context::contextsContainer &container)
 {
     for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
-        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>((*it).second.getDirective("port"))));
+        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>(*(*it).second.getDirective("port").begin())));
 }
 
 PollingManager::PollingManager(const PollingManager &copy) {

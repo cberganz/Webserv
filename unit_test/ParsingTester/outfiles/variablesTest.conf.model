@@ -3,6 +3,7 @@ root -> $default_root
 
 	[server][$listen_port]
 	autoindex -> off
+	client_max_body_size -> 1m
 	ip -> $listen_port
 	listen -> $listen_port
 	port -> $listen_port
@@ -11,11 +12,13 @@ root -> $default_root
 
 		[location][$path]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> $default_index
 		root -> $default_root
 
 		[location][$path2]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> $index_default
 		root -> $default_root
 

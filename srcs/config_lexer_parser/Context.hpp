@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/05 00:58:21 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/06 01:38:49 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ public:
 	const std::map<std::string, Context>	&getContexts() const;
 	const ContextBase::directivesContainer	&getDirectives() const;
 	const Context							&getContext(const std::string &contextName) const;
-	const std::string						&getDirective(const std::string &directiveName) const;
+	const std::vector<std::string>			&getDirective(const std::string &directiveName) const;
 	bool									directiveExist(const std::string &directive) const;
 
 	void checkMandatoryDirectives();

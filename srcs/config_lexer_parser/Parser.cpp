@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:30 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/30 05:11:21 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 02:16:24 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,13 @@ void Parser::setServersIpsAndPorts(Context &context)
 	{
 		if ((*it).second.getContextName() == "server")
 		{
-			std::string s = (*it).second.getDirective("listen");
-			(*it).second.getDirectives().insert(std::make_pair("ip", s.substr(0, s.find(":"))));
-			(*it).second.getDirectives().insert(std::make_pair("port", s.substr(s.find(":") + 1, s.size())));
+			std::string s = *(*it).second.getDirective("listen").begin();
+			std::vector<std::string> tmp;
+			tmp.push_back(s.substr(0, s.find(":")));
+			(*it).second.getDirectives().insert(std::make_pair("ip", tmp));
+			tmp.clear();
+			tmp.push_back(s.substr(s.find(":") + 1, s.size()));
+			(*it).second.getDirectives().insert(std::make_pair("port", tmp));
 		}
 	}
 }

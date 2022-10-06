@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>	        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 18:00:44 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/19 16:17:29 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 02:58:19 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,20 +110,20 @@ std::vector<std::string> Lexer::readTokensFromFile(const std::string &fileName)
 	std::string	line, save;
 	Lexer::t_funcPtr funcPtrs[] =
 	{
-		{std::string(" "), &Lexer::handleSpace},
-		{std::string("\t"), &Lexer::handleSpace},
-		{std::string("\f"), &Lexer::handleSpace},
-		{std::string("\n"), &Lexer::handleSpace},
-		{std::string("\r"), &Lexer::handleSpace},
-		{std::string("\v"), &Lexer::handleSpace},
-		{std::string(";"), &Lexer::handleCharToken},
-	    {std::string("{"), &Lexer::handleCharToken},
-		{std::string("}"), &Lexer::handleCharToken},
-		{std::string("\""), &Lexer::handleQuoting},
-		{std::string("\'"), &Lexer::handleQuoting},
-		{std::string("#"), &Lexer::handleComment},
-		{std::string("$"), &Lexer::handleVar},
-		{std::string("EOA"), &Lexer::handleKeyword}
+		{ std::string(" "),		&Lexer::handleSpace		},
+		{ std::string("\t"),	&Lexer::handleSpace		},
+		{ std::string("\f"), 	&Lexer::handleSpace		},
+		{ std::string("\r"), 	&Lexer::handleSpace		},
+		{ std::string("\v"), 	&Lexer::handleSpace		},
+		{ std::string("\n"), 	&Lexer::handleCharToken	},
+		{ std::string(";"),		&Lexer::handleCharToken	},
+	    { std::string("{"),		&Lexer::handleCharToken	},
+		{ std::string("}"),		&Lexer::handleCharToken	},
+		{ std::string("\""),	&Lexer::handleQuoting	},
+		{ std::string("\'"), 	&Lexer::handleQuoting	},
+		{ std::string("#"),		&Lexer::handleComment	},
+		{ std::string("$"),		&Lexer::handleVar		},
+		{ std::string("EOA"),	&Lexer::handleKeyword	}
 	};
 
 	std::ifstream fileIn(fileName.c_str());

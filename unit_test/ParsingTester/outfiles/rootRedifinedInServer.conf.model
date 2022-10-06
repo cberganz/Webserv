@@ -3,6 +3,7 @@ root -> TEST
 
 	[server][443]
 	autoindex -> off
+	client_max_body_size -> 1m
 	ip -> 443
 	listen -> 443
 	port -> 443
@@ -11,11 +12,13 @@ root -> TEST
 
 		[location][/path]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> index.html
 		root -> test2
 
 		[location][/what]
 		autoindex -> off
+		client_max_body_size -> 1m
 		index -> what.html
 		root -> test2
 

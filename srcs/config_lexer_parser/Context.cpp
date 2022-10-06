@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/05 00:58:29 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/06 04:08:57 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Context::Context(const Context &src)
 Context::Context(const tokensContainer &tokens)
 	: ContextBase(tokens)
 {
+	handleNewline();
 	getContextInformations();
 }
 
@@ -99,7 +100,7 @@ const ContextBase::directivesContainer &Context::getDirectives() const
 const Context &Context::getContext(const std::string &contextName) const
 { return m_contexts.at(contextName); }
 
-const std::string &Context::getDirective(const std::string &directiveName) const
+const std::vector<std::string> &Context::getDirective(const std::string &directiveName) const
 { return m_directives.at(directiveName); }
 
 bool Context::directiveExist(const std::string &directive) const
@@ -137,9 +138,9 @@ void Context::getContextInformations()
 
 void Context::blocInserter()
 {
-	if (not m_contexts.count(getKeyIdentifier()))
+	if (m_contexts.find(getKeyIdentifier()) == m_contexts.end())
 		m_contexts.insert(std::make_pair(getKeyIdentifier(), Context(*this)));
-	else
+	else if (m_contextName != "global")
 		throwException(DUPLICATE_BLOC, getCurrentToken());
 }
 

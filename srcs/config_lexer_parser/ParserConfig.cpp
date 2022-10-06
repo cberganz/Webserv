@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:25 by cberganz          #+#    #+#             */
-/*   Updated: 2022/09/18 02:53:16 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/06 02:17:02 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,9 @@ bool ParserConfig::isPossibleBloc(const std::string &keyword) const
 bool ParserConfig::isMandatoryBloc(const std::string &keyword) const
 { return isMandatory(keyword) and isBloc(keyword); }
 
+bool ParserConfig::isMultiple(const std::string &keyword) const
+{ return keywords[m_contextIndex][getKeywordIndex(keyword)].isMultiple; }
+
 /*
 **	@brief Set of methods allowing access to parameters from the keywords table,
 **		   using indexes taken as int.
@@ -204,6 +207,9 @@ bool ParserConfig::isPossibleBloc(const int &index) const
 
 bool ParserConfig::isMandatoryBloc(const int &index) const
 { return isMandatory(index) and isBloc(index); }
+
+bool ParserConfig::isMultiple(const int &index) const
+{ return keywords[m_contextIndex][index].isMultiple; }
 
 bool ParserConfig::indexIsDefault(const int &index) const
 { return keywords[m_contextIndex][index].keyword.empty(); }
