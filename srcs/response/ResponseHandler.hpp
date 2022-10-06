@@ -1,17 +1,13 @@
 #ifndef RESPONSEHANDLER_HPP
 # define RESPONSEHANDLER_HPP
 
-# include "Response.hpp"
-# include "../client_request/ClientRequest.hpp"
+# include "ResponseMaker.hpp"
+# include "../client_request/ClientRequestParser.hpp"
 
 class ResponseHandler {
 	protected:
-		ClientRequest	m_client_request;
-		ClientRequest	m_client_request;
-
-
-	private:
-
+		ClientRequestParser	m_client_req_parser;
+		ResponseMaker		m_response_maker;
 
 	public:
 		ResponseHandler();
@@ -19,6 +15,11 @@ class ResponseHandler {
 		ResponseHandler(const ResponseHandler &copy);
 		~ResponseHandler();
 		ResponseHandler	&operator=(const ResponseHandler &copy);
+
+		void		setClientRequest(std::string client_request);
+
+		std::string createResponseMessage(const std::string &ip, const std::string &port);
+
 };
 
 #endif

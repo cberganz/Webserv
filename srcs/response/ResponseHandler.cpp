@@ -1,47 +1,42 @@
 #include "ResponseHandler.hpp"
 
-ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_header(), m_body()
+ResponseHandler::ResponseHandler()
+: m_client_req_parser(), m_response_maker()
 {}
 
-ClientRequest::ClientRequest(std::string client_request): m_header()
-{
-	// check si string vide
-	trimBegin(client_request, "\r\n");
-	std::string					line;
-	std::istringstream 			str_stream(client_request);
-	std::vector<std::string>	key_value_vector;
+ResponseHandler::ResponseHandler(std::string client_request)
+: m_client_req_parser(client_request), m_response_maker()
+{}
 
-
-	std::getline(str_stream, line);
-	this->parse_request_line(line);
-	this->replace_encode_char(m_path);
-	if (!is_request_line_correct())
-		throw ErrorException(400);
-	client_request.erase(0, line.length() + 1); // verifier comportement si pas de \n a la fin
-	this->parse_header(client_request);
-
-	this->parse_body(client_request);
-	this->print();
-}
-
-ClientRequest::ClientRequest(const ClientRequest &copy)
+ResponseHandler::ResponseHandler(const ResponseHandler &copy)
 {
 	if (this != &copy)
 		*this = copy;
 }
 
-ClientRequest::~ClientRequest()
+ResponseHandler::~ResponseHandler()
 {}
 
-ClientRequest  &ClientRequest::operator=(const ClientRequest &copy)
+ResponseHandler  &ResponseHandler::operator=(const ResponseHandler &copy)
 {
 	if (this != &copy)
 	{
-		m_http_version = copy.m_http_version;
-		m_method = copy.m_method;
-		m_path = copy.m_path;
-		m_header = copy.m_header;
-		m_body = copy.m_body;
+		m_client_req_parser = copy.m_client_req_parser;
+		m_response_maker = copy.m_response_maker;
 	}
 	return (*this);
+}
+
+void	ResponseHandler::setClientRequest(std::string client_request)
+{ m_client_req_parser.setRequest(client_request); }
+
+std::string ResponseHandler::createResponseMessage(const std::string &ip, const std::string &port)
+{
+	ClientRequest	*client_req			= m_client_req_parser.makeClientRequest();
+	Response		*response			= m_response_maker.createResponse(client_req->getPath(), ip, port);
+	std::string		response_message	= response->getResponse();
+
+	delete client_req;
+	delete response;
+	return (response_message);
 }
