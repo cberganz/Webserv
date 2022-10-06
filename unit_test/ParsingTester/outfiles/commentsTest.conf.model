@@ -2,8 +2,10 @@
 root -> TEST
 
 	[server][443]
+	allowed_methods -> default
 	autoindex -> off
 	client_max_body_size -> 1m
+	error_page -> default
 	index -> index.php
 	ip -> 443
 	listen -> 443
@@ -14,12 +16,14 @@ root -> TEST
 		[location][/path sfsaf asdfsda]
 		autoindex -> off
 		client_max_body_size -> 1m
+		error_page -> default
 		index -> index.html
 		root ->  Ceci 'est' un 'test'
 
 		[location][/what]
 		autoindex -> off
 		client_max_body_size -> 1m
+		error_page -> default
 		index -> what.html
 		root -> 'Blorp' 'baba'
 
