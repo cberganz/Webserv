@@ -157,7 +157,7 @@ std::string     PollingManager::receive_request(int client_socket) {
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer[ret] = '\0';
-	std::cout << buffer << std::endl;
+    // std::cout << "\n\nCLIENT REQUEST: " << buffer << "\n"<< std::endl;
     return (std::string(buffer));
 }
 

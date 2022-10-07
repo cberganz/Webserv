@@ -4,8 +4,8 @@ ResponseHandler::ResponseHandler()
 : m_client_req_parser(), m_response_maker()
 {}
 
-ResponseHandler::ResponseHandler(std::string client_request)
-: m_client_req_parser(client_request), m_response_maker()
+ResponseHandler::ResponseHandler(const Config &config)
+: m_client_req_parser(), m_response_maker(config)
 {}
 
 ResponseHandler::ResponseHandler(const ResponseHandler &copy)

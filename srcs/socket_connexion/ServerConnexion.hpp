@@ -17,6 +17,7 @@
 # include <exception>
 
 # include "../config_lexer_parser/Config.hpp"
+# include "../response/ResponseHandler.hpp"
 # include "PollingManager.hpp"
 # include "Chunks.hpp"
 
@@ -25,10 +26,14 @@ class ServerConnexion {
         void    write_to_client(std::string chunk, int fd);
         void    read_from_client(int fd);
 
+        std::string     getSocketPort(int sockfd);
+        std::string     getSocketIp(int sockfd);
+
     protected:
         Config			m_config;
         PollingManager  m_polling;
         Chunks          m_chunks;
+        ResponseHandler m_rep_handler;
 
     public:
         ServerConnexion();
@@ -36,7 +41,8 @@ class ServerConnexion {
         ServerConnexion(const ServerConnexion &copy);
         ~ServerConnexion();
         ServerConnexion &operator=(const ServerConnexion &copy);
-        void    connexion_loop();
+
+        void            connexion_loop();
 };
 
 #endif

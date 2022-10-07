@@ -60,6 +60,7 @@ void	ClientRequestParser::parse_request_line(std::string request_line, ClientReq
 	getline(str_stream, line);
 	if (str_stream)
 		throw ErrorException(400);
+	std::cout << "HTTP_VERSION:\t" << attributes[2] << "\n"<< std::endl;
 	this->replace_encode_char(attributes[1]);
 	client_req.setMethod(attributes[0]);
 	client_req.setPath(attributes[1]);
@@ -79,7 +80,7 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 			break ;
 		if (line.find(':') == std::string::npos)
 			throw ErrorException(400);
-		
+
 		std::istringstream	line_stream(line);
 		std::string			header_key;
 		std::string			header_value;
@@ -160,8 +161,18 @@ bool	ClientRequestParser::is_path_correct(std::string path)
 
 bool	ClientRequestParser::is_http_version_correct(std::string http_version)
 {
-	if (http_version != "HTTP/1.1")
+	// std::istringstream 			str_stream(http_version);
+	// std::string					line;
+
+	// getline(str_stream, line,  '\\');
+	// if (line.empty() || !str_stream || line.compare("HTTP"))
+	// 	return (false);
+	// getline(str_stream, line);
+	// std::cout << "\n\nCompare:\t" << http_version << " && " << "HTTP/1.1 =>\t" << ((http_version == "HTTP/1.1")) << "\n\n" << std::endl;
+	if (http_version.find("HTTP/1.1") == std::string::npos)
+	{
 		return (false);
+	}
 	return (true);
 }
 
@@ -199,7 +210,7 @@ ClientRequest	*ClientRequestParser::makeClientRequest()
 	std::string			line;
 	std::istringstream 	str_stream(request_copy);
 	ClientRequest		*client_req = new ClientRequest();
-	
+
 	std::getline(str_stream, line);
 	parse_request_line(line, *client_req);
 	if (!is_request_line_correct(*client_req))

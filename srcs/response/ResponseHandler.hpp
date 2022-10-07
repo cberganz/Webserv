@@ -11,7 +11,7 @@ class ResponseHandler {
 
 	public:
 		ResponseHandler();
-		ResponseHandler(const std::string client_request);
+		ResponseHandler(const Config &config);
 		ResponseHandler(const ResponseHandler &copy);
 		~ResponseHandler();
 		ResponseHandler	&operator=(const ResponseHandler &copy);

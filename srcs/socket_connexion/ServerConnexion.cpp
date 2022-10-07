@@ -4,7 +4,8 @@ ServerConnexion::ServerConnexion() : m_polling(), m_config() {}
 
 ServerConnexion::ServerConnexion(const std::string &path)
 	: m_config(path),
-	  m_polling(m_config.getGlobalContextsContainer())
+	  m_polling(m_config.getGlobalContextsContainer()),
+      m_rep_handler(m_config)
 {}
 
 ServerConnexion::ServerConnexion(const ServerConnexion &copy) {
@@ -47,10 +48,45 @@ std::string	create_response(std::string file) {
 	return (http_request);
 }
 
+std::string ServerConnexion::getSocketPort(int sockfd)
+{
+    t_sockaddr_in       addr;
+    socklen_t           addrlen;
+    std::stringstream   ss;
+
+
+    getsockname(sockfd, (struct sockaddr *)&addr, &addrlen);
+    ss << htons(addr.sin_port);
+    return (ss.str());
+}
+
+std::string ServerConnexion::getSocketIp(int sockfd)
+{
+    int                 ip_val;
+    t_sockaddr_in       addr;
+    socklen_t           addrlen;
+    std::stringstream   ss;
+
+    getsockname(sockfd, (struct sockaddr *)&addr, &addrlen);
+    ip_val = htonl(addr.sin_addr.s_addr);
+    for (int i = 0; i < 4; i++)
+    {
+        ss << (ip_val >> 8 * (3 - i) & 0xff);
+        if (i != 3)
+            ss << ".";
+    }
+    return (ss.str());
+}
+
 void    ServerConnexion::read_from_client(int fd) {
     bool    is_chunk = false;
 
     std::string client_req = m_polling.receive_request(fd);
+    if (client_req.empty())
+    {
+        close(fd);
+        return ;
+    }
     if (m_chunks.is_chunk(fd, client_req)) {
         is_chunk = true;
         if (!m_chunks.is_chunked_header(fd))
@@ -62,13 +98,32 @@ void    ServerConnexion::read_from_client(int fd) {
         }
     }
     if (!is_chunk) {
-        /** Traitement de la requete client ici :
-         * -> requete client = string client_req
-         * -> reponse server = string create_response("unit_test/ConnexionTester/page.html")
-         * **/
-        m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
-            create_response("unit_test/ConnexionTester/page.html")), fd);
-        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+        try {
+            m_rep_handler.setClientRequest(client_req);
+            std::string reponse_msg
+                = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
+            /** Traitement de la requete client ici :
+             * -> requete client = string client_req
+             * -> reponse server = string create_response("unit_test/ConnexionTester/page.html")
+             * **/
+            m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
+                reponse_msg), fd);
+            m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+        }
+        catch (ErrorException & e) {
+            std::stringstream   ss;
+            HttpCodes           http_code;
+            std::string         error_page = create_response("./app/error_pages/template.html");//modifier header et status
+
+            ss << e.getCode();
+            if (error_page.find("$STATUS") == std::string::npos
+                || error_page.find("$MESSAGE") == std::string::npos)
+                throw ;//envoyer une exception ici 
+            error_page = error_page.replace(error_page.find("$STATUS"),  7, ss.str());
+            error_page = error_page.replace(error_page.find("$MESSAGE"),  8, http_code[e.getCode()]);
+            m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
+            m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+        }
     }
 }
 

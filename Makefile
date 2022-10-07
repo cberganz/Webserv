@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
+#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/03 21:47:21 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/06 19:59:21 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,22 +16,26 @@ CC			= clang++
 
 INCLUDE		= include/
 
-CFLAGS		= #-Wall -Wextra -Werror -std=c++98 -g
+CFLAGS		= -fPIC #-Wall -Wextra -Werror -std=c++98 -g
 
-SRC_NAME	= srcs/config_lexer_parser/Config.cpp		\
-			  srcs/config_lexer_parser/Parser.cpp		\
-			  srcs/config_lexer_parser/Lexer.cpp		\
-			  srcs/config_lexer_parser/Context.cpp		\
-			  srcs/config_lexer_parser/ContextBase.cpp	\
-			  srcs/config_lexer_parser/ParserConfig.cpp	\
-			  srcs/socket_connexion/PollingManager.cpp	\
-			  srcs/socket_connexion/ServerConnexion.cpp	\
-			  srcs/socket_connexion/Chunks.cpp	\
-			  srcs/response/BodyMaker.cpp				\
-			  srcs/response/HeaderMaker.cpp				\
-			  srcs/response/HttpCodes.cpp				\
-			  srcs/response/Response.cpp				\
-			  srcs/response/ResponseMaker.cpp			
+SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
+			  srcs/config_lexer_parser/Parser.cpp			\
+			  srcs/config_lexer_parser/Lexer.cpp			\
+			  srcs/config_lexer_parser/Context.cpp			\
+			  srcs/config_lexer_parser/ContextBase.cpp		\
+			  srcs/config_lexer_parser/ParserConfig.cpp		\
+			  srcs/socket_connexion/PollingManager.cpp		\
+			  srcs/socket_connexion/ServerConnexion.cpp		\
+			  srcs/socket_connexion/Chunks.cpp				\
+			  srcs/client_request/ClientRequest.cpp			\
+			  srcs/client_request/ClientRequestParser.cpp	\
+			  srcs/response/BodyMaker.cpp					\
+			  srcs/response/HeaderMaker.cpp					\
+			  srcs/response/HttpCodes.cpp					\
+			  srcs/response/Response.cpp					\
+			  srcs/response/ResponseMaker.cpp				\
+			  srcs/response/ResponseHandler.cpp			
+
 
 #SRC_DIR		= srcs/
 SRC			= ${SRC_NAME} #${addprefix ${SRC_DIR}, ${SRC_NAME}}
@@ -69,6 +73,6 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out unit_test/ParsingTester/confFiles/basicTest.conf 	
+	./a.out /home/rbicanic/Documents/Webserv/config_files/default.conf
 
 .PHONY : all clean fclean test re server_connexion
