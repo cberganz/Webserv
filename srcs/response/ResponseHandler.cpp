@@ -33,7 +33,7 @@ void	ResponseHandler::setClientRequest(std::string client_request)
 std::string ResponseHandler::createResponseMessage(const std::string &ip, const std::string &port)
 {
 	ClientRequest	*client_req			= m_client_req_parser.makeClientRequest();
-	Response		*response			= m_response_maker.createResponse(client_req->getPath(), ip, port);
+	Response		*response			= m_response_maker.createResponse(client_req->getPath(), ip, port, client_req->getMethod());
 	std::string		response_message	= response->getResponse();
 
 	delete client_req;

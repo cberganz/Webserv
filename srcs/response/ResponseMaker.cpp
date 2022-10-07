@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseMaker.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/07 15:09:56 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/07 16:32:01 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ ResponseMaker& ResponseMaker::operator=(const ResponseMaker &rhs)
 	return *this;
 }
 
-Response* ResponseMaker::createResponse(const std::string &uri, const std::string &ip, const std::string &port)
+Response* ResponseMaker::createResponse(const std::string &uri, const std::string &ip, const std::string &port, const std::string &method)
 {
 	Response*	response = new Response();
 	try {
 		Context context = m_config[ip + ":" + port].getContext(uri); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
-		std::string body = m_bodyMaker.createBody(context, uri);
+		std::string body = m_bodyMaker.createBody(context, uri, method);
 		(*response).append(m_headerMaker.createHeader());
 		(*response).append(body);
 	} catch (const std::out_of_range &e) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 02:21:22 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/07 18:28:19 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,9 @@ BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 	return *this;
 }
 
-const std::string &BodyMaker::createBody(const Context& context, const std::string &uri)
-{
-	m_body.clear();
-	std::string path;
-	if (context.directiveExist("root"))
-		path = *context.getDirective("root").begin();
-	path += uri;
+/** METHOD **/
+
+const std::string	&BodyMaker::getMethod(const Context& context, std::string path) {
 	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -52,6 +48,34 @@ const std::string &BodyMaker::createBody(const Context& context, const std::stri
 		executeCGI(path);
 	else
 		readFile(path);
+	return (m_body);
+}
+
+void	BodyMaker::postMethod(std::string path) {
+}
+
+void	BodyMaker::deleteMethod(std::string path) {
+	if (access(path.c_str(), F_OK) == -1)
+		throw (ErrorException(404));
+	if (path.back() == '/' || access(path.c_str(), W_OK) == -1)
+		throw (ErrorException(403));
+	if (std::remove(path.c_str())) 
+		throw (ErrorException(500));
+}
+
+const std::string &BodyMaker::createBody(const Context& context, const std::string &uri, const std::string &method)
+{
+	m_body.clear();
+	std::string path;
+	if (context.directiveExist("root"))
+		path = *context.getDirective("root").begin();
+	path += uri;
+	if (method == "DELETE")
+		deleteMethod(path);
+	else if (method == "POST")
+		postMethod(path);
+	else
+		return (getMethod(context, path));
 	return m_body;
 }
 

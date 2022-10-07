@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseMaker.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:00:19 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:41:03 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/07 16:30:57 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ public:
 
 	ResponseMaker& operator=(const ResponseMaker &rhs);
 
-	Response* createResponse(const std::string &uri, const std::string &ip, const std::string &port);
+	Response* createResponse(const std::string &uri, const std::string &ip, const std::string &port, const std::string &method);
 
 private:
 	HttpCodes	m_httpCodes;
