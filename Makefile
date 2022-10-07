@@ -6,7 +6,7 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/06 19:59:21 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/07 20:44:30 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC			= clang++
 
 INCLUDE		= include/
 
-CFLAGS		= -fPIC #-Wall -Wextra -Werror -std=c++98 -g
+CFLAGS		= -fPIC -g #-Wall -Wextra -Werror -std=c++98 -g
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/config_lexer_parser/Parser.cpp			\
@@ -73,6 +73,6 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out /home/rbicanic/Documents/Webserv/config_files/default.conf
+	valgrind --leak-check=full ./a.out ./config_files/default.conf
 
 .PHONY : all clean fclean test re server_connexion

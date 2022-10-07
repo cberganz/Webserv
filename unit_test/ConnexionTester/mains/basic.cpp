@@ -8,6 +8,14 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	ServerConnexion server(argv[1]);
-	server.connexion_loop();
+	try
+	{
+		server.connexion_loop();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << "Exception: "<< e.what() << '\n';
+	}
+	
     return 0;
 }

@@ -26,6 +26,7 @@
 # define ACCEPTERR              "accept() failed."
 # define RECEIVEERR             "receive() failed."
 # define SENDERR                "send() failed."
+# define IPERR                "Wrong Ip address format."
 
 # define MAXBUF 8192
 # define MAX_EVENTS 5
@@ -41,11 +42,12 @@ class PollingManager {
 
     private:
         /** CREATION DE LA CONNEXION **/
-        t_sockaddr_in   init_address_structure(int port);
-        int             create_socket(int port);
+        t_sockaddr_in   init_address_structure(int port, int ip);
+        int             create_socket(int port, int ip);
         void            close_socket_fds();
         void            set_socket(int fd);
         void            add_socket_to_epoll(int fd);
+        uint32_t        getIntIp(std::string string_ip);
         
         class SocketCreationException : public std::exception {
             private:
