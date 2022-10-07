@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
+#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/07 16:23:31 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/07 21:15:48 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC			= clang++
 
 INCLUDE		= include/
 
-CFLAGS		= -fPIC #-Wall -Wextra -Werror -std=c++98 -g
+CFLAGS		= -fPIC -g #-Wall -Wextra -Werror -std=c++98 -g
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/config_lexer_parser/Parser.cpp			\
@@ -73,6 +73,6 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out ./config_files/default.conf
+	valgrind --leak-check=full ./a.out ./config_files/default.conf
 
 .PHONY : all clean fclean test re server_connexion

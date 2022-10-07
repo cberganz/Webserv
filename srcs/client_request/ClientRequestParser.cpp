@@ -60,7 +60,6 @@ void	ClientRequestParser::parse_request_line(std::string request_line, ClientReq
 	getline(str_stream, line);
 	if (str_stream)
 		throw ErrorException(400);
-	std::cout << "HTTP_VERSION:\t" << attributes[2] << "\n"<< std::endl;
 	this->replace_encode_char(attributes[1]);
 	client_req.setMethod(attributes[0]);
 	client_req.setPath(attributes[1]);
@@ -161,18 +160,8 @@ bool	ClientRequestParser::is_path_correct(std::string path)
 
 bool	ClientRequestParser::is_http_version_correct(std::string http_version)
 {
-	// std::istringstream 			str_stream(http_version);
-	// std::string					line;
-
-	// getline(str_stream, line,  '\\');
-	// if (line.empty() || !str_stream || line.compare("HTTP"))
-	// 	return (false);
-	// getline(str_stream, line);
-	// std::cout << "\n\nCompare:\t" << http_version << " && " << "HTTP/1.1 =>\t" << ((http_version == "HTTP/1.1")) << "\n\n" << std::endl;
-	if (http_version.find("HTTP/1.1") == std::string::npos)
-	{
+	if (http_version != "HTTP/1.1")
 		return (false);
-	}
 	return (true);
 }
 
@@ -212,6 +201,7 @@ ClientRequest	*ClientRequestParser::makeClientRequest()
 	ClientRequest		*client_req = new ClientRequest();
 
 	std::getline(str_stream, line);
+	trimEnd(line, "\r\n");// voir comment traiter les \r fin de la ligne possible multiple \r ? 
 	parse_request_line(line, *client_req);
 	if (!is_request_line_correct(*client_req))
 		throw ErrorException(400);

@@ -28,6 +28,8 @@ class ServerConnexion {
 
         std::string     getSocketPort(int sockfd);
         std::string     getSocketIp(int sockfd);
+        void            handleResponse(std::string client_req, int fd);
+        void            handleDefaultError(ErrorException & e, int fd);
 
     protected:
         Config			m_config;
