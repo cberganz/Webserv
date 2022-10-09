@@ -41,7 +41,7 @@ void    ServerConnexion::write_to_client(std::string chunk, int fd) {
 std::string	create_response(std::string file, std::string status_code, std::string msg) {
 	std::ifstream       fs(file);
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-	std::string header("HTTP/1.1" + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
+	std::string header("HTTP/1.1 " + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
 	header += std::to_string(file_content.length());
 	std::string http_request = header + "\r\n\r\n" + file_content;
 
@@ -93,13 +93,15 @@ void    ServerConnexion::handleResponse(std::string client_req, int fd)
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 {
     HttpCodes           http_code;
-    std::string         error_page = create_response("./app/error_pages/template.html", ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
+    std::string         error_page = create_response(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
 
-    if (error_page.find("$STATUS") == std::string::npos
-        || error_page.find("$MESSAGE") == std::string::npos)
-        throw ;//envoyer une exception ici
-    error_page = error_page.replace(error_page.find("$STATUS"),  7, ft::itostr(e.getCode()));
-    error_page = error_page.replace(error_page.find("$MESSAGE"),  8, http_code[e.getCode()]);
+    if (e.getFile() == "./app/error_pages/template.html"
+        && (error_page.find("$STATUS") != std::string::npos
+        || error_page.find("$MESSAGE") != std::string::npos))
+    {
+        error_page = error_page.replace(error_page.find("$STATUS"),  7, ft::itostr(e.getCode()));
+        error_page = error_page.replace(error_page.find("$MESSAGE"),  8, http_code[e.getCode()]);
+    }
     m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
     m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
 
@@ -128,8 +130,7 @@ void    ServerConnexion::read_from_client(int fd) {
     if (!is_chunk) {
         try {
             handleResponse(client_req, fd);
-        }
-        catch (ErrorException & e) {
+        } catch (ErrorException & e) {
             // if ( default error pages not set )
             handleDefaultError(e, fd);
             // else

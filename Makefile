@@ -6,7 +6,7 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/07 21:15:48 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/09 17:45:28 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,6 +73,6 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	valgrind --leak-check=full ./a.out ./config_files/default.conf
+	./a.out ./config_files/default.conf
 
 .PHONY : all clean fclean test re server_connexion

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keywordsTable.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 04:43:33 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/09 19:56:35 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "autoindex",				true,	true,	true,	false,	false,	false,	"off"			 }, //.Defines whether autoindex should be generated.........
 	{ "client_max_body_size",	true,	true,	true,	false,	false,	false,	"1m"			 }, //.Defines a max size for client requests body...........
 	{ "error_page",				true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines the paths to error pages...................
+	{ "allowed_methods",		true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines allowed http methods...........
 	{ "",						false,	false,	false,	false,	false,	false,	""			 	 }, //.Default settings if keyword was not found.............
 },
 
