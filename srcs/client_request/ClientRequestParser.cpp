@@ -72,9 +72,10 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 	std::istringstream 									str_stream(str);
 	std::map<std::string, std::vector<std::string> >	header;
 
-	while (std::getline(str_stream, line))
+	
+	// std::getline(str_stream, line);
+	while (std::getline(str_stream, line, '\r'))
 	{
-		this->trimBegin(line, "\n\r");
 		if (line.empty())
 			break ;
 		if (line.find(':') == std::string::npos)
@@ -93,6 +94,7 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 		this->trimBegin(header_value, " \f\t\n\r\v");
 		this->trimEnd(header_value, " \f\t\n\r\v");
 		header[header_key] = tokenise(header_value, ',');
+		std::getline(str_stream, line);
 	}
 	return (header);
 }
@@ -103,15 +105,16 @@ std::string	ClientRequestParser::parse_body(std::string str)
 	int							header_length = 0;
 	std::istringstream 			str_stream(str);
 
-	while (std::getline(str_stream, line))
+	while (std::getline(str_stream, line, '\r'))
 	{
 		header_length += line.length() + 1;
-		this->trimBegin(line, "\r");
+		this->trimBegin(line, "\r\n");
 		if (line.empty())
 			break ;
 	}
-	str.erase(0, header_length);
-	return (str);
+	std::getline(str_stream, line);
+	header_length += line.length() + 1;
+	return (str.erase(0, header_length));
 }
 
 void	ClientRequestParser::trimBegin(std::string &request, std::string charset)

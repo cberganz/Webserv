@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/09 21:59:21 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/10 19:58:25 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 		if (!std::isdigit(max_body_size[i]))
 			throw ErrorException(500); // erreur sur le format de la valeur max body size voir quoi faire
 	
-	size_t max_size = std::atoi(max_body_size.c_str());
+	size_t max_size = std::atoi(max_body_size.c_str()) * 1000000;// en mega voir comment fair pour giga etc
 	if (client_req.getBody().size() > max_size)
-		return (false);
-	return (true);
+		return (true);
+	return (false);
 }
 
 void	ResponseMaker::handleErrorPageDirective(Context &context, int error_status)
@@ -98,7 +98,7 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 			throw ErrorException(405);
 		if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
 			throw ErrorException(413);
-		std::string body = m_bodyMaker.createBody(context, client_req.getPath(), client_req.getMethod());
+		std::string body = m_bodyMaker.createBody(context, client_req);
 		(*response).append(m_headerMaker.createHeader());
 		(*response).append(body);
 	} catch (const std::out_of_range &e) {

@@ -3,17 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/10 15:56:46 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/10 19:20:59 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BodyMaker.hpp"
 
 BodyMaker::BodyMaker()
-{}
+{
+	m_method_fcts["GET"]	= &BodyMaker::getMethod;
+	m_method_fcts["POST"]	= &BodyMaker::postMethod;
+	m_method_fcts["DELETE"]	= &BodyMaker::deleteMethod;
+
+}
 
 BodyMaker::BodyMaker(const BodyMaker &src)
 { *this = src; }
@@ -29,8 +34,16 @@ BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 }
 
 /** METHOD **/
+const std::string	&BodyMaker::CallMethod( const std::string & s,
+											const Context& context,
+											std::string path,
+											const ClientRequest& client_req) {
+	MethodFunctions fp = m_method_fcts[s];
+	return (this->*fp)(context, path, client_req);
+}
 
-const std::string	&BodyMaker::getMethod(const Context& context, std::string path) {
+
+const std::string	&BodyMaker::getMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -51,32 +64,37 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 	return (m_body);
 }
 
-void	BodyMaker::postMethod(std::string path) {
+const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+	if (client_req.getHeader().find("content-type")// voir quoi fare si pas de content-type
+		== client_req.getHeader().end())
+			return (m_body);// voir quel retour utiliser
+	else if (client_req.getHeader().at("content-type")[0] == "application/x-www-form-urlencoded")
+		return (m_body);// voir quel retour utiliser
+
+	else if (!client_req.getHeader().at("content-type")[0].compare(0, 29,"multipart/form-data;boundary="))
+		return (m_body);// voir quel retour utiliser
+	return (m_body);// voir quel retour utiliser
 }
 
-void	BodyMaker::deleteMethod(std::string path) {
+const std::string	&BodyMaker::deleteMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+	(void) context;
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
 	if (path.back() == '/' || access(path.c_str(), W_OK) == -1)
 		throw (ErrorException(403));
 	if (std::remove(path.c_str())) 
 		throw (ErrorException(500));
+	return (m_body);// voir quel retour utiliser
 }
 
-const std::string &BodyMaker::createBody(const Context& context, const std::string &uri, const std::string &method)
+const std::string &BodyMaker::createBody(const Context& context, const ClientRequest& client_req)
 {
 	m_body.clear();
 	std::string path;
 	if (context.directiveExist("root"))
 		path = *context.getDirective("root").begin();
-	path += uri;
-	if (method == "DELETE")
-		deleteMethod(path);
-	// else if (method == "POST")
-	// 	postMethod(path);
-	else
-		return (getMethod(context, path));
-	return m_body;
+	path += client_req.getPath();
+	return (CallMethod(client_req.getMethod(), context, path, client_req));
 }
 
 bool BodyMaker::requiresCGI(const std::string &path)
