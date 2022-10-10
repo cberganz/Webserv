@@ -69,11 +69,21 @@ bool            Chunks::is_chunked_header(int fd) {
     return (false);
 }
 
-bool            Chunks::is_chunk(int fd, std::string chunk) {
+bool            Chunks::findChunkedReq(int fd) {
     if (m_chunked_requests.find(fd) != m_chunked_requests.end())
         return (true);
-    if (chunk.find("Transfer-Encoding: chunked") != std::string::npos)
+    return (false);
+}
+
+bool            Chunks::is_chunk_encoding(int fd) {
+    if (!findChunkedReq(fd))
+        return (false);
+    if (m_chunked_requests.find(fd)->second.find("Transfer-Encoding: chunked") != std::string::npos)
         return (true);
     return (false);
+}
+
+void            Chunks::delete_chunk_request(int fd) {
+    m_chunked_requests.erase(fd);
 }
 

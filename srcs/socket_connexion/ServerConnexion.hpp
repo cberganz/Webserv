@@ -14,6 +14,7 @@
 # include <sys/epoll.h>  
 # include <fcntl.h>
 # include <errno.h>
+# include <iostream>
 # include <exception>
 
 # include "../config_lexer_parser/Config.hpp"
@@ -30,6 +31,7 @@ class ServerConnexion {
         std::string     getSocketIp(int sockfd);
         void            handleResponse(std::string client_req, int fd);
         void            handleDefaultError(ErrorException & e, int fd);
+        bool            is_size_chunk(std::string chunk);
 
     protected:
         Config			m_config;

@@ -153,17 +153,17 @@ int            PollingManager::accept_connexion(int ready_fd) {
     return (new_socket);
 }
 
-std::string     PollingManager::receive_request(int client_socket) {
-    char    buffer[MAXBUF];
+std::pair<int, std::string>     PollingManager::receive_request(int client_socket) {
+    char    buffer[MAXBUF + 1];
     int     ret;
 
-    if ((ret = recv(client_socket, &buffer, MAXBUF, 0)) < 0) // comment reagir quand la taille est depassee ?
+    if ((ret = recv(client_socket, &buffer, MAXBUF, 0)) < 0) 
     {
         close(client_socket); // pas sur, peut etre renvoyer une reponse au client
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer[ret] = '\0';
-    return (std::string(buffer));
+    return (std::make_pair(ret, std::string(buffer)));
 }
 
 void            PollingManager::send_request(std::string request, int client_socket) {

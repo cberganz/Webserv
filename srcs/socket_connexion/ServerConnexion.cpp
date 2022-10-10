@@ -107,35 +107,40 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 
 }
 
-
 void    ServerConnexion::read_from_client(int fd) {
-    bool        is_chunk    = false;
-    std::string client_req  = m_polling.receive_request(fd);
+    bool                        is_chunk    = true;
+    std::pair<int, std::string> client_req  = m_polling.receive_request(fd);
 
-    if (client_req.empty())
-    {
+    if (client_req.first < MAXBUF && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos) {
+        m_chunks.add_chunk_request(fd, client_req.second);
+        is_chunk = false;
+        client_req.second = m_chunks.get_unchunked_request(fd);
+    }
+    else {
+        if (m_chunks.is_chunk_encoding(fd) && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos)
+            client_req = m_polling.receive_request(fd);
+        m_chunks.add_chunk_request(fd, client_req.second);
+        if ((client_req.second == "\r\n" || client_req.second.find("0\r\n") != std::string::npos) && m_chunks.is_chunk_encoding(fd)) {
+            is_chunk = false;
+            client_req.second = m_chunks.get_unchunked_request(fd);
+        }
+    }
+    if (!is_chunk && client_req.second == "") {
+        m_chunks.delete_chunk_request(fd);
         close(fd);
         return ;
     }
-    if (m_chunks.is_chunk(fd, client_req)) {
-        is_chunk = true;
-        if (!m_chunks.is_chunked_header(fd))
-            client_req = m_polling.receive_request(fd);
-        m_chunks.add_chunk_request(fd, client_req);
-        if (client_req.find("0\r\n") != std::string::npos) {
-            client_req = m_chunks.get_unchunked_request(fd);
-            is_chunk = false;
-        }
-    }
     if (!is_chunk) {
+        std::cout << "\n\nREQUETE CLIENT: " << client_req.second << std::endl;
         try {
-            handleResponse(client_req, fd);
+            handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {
             // if ( default error pages not set )
             handleDefaultError(e, fd);
             // else
                 // handle error with setted error page
         }
+        m_chunks.delete_chunk_request(fd);
     }
 }
 

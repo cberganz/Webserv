@@ -67,17 +67,17 @@ class PollingManager {
         PollingManager  &operator=(const PollingManager &copy);
 
         /** EPOLL - TRAITEMENT DES REQUETES **/
-        void                new_client_connexion(int fd);
-        void                send_response(std::string header, int fd);
-        void                init_epoll_events();
-        void                edit_socket_in_epoll(int fd, int event);
-        int                 wait_for_connexions();
-        bool                is_existing_socket_fd(int fd);
-        int                 accept_connexion(int ready_fd);
-        std::string         receive_request(int client_socket);
-        void                send_request(std::string request, int client_socket);
-        void                close_epfd();
-        struct epoll_event  get_ready_event( int index ) const;
+        void                                new_client_connexion(int fd);
+        void                                send_response(std::string header, int fd);
+        void                                init_epoll_events();
+        void                                edit_socket_in_epoll(int fd, int event);
+        int                                 wait_for_connexions();
+        bool                                is_existing_socket_fd(int fd);
+        int                                 accept_connexion(int ready_fd);
+        std::pair<int, std::string>         receive_request(int client_socket);
+        void                                send_request(std::string request, int client_socket);
+        void                                close_epfd();
+        struct epoll_event                  get_ready_event( int index ) const;
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/07 18:28:19 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/10 15:56:46 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ const std::string &BodyMaker::createBody(const Context& context, const std::stri
 	path += uri;
 	if (method == "DELETE")
 		deleteMethod(path);
-	else if (method == "POST")
-		postMethod(path);
+	// else if (method == "POST")
+	// 	postMethod(path);
 	else
 		return (getMethod(context, path));
 	return m_body;

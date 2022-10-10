@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
+#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/09 17:45:28 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/10 15:57:46 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,6 +73,6 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out ./config_files/default.conf
+	./a.out ./config_files/form.conf
 
 .PHONY : all clean fclean test re server_connexion

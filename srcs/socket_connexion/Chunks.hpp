@@ -29,8 +29,10 @@ class Chunks {
         std::string     get_next_chunk(int fd);
 
         /** UTILS **/
-        bool            is_chunk(int fd, std::string chunk);
+        bool            findChunkedReq(int fd);
+        bool            is_chunk_encoding(int fd);
         bool            is_chunked_header(int fd);
+        void            delete_chunk_request(int fd);
 };
 
 #endif
