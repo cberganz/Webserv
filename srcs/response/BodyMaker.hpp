@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/10 19:03:19 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 18:21:40 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ private:
 	const std::string	&postMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&deleteMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&CallMethod( const std::string & s, const Context& context, std::string path, const ClientRequest& client_req);
+
+	// void	post_urlencoded()
 
 };
 

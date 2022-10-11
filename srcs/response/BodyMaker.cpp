@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 17:24:51 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 18:14:08 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 		readFile(path);
 	return (m_body);
 }
+
+
 
 const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type

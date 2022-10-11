@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/10 19:58:25 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 20:43:11 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,49 @@ void	ResponseMaker::handleErrorPageDirective(Context &context, int error_status)
 	throw ErrorException(error_status);
 }
 
+std::string	find_longest_location(Context context, std::string uri)
+{
+	while (uri.length())
+	{
+		try { 
+			context.getContext(uri);
+			return (uri);
+		}
+		catch (const std::out_of_range &e) {
+			uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
+		}
+	}
+	try {
+		context.getContext("/");
+		return ("/");
+	}
+	catch (const std::out_of_range &e) {}
+	return (uri);
+}
+
+Context	find_context(Context context, std::string uri)
+{
+	Context last_context = context;
+
+	while ()
+	{
+		try {
+			last_context = last_context.getContext(find_longest_location(context, uri));
+
+		} catch (const std::out_of_range &e) {
+			if ()
+			return (last_context);
+		}
+	}
+}
+
 Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
 {
 	Response*	response = new Response();
 	try {
+		std::cout << "\n\nLONGEST LOCATION: " << find_longest_location(m_config[ip + ":" + port], client_req.getPath()) << std::endl;
 		Context context = m_config[ip + ":" + port].getContext(client_req.getPath()); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+		
 		if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
 			throw ErrorException(405);
 		if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
