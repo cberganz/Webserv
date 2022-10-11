@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/10 19:20:59 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 17:24:51 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 }
 
 const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
-	if (client_req.getHeader().find("content-type")// voir quoi fare si pas de content-type
+	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
 			return (m_body);// voir quel retour utiliser
-	else if (client_req.getHeader().at("content-type")[0] == "application/x-www-form-urlencoded")
+	else if (client_req.getHeader().at("Content-Type")[0] == "application/x-www-form-urlencoded")
 		return (m_body);// voir quel retour utiliser
 
-	else if (!client_req.getHeader().at("content-type")[0].compare(0, 29,"multipart/form-data;boundary="))
+	else if (!client_req.getHeader().at("Content-Type")[0].compare(0, 30,"multipart/form-data; boundary="))
 		return (m_body);// voir quel retour utiliser
 	return (m_body);// voir quel retour utiliser
 }
