@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 20:43:11 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 20:47:09 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,21 +109,21 @@ std::string	find_longest_location(Context context, std::string uri)
 	return (uri);
 }
 
-Context	find_context(Context context, std::string uri)
-{
-	Context last_context = context;
+// Context	find_context(Context context, std::string uri)
+// {
+// 	Context last_context = context;
 
-	while ()
-	{
-		try {
-			last_context = last_context.getContext(find_longest_location(context, uri));
+// 	while ()
+// 	{
+// 		try {
+// 			last_context = last_context.getContext(find_longest_location(context, uri));
 
-		} catch (const std::out_of_range &e) {
-			if ()
-			return (last_context);
-		}
-	}
-}
+// 		} catch (const std::out_of_range &e) {
+// 			if ()
+// 			return (last_context);
+// 		}
+// 	}
+// }
 
 Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
 {
