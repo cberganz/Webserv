@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 20:43:21 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/11 20:49:11 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 				path);
 	}
 }
+
 
 const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type

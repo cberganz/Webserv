@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 19:37:07 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/11 20:49:21 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ private:
 	const std::string	&CallMethod( const std::string & s, const Context& context, std::string path, const ClientRequest& client_req);
 	void				post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path);
 	void				createFile(std::string filename, std::string content, std::string path);
+
+	// void	post_urlencoded()
 
 };
 
