@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/10 19:03:19 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 19:37:07 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include "../client_request/ClientRequest.hpp"
 # include "extensionsTable.hpp"
 # include <cstdio>
+
+# define UPLOAD_PATH "./upload"
 
 class BodyMaker {
 
@@ -54,6 +56,8 @@ private:
 	const std::string	&postMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&deleteMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&CallMethod( const std::string & s, const Context& context, std::string path, const ClientRequest& client_req);
+	void				post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path);
+	void				createFile(std::string filename, std::string content, std::string path);
 
 };
 

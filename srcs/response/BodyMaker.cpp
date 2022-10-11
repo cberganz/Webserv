@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 17:24:51 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/11 20:43:21 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,34 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 	return (m_body);
 }
 
+void	BodyMaker::createFile(std::string filename, std::string content, std::string path) {
+	filename = path + filename;
+	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
+
+	out.clear();
+	for (size_t i = 0; i < content.length(); i++)
+		out.put(content[i]);
+}
+
+void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
+	std::string	boundary = client_req.getHeader().at("Content-Type")[0].substr(30);
+	std::string body = client_req.getBody();
+	int			i = 0;
+
+	while ((i = body.find(boundary, i)) != std::string::npos) {
+		i += boundary.length() + 1;
+		if (body.find("filename=", i) == std::string::npos)
+			break ;
+		if (body.find("filename=", i) > body.find(boundary, i)
+			|| body[body.find("filename=", i) + 10] == '\"')
+			continue ;
+		i = body.find("filename=", i) + 10;
+		createFile(body.substr(i, body.find("\"", i) - i), 
+				body.substr(body.find("\r\n\r\n", i) + 4, body.find("\r\n--" + boundary, i) - body.find("\r\n\r\n", i) - 4),
+				path);
+	}
+}
+
 const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
@@ -72,7 +100,7 @@ const std::string	&BodyMaker::postMethod(const Context& context, std::string pat
 		return (m_body);// voir quel retour utiliser
 
 	else if (!client_req.getHeader().at("Content-Type")[0].compare(0, 30,"multipart/form-data; boundary="))
-		return (m_body);// voir quel retour utiliser
+		return (post_multipart_form(client_req, context, path), m_body);// voir quel retour utiliser
 	return (m_body);// voir quel retour utiliser
 }
 
