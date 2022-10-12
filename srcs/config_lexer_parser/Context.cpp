@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Context.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 04:08:57 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/12 15:50:18 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,18 @@ const std::vector<std::string> &Context::getDirective(const std::string &directi
 
 bool Context::directiveExist(const std::string &directive) const
 { return m_directives.count(directive); }
+
+bool Context::contextExist(const std::string &contextName) const
+{ 
+	try {
+		this->getContext(contextName);
+	}
+	catch (const std::out_of_range &e) {
+		return (false);
+	}
+	return (true);
+}
+
 /*
 **	@brief Parse the context informations inside the tokens container.
 **

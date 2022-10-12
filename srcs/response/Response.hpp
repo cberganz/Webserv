@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:33 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:22:50 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/12 18:05:55 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,38 @@
 # define RESPONSE_HPP
 
 # include <string>
+# include "../config_lexer_parser/Config.hpp"
+# include "../client_request/ClientRequest.hpp"
 
 class Response {
 
 public:
 	Response();
+	Response(const ClientRequest &client_req, const Context &context, const std::string &longest_location);
 	~Response();
 	Response(const Response &src);
 
 	Response &operator=(const Response &rhs);
 
-	const std::string &getResponse();
+	const std::string	&getResponse() const;
+	const int 			&getHttpCode() const;
+	const std::string	&getPath() const;
+	const Context		&getContext() const;
+	const ClientRequest	&getClientRequest() const;
 
-	void append(const std::string &str);
 	void setHttpCode(const int &code);
+	void setPath(const std::string &longest_location);
+	void setContext(const Context &context);
+	void setClientRequest(const ClientRequest &client_req);
+	
+	void append(const std::string &str);
 
 private:
-	std::string m_response;
-	int			m_httpCode;
+	int				m_httpCode;
+	std::string 	m_response;
+	std::string 	m_path;
+	Context 		m_context;
+	ClientRequest 	m_client_req;
 
 }; // class Response
 

@@ -119,8 +119,9 @@ void                PollingManager::edit_socket_in_epoll(int fd, int event) {
 }
 
 void            PollingManager::init_epoll_events() {
-    if ((m_epfd = epoll_create(10)) < 0)
+    if ((m_epfd = epoll_create(10)) < 0) {
         throw (SocketCreationException(EPOLLCREATEERR));
+	}
 	for (size_t i = 0; i < m_sockets_fds.size(); i++)
         add_socket_to_epoll(m_sockets_fds[i]);
 }

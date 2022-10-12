@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:00:19 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/09 21:50:56 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/12 18:49:37 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ public:
 
 	bool		isMethodAllowed(Context &context, ClientRequest &client_req);
 	bool		isBodySizeLimitReached(Context &context, ClientRequest &client_req);
-	void		handleErrorPageDirective(Context &context, int error_status);
+	void		handleErrorPageDirective(const Context &context, int error_status, const std::string path);
 
 	Response*	createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port);
 
@@ -44,6 +44,8 @@ private:
 	Config		m_config;
 	HeaderMaker	m_headerMaker;
 	BodyMaker	m_bodyMaker;
+
+	std::string	findLongestLocation(Context context, std::string uri);
 
 }; // class ResponseMaker
 

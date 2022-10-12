@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 20:47:09 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/12 18:50:47 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,80 +75,67 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 	return (false);
 }
 
-void	ResponseMaker::handleErrorPageDirective(Context &context, int error_status)
+void	ResponseMaker::handleErrorPageDirective(const Context &context, int error_status, const std::string path)
 {
 	ContextBase::tokensContainer error_page_tokens =
 			context.getDirective("error_page");
 
-	if (error_page_tokens.front() != "default"
-		&& std::find(error_page_tokens.begin(), error_page_tokens.end(), ft::itostr(error_status))
-		!= error_page_tokens.end()
-		&& access(error_page_tokens.back().c_str(), F_OK ) != -1
-		&& access(error_page_tokens.back().c_str(), R_OK ) != -1)
-			throw ErrorException(error_status, error_page_tokens.back());
+	if (error_page_tokens.front() == "default")
+		throw ErrorException(error_status);
+
+	Lexer::tokensContainer::iterator error_it =
+				std::find(error_page_tokens.begin(), error_page_tokens.end(), ft::itostr(error_status));
+
+	if (error_it == error_page_tokens.end()
+		|| error_it + 1 == error_page_tokens.end())
+			throw ErrorException(error_status);
+
+	std::string error_file_path = path + "/" + *(error_it + 1);
+
+	std::cout << "\n\n"+error_file_path+"\n\n" << std::endl;
+	if (access(error_file_path.c_str(), F_OK ) != -1
+		&& access(error_file_path.c_str(), R_OK ) != -1)
+			throw ErrorException(error_status, error_file_path);
+
 	throw ErrorException(error_status);
 }
 
-std::string	find_longest_location(Context context, std::string uri)
+std::string	ResponseMaker::findLongestLocation(Context context, std::string uri)
 {
-	while (uri.length())
+	while (!uri.empty())
 	{
-		try { 
-			context.getContext(uri);
+		if (context.contextExist(uri))
 			return (uri);
-		}
-		catch (const std::out_of_range &e) {
-			uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
-		}
+		uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
 	}
-	try {
-		context.getContext("/");
+	if (context.contextExist("/"))
 		return ("/");
-	}
-	catch (const std::out_of_range &e) {}
 	return (uri);
 }
 
-// Context	find_context(Context context, std::string uri)
-// {
-// 	Context last_context = context;
-
-// 	while ()
-// 	{
-// 		try {
-// 			last_context = last_context.getContext(find_longest_location(context, uri));
-
-// 		} catch (const std::out_of_range &e) {
-// 			if ()
-// 			return (last_context);
-// 		}
-// 	}
-// }
-
 Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
 {
-	Response*	response = new Response();
+	std::string longest_location = findLongestLocation(m_config[ip + ":" + port], client_req.getPath());
+
 	try {
-		std::cout << "\n\nLONGEST LOCATION: " << find_longest_location(m_config[ip + ":" + port], client_req.getPath()) << std::endl;
-		Context context = m_config[ip + ":" + port].getContext(client_req.getPath()); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
-		
+		if (!m_config[ip + ":" + port].contextExist(longest_location))
+			throw ErrorException(404);
+		Context context = m_config[ip + ":" + port].getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+		Response*	response = new Response(client_req, context, longest_location);
+
 		if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
 			throw ErrorException(405);
 		if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
 			throw ErrorException(413);
-		std::string body = m_bodyMaker.createBody(context, client_req);
+
+		std::string body = m_bodyMaker.createBody(*response);
 		(*response).append(m_headerMaker.createHeader());
 		(*response).append(body);
-	} catch (const std::out_of_range &e) {
-		Context	context =
-			m_config[ip + ":" + port];
-
-		handleErrorPageDirective(context, 404);
+		return response;
 	} catch (ErrorException &e) {
 		Context	context =
-			m_config[ip + ":" + port].getContext(client_req.getPath());
-
-		handleErrorPageDirective(context, e.getCode());
+			m_config[ip + ":" + port].getContext(longest_location);
+		handleErrorPageDirective(context, e.getCode(), *context.getDirective("root").begin());
 	}
-	return response;
+	return new Response();
 }

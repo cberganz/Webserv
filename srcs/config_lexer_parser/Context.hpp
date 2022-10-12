@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Context.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 01:38:49 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/12 15:37:37 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ public:
 	const Context							&getContext(const std::string &contextName) const;
 	const std::vector<std::string>			&getDirective(const std::string &directiveName) const;
 	bool									directiveExist(const std::string &directive) const;
+	bool									contextExist(const std::string &context) const;
 
 	void checkMandatoryDirectives();
 	void checkMandatoryContexts() const;
