@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:33 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 16:52:55 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 20:26:46 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,14 @@ public:
 	const std::string	&getPath() const;
 	const Context		&getContext() const;
 	const ClientRequest	&getClientRequest() const;
+	const std::string	&getLocation() const;
 
 	void setHttpCode(const int &code);
 	void setPath(const std::string &longest_location);
 	void setContext(const Context &context);
 	void setClientRequest(const ClientRequest &client_req);
-	
+	void setLocation(const std::string &location);
+
 	void append(const std::string &str);
 	void insert(std::string::size_type index, const std::string &str);
 
@@ -45,6 +47,7 @@ private:
 	int				m_httpCode;
 	std::string 	m_response;
 	std::string 	m_path;
+	std::string 	m_location;
 	Context 		m_context;
 	ClientRequest 	m_client_req;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HeaderMaker.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:26:44 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 16:10:10 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 20:23:48 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 class HeaderMaker {
 
 public:
-	typedef bool (HeaderMaker::*conditions)();
+	typedef bool (HeaderMaker::*conditions)(const ClientRequest &client_req, const Response &response);
 	typedef void (HeaderMaker::*fields)(const ClientRequest &client_req, const Response &response);
 
 	HeaderMaker();
@@ -44,20 +44,20 @@ private:
 	static fields		m_fields[];
 	static conditions	m_conditions[];
 
-	bool condition_date();
-	bool condition_server();
-	bool condition_location();
-	bool condition_connection();
-	bool condition_retry_after();
-	bool condition_last_modified();
-	bool condition_www_authenticate();
-	bool condition_transfert_encoding();
-	bool condition_content_type();
-	bool condition_content_lenght();
-	bool condition_content_location();
-	bool condition_content_language();
+	bool condition_date(const ClientRequest &client_req, const Response &response);
+	bool condition_server(const ClientRequest &client_req, const Response &response);
+	bool condition_location(const ClientRequest &client_req, const Response &response);
+	bool condition_connection(const ClientRequest &client_req, const Response &response);
+	bool condition_retry_after(const ClientRequest &client_req, const Response &response);
+	bool condition_last_modified(const ClientRequest &client_req, const Response &response);
+	bool condition_www_authenticate(const ClientRequest &client_req, const Response &response);
+	bool condition_transfert_encoding(const ClientRequest &client_req, const Response &response);
+	bool condition_content_type(const ClientRequest &client_req, const Response &response);
+	bool condition_content_lenght(const ClientRequest &client_req, const Response &response);
+	bool condition_content_location(const ClientRequest &client_req, const Response &response);
+	bool condition_content_language(const ClientRequest &client_req, const Response &response);
 
-	void head(const ClientRequest &client_req, const Response &response);
+	void head(const Response &response);
 	void date(const ClientRequest &client_req, const Response &response);
 	void server(const ClientRequest &client_req, const Response &response);
 	void location(const ClientRequest &client_req, const Response &response);

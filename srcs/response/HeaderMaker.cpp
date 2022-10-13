@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HeaderMaker.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 18:44:02 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 20:30:14 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ HeaderMaker &HeaderMaker::operator=(const HeaderMaker &rhs)
 std::string HeaderMaker::createHeader(const ClientRequest &client_req, const Response &response)
 {
 	m_header.clear();
-	head(client_req, response);
+	head(response);
 	for (int i = 0 ; i < MAX_FIELDS ; i++)
 	{
-		if ((this->*m_conditions[i])())
+		if ((this->*m_conditions[i])(client_req, response))
 		{
 			m_header += headersTable[i].rowTitle + ": ";
 			(this->*m_fields[i])(client_req, response);
@@ -79,7 +79,7 @@ std::string HeaderMaker::createHeader(const ClientRequest &client_req, const Res
 	return m_header;
 }
 
-void HeaderMaker::head(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::head(const Response &response)
 {
 	m_header += "HTTP/1.1";
 	m_header += " " + ft::itostr(response.getHttpCode());
@@ -87,40 +87,40 @@ void HeaderMaker::head(const ClientRequest &client_req, const Response &response
 	m_header += NEWLINE;
 }
 
-bool HeaderMaker::condition_date()
+bool HeaderMaker::condition_date(const ClientRequest &client_req, const Response &response)
 { return true; }
 
-bool HeaderMaker::condition_server()
+bool HeaderMaker::condition_server(const ClientRequest &client_req, const Response &response)
 { return true; }
 
-bool HeaderMaker::condition_location()
+bool HeaderMaker::condition_location(const ClientRequest &client_req, const Response &response)
+{ return (response.getHttpCode() > 300 && response.getHttpCode() < 400 ? true : false); }// checker les bons stATuscode
+
+bool HeaderMaker::condition_connection(const ClientRequest &client_req, const Response &response)
 { return false; }
 
-bool HeaderMaker::condition_connection()
-{ return false; }
-
-bool HeaderMaker::condition_retry_after()
+bool HeaderMaker::condition_retry_after(const ClientRequest &client_req, const Response &response)
 { return true; }
 
-bool HeaderMaker::condition_last_modified()
+bool HeaderMaker::condition_last_modified(const ClientRequest &client_req, const Response &response)
 { return false; }
 
-bool HeaderMaker::condition_www_authenticate()
+bool HeaderMaker::condition_www_authenticate(const ClientRequest &client_req, const Response &response)
 { return false; }
 
-bool HeaderMaker::condition_transfert_encoding()
+bool HeaderMaker::condition_transfert_encoding(const ClientRequest &client_req, const Response &response)
 { return true; }
 
-bool HeaderMaker::condition_content_type()
+bool HeaderMaker::condition_content_type(const ClientRequest &client_req, const Response &response)
 { return true; }
 
-bool HeaderMaker::condition_content_lenght()
+bool HeaderMaker::condition_content_lenght(const ClientRequest &client_req, const Response &response)
 { return false; }
 
-bool HeaderMaker::condition_content_location()
+bool HeaderMaker::condition_content_location(const ClientRequest &client_req, const Response &response)
 { return false; }
 
-bool HeaderMaker::condition_content_language()
+bool HeaderMaker::condition_content_language(const ClientRequest &client_req, const Response &response)
 { return false; }
 
 void HeaderMaker::date(const ClientRequest &client_req, const Response &response)
@@ -130,7 +130,7 @@ void HeaderMaker::server(const ClientRequest &client_req, const Response &respon
 { m_header += *response.getContext().getDirective("server_name").begin(); }
 
 void HeaderMaker::location(const ClientRequest &client_req, const Response &response)
-{ m_header += ""; }
+{ m_header += response.getLocation(); }
 
 void HeaderMaker::connection(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }

@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:56 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 16:52:58 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 20:26:24 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Response::Response()
 {}
 
 Response::Response(const ClientRequest &client_req, const Context &context, const std::string &longest_location)
-: m_httpCode(200), m_response(), m_path(), m_context(context), m_client_req(client_req)
+: m_httpCode(200), m_response(), m_path(), m_location(), m_context(context), m_client_req(client_req)
 {
 	this->setPath(longest_location);
 }
@@ -37,6 +37,7 @@ Response &Response::operator=(const Response &rhs)
 		this->m_response 	= rhs.m_response;
 		this->m_httpCode 	= rhs.m_httpCode;
 		this->m_path		= rhs.m_path;
+		this->m_location	= rhs.m_location;
 		this->m_context		= rhs.m_context;
 		this->m_client_req	= rhs.m_client_req;
 	}
@@ -51,6 +52,9 @@ const int	&Response::getHttpCode() const
 
 const std::string	&Response::getPath() const
 { return m_path; }
+
+const std::string	&Response::getLocation() const
+{ return m_location; }
 
 const Context	&Response::getContext() const
 { return m_context; }
@@ -84,3 +88,6 @@ void Response::setContext(const Context &context)
 
 void Response::setClientRequest(const ClientRequest &client_req)
 { m_client_req = client_req; }
+
+void Response::setLocation(const std::string &location)
+{ m_location = location; }
