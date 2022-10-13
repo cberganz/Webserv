@@ -6,6 +6,7 @@
 # include <iostream>
 # include <sstream>
 # include <iostream>
+# include "../tools/utility.hpp"
 
 # define MAX_CHUNK_LEN  1024
 
@@ -23,6 +24,7 @@ class Chunks {
         /** REQUEST **/
         void            add_chunk_request(int fd, std::string chunk);
         std::string     get_unchunked_request(int fd);
+        bool            request_body_is_whole(int fd);
 
         /** RESPONSE **/
         std::string     add_headerless_response_to_chunk(int fd, std::string response);

@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/11 20:43:21 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/12 14:42:44 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 
 void	BodyMaker::createFile(std::string filename, std::string content, std::string path) {
 	filename = path + filename;
-	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
+	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::binary);
+	size_t			size = content.size();
 
 	out.clear();
-	for (size_t i = 0; i < content.length(); i++)
-		out.put(content[i]);
+	out.write(content.c_str(), size);
 }
 
 void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
