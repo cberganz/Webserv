@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:56 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 18:09:44 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/13 16:52:58 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ const ClientRequest	&Response::getClientRequest() const
 
 void Response::append(const std::string &str)
 { this->m_response += str; }
+
+void Response::insert(std::string::size_type index, const std::string &str)
+{ this->m_response.insert(index, str); }
 
 void Response::setHttpCode(const int &code)
 { this->m_httpCode = code; }

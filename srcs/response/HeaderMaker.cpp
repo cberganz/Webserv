@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 05:55:00 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 18:44:02 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,16 @@ HeaderMaker &HeaderMaker::operator=(const HeaderMaker &rhs)
 	return *this;
 }
 
-std::string HeaderMaker::createHeader()
+std::string HeaderMaker::createHeader(const ClientRequest &client_req, const Response &response)
 {
 	m_header.clear();
-	head();
+	head(client_req, response);
 	for (int i = 0 ; i < MAX_FIELDS ; i++)
 	{
 		if ((this->*m_conditions[i])())
 		{
 			m_header += headersTable[i].rowTitle + ": ";
-			(this->*m_fields[i])();
+			(this->*m_fields[i])(client_req, response);
 			m_header += NEWLINE;
 		}
 	}
@@ -79,11 +79,11 @@ std::string HeaderMaker::createHeader()
 	return m_header;
 }
 
-void HeaderMaker::head()
+void HeaderMaker::head(const ClientRequest &client_req, const Response &response)
 {
 	m_header += "HTTP/1.1";
-	m_header += " " + ft::itostr(200); // TO_DO: code should come from request
-	m_header += " " + m_httpCodes[200];// TO_DO: code should come from request
+	m_header += " " + ft::itostr(response.getHttpCode());
+	m_header += " " + m_httpCodes[response.getHttpCode()];
 	m_header += NEWLINE;
 }
 
@@ -123,38 +123,50 @@ bool HeaderMaker::condition_content_location()
 bool HeaderMaker::condition_content_language()
 { return false; }
 
-void HeaderMaker::date()
+void HeaderMaker::date(const ClientRequest &client_req, const Response &response)
 { m_header += ft::getTimeFormated(); }
 
-void HeaderMaker::server()
-{ m_header += "webserv-42"; }
+void HeaderMaker::server(const ClientRequest &client_req, const Response &response)
+{ m_header += *response.getContext().getDirective("server_name").begin(); }
 
-void HeaderMaker::location()
+void HeaderMaker::location(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }
 
-void HeaderMaker::connection()
+void HeaderMaker::connection(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }
 
-void HeaderMaker::retry_after()
+void HeaderMaker::retry_after(const ClientRequest &client_req, const Response &response)
 { m_header += "120"; }
 
-void HeaderMaker::last_modified()
+void HeaderMaker::last_modified(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }
 
-void HeaderMaker::www_authenticate()
+void HeaderMaker::www_authenticate(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }
 
-void HeaderMaker::transfert_encoding()
+void HeaderMaker::transfert_encoding(const ClientRequest &client_req, const Response &response)
 { m_header += "chunked"; }
 
-void HeaderMaker::content_type()
-{ m_header += "text/html; charset=utf-8"; }
+void HeaderMaker::content_type(const ClientRequest &client_req, const Response &response)
+{
+	std::string extension = response.getPath().substr(response.getPath().find_last_of(".") + 1, response.getPath().size());
+	for (int i = 0 ; i < MAX_EXT ; i++)
+	{
+		if (extension == extensionsTable[i].extension)
+		{
+			m_header += extensionsTable[i].MIMEType;
+			m_header += "; charset=utf-8";
+			return ;			
+		}
+	}
+	m_header += "text/html; charset=utf-8";
+}
 
-void HeaderMaker::content_lenght()
+void HeaderMaker::content_lenght(const ClientRequest &client_req, const Response &response)
+{ m_header += ft::itostr(response.getResponse().size()); }
+
+void HeaderMaker::content_location(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }
 
-void HeaderMaker::content_location()
-{ m_header += ""; }
-
-void HeaderMaker::content_language()
+void HeaderMaker::content_language(const ClientRequest &client_req, const Response &response)
 { m_header += ""; }

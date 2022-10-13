@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 18:50:47 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/13 19:19:50 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,8 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 		if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
 			throw ErrorException(413);
 
-		std::string body = m_bodyMaker.createBody(*response);
-		(*response).append(m_headerMaker.createHeader());
-		(*response).append(body);
+		(*response).append(m_bodyMaker.createBody(*response));
+		(*response).insert(0, m_headerMaker.createHeader(client_req, *response));
 		return response;
 	} catch (ErrorException &e) {
 		Context	context =

@@ -13,6 +13,7 @@ root -> TEST
 	server_name -> cberganz.42.fr
 
 		[location][/path]
+		allowed_methods -> default
 		autoindex -> off
 		client_max_body_size -> 1m
 		error_page -> default
@@ -20,6 +21,7 @@ root -> TEST
 		root -> test2
 
 		[location][/what]
+		allowed_methods -> default
 		autoindex -> off
 		client_max_body_size -> 1m
 		error_page -> default

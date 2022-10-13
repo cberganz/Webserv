@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:26:44 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 04:17:03 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/13 16:10:10 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include "../tools/utility.hpp"
 # include "HttpCodes.hpp"
 # include "headersTable.hpp"
+# include "extensionsTable.hpp"
+# include "../client_request/ClientRequest.hpp"
+# include "Response.hpp"
 
 # define NEWLINE "\r\n"
 # define MAX_FIELDS 12
@@ -25,7 +28,7 @@ class HeaderMaker {
 
 public:
 	typedef bool (HeaderMaker::*conditions)();
-	typedef void (HeaderMaker::*fields)();
+	typedef void (HeaderMaker::*fields)(const ClientRequest &client_req, const Response &response);
 
 	HeaderMaker();
 	HeaderMaker(const HeaderMaker &src);
@@ -33,7 +36,7 @@ public:
 
 	HeaderMaker &operator=(const HeaderMaker &rhs);
 
-	std::string createHeader();
+	std::string createHeader(const ClientRequest &client_req, const Response &response);
 
 private:
 	HttpCodes			m_httpCodes;
@@ -54,19 +57,19 @@ private:
 	bool condition_content_location();
 	bool condition_content_language();
 
-	void head();
-	void date();
-	void server();
-	void location();
-	void connection();
-	void retry_after();
-	void last_modified();
-	void www_authenticate();
-	void transfert_encoding();
-	void content_type();
-	void content_lenght();
-	void content_location();
-	void content_language();
+	void head(const ClientRequest &client_req, const Response &response);
+	void date(const ClientRequest &client_req, const Response &response);
+	void server(const ClientRequest &client_req, const Response &response);
+	void location(const ClientRequest &client_req, const Response &response);
+	void connection(const ClientRequest &client_req, const Response &response);
+	void retry_after(const ClientRequest &client_req, const Response &response);
+	void last_modified(const ClientRequest &client_req, const Response &response);
+	void www_authenticate(const ClientRequest &client_req, const Response &response);
+	void transfert_encoding(const ClientRequest &client_req, const Response &response);
+	void content_type(const ClientRequest &client_req, const Response &response);
+	void content_lenght(const ClientRequest &client_req, const Response &response);
+	void content_location(const ClientRequest &client_req, const Response &response);
+	void content_language(const ClientRequest &client_req, const Response &response);
 
 }; // class HeaderMaker
 

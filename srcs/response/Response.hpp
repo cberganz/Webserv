@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:33 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 18:05:55 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/13 16:52:55 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ public:
 	void setClientRequest(const ClientRequest &client_req);
 	
 	void append(const std::string &str);
+	void insert(std::string::size_type index, const std::string &str);
 
 private:
 	int				m_httpCode;
