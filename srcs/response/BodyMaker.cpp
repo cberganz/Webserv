@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 14:37:33 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/12 19:48:09 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,16 @@ BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 }
 
 /** METHOD **/
-const std::string	&BodyMaker::CallMethod( const std::string & s,
-											const Context& context,
-											std::string path,
-											const ClientRequest& client_req) {
-	MethodFunctions fp = m_method_fcts[s];
-	return (this->*fp)(context, path, client_req);
-}
 
+bool isDirectory(const std::string &path)
+{
+	struct stat s;
+
+	if ( lstat(path.c_str(), &s) == 0 )
+		if ( S_ISDIR(s.st_mode) )
+			return true;
+	return false;
+}
 
 const std::string	&BodyMaker::getMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
@@ -53,9 +55,7 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 			return autoIndex(path);
 		}
 	}
-	else
-		path += "/" + *context.getDirective("index").begin();
-	if (access(path.c_str(), F_OK) == -1)
+	if (access(path.c_str(), F_OK) == -1 || isDirectory(path))// voir si Nginx gere pareil
 		throw ErrorException(404);
 	if (requiresCGI(path))
 		executeCGI(path);
@@ -66,11 +66,11 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 
 void	BodyMaker::createFile(std::string filename, std::string content, std::string path) {
 	filename = path + filename;
-	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::binary);
-	size_t			size = content.size();
+	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
 
 	out.clear();
-	out.write(content.c_str(), size);
+	for (size_t i = 0; i < content.length(); i++)
+		out.put(content[i]);
 }
 
 void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
@@ -91,7 +91,6 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 				path);
 	}
 }
-
 
 const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
@@ -116,14 +115,11 @@ const std::string	&BodyMaker::deleteMethod(const Context& context, std::string p
 	return (m_body);// voir quel retour utiliser
 }
 
-const std::string &BodyMaker::createBody(const Context& context, const ClientRequest& client_req)
+const std::string &BodyMaker::createBody(const Response& response)
 {
 	m_body.clear();
-	std::string path;
-	if (context.directiveExist("root"))
-		path = *context.getDirective("root").begin();
-	path += client_req.getPath();
-	return (CallMethod(client_req.getMethod(), context, path, client_req));
+	MethodFunctions fp = m_method_fcts[response.getClientRequest().getMethod()];
+	return (this->*fp)(response.getContext(), response.getPath(), response.getClientRequest());
 }
 
 bool BodyMaker::requiresCGI(const std::string &path)

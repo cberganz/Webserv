@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   extensionsTable.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/03 01:42:36 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/12 19:19:03 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define MAX_EXT 76
+#define MAX_EXT 77
 
 typedef struct s_extension {
 	std::string	extension;
@@ -22,6 +22,7 @@ typedef struct s_extension {
 const t_extension extensionsTable[MAX_EXT] =
 {
 	/*.Ext......isCGI.......prog............MIMEType....................................................................*/
+	{ "",		false,		"",				"text/html"																	},
 	{ "html",	false,		"",				"text/html"																	},
 	{ "php",	true,		"/usr/bin/php",	"application/x-httpd-php"													},
 	{ "aac",	false,		"",				"audio/aac"																	},
