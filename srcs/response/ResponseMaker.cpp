@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 20:33:14 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/14 16:34:26 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 	std::string longest_location = findLongestLocation(m_config[ip + ":" + port], client_req.getPath());
 
 	try {
-		if (!m_config[ip + ":" + port].contextExist(longest_location))
+		if (not m_config[ip + ":" + port].contextExist(longest_location))
 			throw ErrorException(404);
 		Context context = m_config[ip + ":" + port].getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
 		Response*	response = new Response(client_req, context, longest_location);

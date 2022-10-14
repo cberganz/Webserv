@@ -19,6 +19,7 @@ root -> $default_root
 		error_page -> default
 		index -> $default_index
 		root -> $default_root
+		server_name -> $name_server
 
 		[location][$path2]
 		allowed_methods -> default
@@ -27,4 +28,5 @@ root -> $default_root
 		error_page -> default
 		index -> $index_default
 		root -> $default_root
+		server_name -> $name_server
 

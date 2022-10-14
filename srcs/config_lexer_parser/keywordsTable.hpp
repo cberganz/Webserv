@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keywordsTable.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 20:32:02 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/14 16:18:06 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 {	/*.Keyword..................Manda...Possi...Direc...Bloc....URI.....Multi...Default..........*/
 	{ "root",					false,	true,	true,	false,	false,	false,	""				 }, //.Sets the root directory for requests..................
 	{ "index",					true,	true,	true,	false,	false,	true,	"index.html" 	 }, //.Defines files that will be used as an index...........
+	{ "server_name",			false,	true,	true,	false,	false,	false,	""				 }, //.Sets names of a virtual server........................
 	{ "autoindex",				true,	true,	true,	false,	false,	false,	"off"			 }, //.Defines whether autoindex should be generated.........
 	{ "client_max_body_size",	true,	true,	true,	false,	false,	false,	"1m"			 }, //.Defines a max size for client requests body...........
 	{ "error_page",				true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines the paths to error pages...................

@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 20:30:14 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/14 16:14:40 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ bool HeaderMaker::condition_date(const ClientRequest &client_req, const Response
 { return true; }
 
 bool HeaderMaker::condition_server(const ClientRequest &client_req, const Response &response)
-{ return true; }
+{ return response.getContext().directiveExist("server_name"); }
 
 bool HeaderMaker::condition_location(const ClientRequest &client_req, const Response &response)
 { return (response.getHttpCode() > 300 && response.getHttpCode() < 400 ? true : false); }// checker les bons stATuscode

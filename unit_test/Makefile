@@ -15,8 +15,8 @@ all: test
 
 test:
 	@bash ParsingTester/ParsingTester.sh
-	@bash ConnexionTester/ConnexionTester.sh
 	@bash ResponseTester/ResponseMakerTester.sh
+	@bash ConnexionTester/ConnexionTester.sh
 	@rm -f a.out
 
 clean:

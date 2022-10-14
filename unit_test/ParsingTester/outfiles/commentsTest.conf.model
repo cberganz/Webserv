@@ -20,6 +20,7 @@ root -> TEST
 		error_page -> default
 		index -> index.html
 		root ->  Ceci 'est' un 'test'
+		server_name -> cberganz.42.fr
 
 		[location][/what]
 		allowed_methods -> default
@@ -28,4 +29,5 @@ root -> TEST
 		error_page -> default
 		index -> what.html
 		root -> 'Blorp' 'baba'
+		server_name -> cberganz.42.fr
 
