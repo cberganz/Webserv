@@ -21,6 +21,7 @@
 # include "../response/ResponseHandler.hpp"
 # include "PollingManager.hpp"
 # include "Chunks.hpp"
+# include <csignal>
 
 class ServerConnexion {
     private:

@@ -154,7 +154,7 @@ int            PollingManager::accept_connexion(int ready_fd) {
 }
 
 std::pair<int, std::string>     PollingManager::receive_request(int client_socket) {
-    char    buffer[MAXBUF + 1];
+    char buffer[MAXBUF + 1];
     int     ret;
 
     if ((ret = recv(client_socket, &buffer, MAXBUF, 0)) < 0) 

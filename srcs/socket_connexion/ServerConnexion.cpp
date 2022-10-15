@@ -37,7 +37,7 @@ void    ServerConnexion::write_to_client(std::string chunk, int fd) {
         if (chunk == "") 
             m_polling.edit_socket_in_epoll(fd, EPOLLIN);
     }
-    catch (ErrorException & e) {
+    catch (...) {
         close(fd);
     }
 }
@@ -95,7 +95,7 @@ void    ServerConnexion::handleResponse(std::string client_req, int fd)
             reponse_msg), fd);
         m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
     }
-    catch (ErrorException & e) {
+    catch (...) {
         close(fd);
     }
 }
@@ -116,7 +116,7 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
         m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
         m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
     }
-    catch (ErrorException & e) {
+    catch (...) {
         close(fd);
     }
 }
@@ -158,6 +158,10 @@ void    ServerConnexion::read_from_client(int fd) {
     }
 }
 
+void    sigpipe_handler(int signal) {
+    std::cout << "BROKEN PIPE\n";
+}
+
 void    ServerConnexion::connexion_loop()
 {
     m_polling.init_epoll_events();
@@ -169,9 +173,10 @@ void    ServerConnexion::connexion_loop()
 		for(int i = 0; i < nfds; i++) {
             struct epoll_event  event;
 
+            signal(SIGPIPE, sigpipe_handler);
             event = m_polling.get_ready_event(i);
-            if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) ||
-                (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))
+            if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
+                || (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))
                 || (event.events & EPOLLRDHUP)) {
                 close (event.data.fd);
                 std::cout << "CLOSED CLIENT CONNEXION\n";
