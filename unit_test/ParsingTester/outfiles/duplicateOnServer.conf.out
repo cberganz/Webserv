@@ -1,0 +1,1 @@
+Error while parsing configuration file: Inside context: server: Duplicate directive reached: 'listen': at line 5.

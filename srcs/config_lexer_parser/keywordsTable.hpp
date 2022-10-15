@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/14 16:18:06 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/15 17:53:06 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct s_keywords {
 **	@warning This MUST be changed when adding new keywords to the table.
 */
 
-# define MAX_KEYWORDS 11
+# define MAX_KEYWORDS 12
 
 /*
 **	@brief Two dimensional array containing possible and/or mandatory directives
@@ -100,6 +100,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "server",					true,	true,	false,	true,	false,	false,	""				 }, //.Sets configuration for a virtual server...............
 	{ "root",					false,	true,	true,	false,	false,	false,	""				 }, //.Sets the root directory for requests..................
 	{ "index",					false,	true,	true,	false,	false,	true,	""				 }, //.Defines files that will be used as an index...........
+	{ "cgi",					true,	true,	true,	false,	false,	false,	"off"			 }, //.Defines whether response should be construct from CGI.
 	{ "",						false,	false,	false,	false,	false,	false,	""				 }, //.Default settings if keyword was not found.............
 },
 	/*.....................................SERVER CONTEXT........................................*/
@@ -113,6 +114,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "client_max_body_size",	true,	true,	true,	false,	false,	false,	"1m"			 }, //.Defines a max size for client requests body...........
 	{ "error_page",				true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines the paths to error pages...................
 	{ "allowed_methods",		true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines allowed http methods...........
+	{ "cgi",					false,	true,	true,	false,	false,	false,	""				 }, //.Defines whether response should be construct from CGI.
 	{ "rewrite",				false,	true,	true,	false,	false,	true,	""		 		 }, 
 	{ "",						false,	false,	false,	false,	false,	false,	""				 }, //.Default settings if keyword was not found.............
 },
@@ -125,6 +127,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "client_max_body_size",	true,	true,	true,	false,	false,	false,	"1m"			 }, //.Defines a max size for client requests body...........
 	{ "error_page",				true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines the paths to error pages...................
 	{ "allowed_methods",		true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines allowed http methods...........
+	{ "cgi",					false,	true,	true,	false,	false,	false,	""				 }, //.Defines whether response should be construct from CGI.
 	{ "rewrite",				false,	true,	true,	false,	false,	true,	""		 		 }, 
 	{ "",						false,	false,	false,	false,	false,	false,	""			 	 }, //.Default settings if keyword was not found.............
 },

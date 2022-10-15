@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 19:21:06 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/15 18:04:19 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <filesystem>
 # include "../tools/ErrorException.hpp"
 # include "../config_lexer_parser/Context.hpp"
+# include "../config_lexer_parser/Config.hpp"
 # include "../client_request/ClientRequest.hpp"
 # include "../tools/utility.hpp"
 # include "extensionsTable.hpp"
@@ -34,6 +35,7 @@ class BodyMaker {
 
 public:
 	BodyMaker();
+	BodyMaker(const Config &config);
 	BodyMaker(const BodyMaker &src);
 	~BodyMaker();
 
@@ -46,6 +48,7 @@ private:
 
 	std::map<std::string, MethodFunctions>	m_method_fcts;
 	std::string 							m_body;
+	Config									m_config;
 
 	const std::string &getProgName(const std::string &path);
 	bool requiresCGI(const std::string &path);

@@ -1,0 +1,1 @@
+Error while parsing configuration file: Inside context: server: Context mandatory child context not found: 'location': at line 7.

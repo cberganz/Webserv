@@ -1,0 +1,1 @@
+Error while parsing configuration file: Inside context: server: Directive ends without semicolon: 'server_name': at line 5.
