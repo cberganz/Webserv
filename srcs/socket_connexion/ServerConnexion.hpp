@@ -19,6 +19,7 @@
 
 # include "../config_lexer_parser/Config.hpp"
 # include "../response/ResponseHandler.hpp"
+# include "../tools/utility.hpp"
 # include "PollingManager.hpp"
 # include "Chunks.hpp"
 # include <csignal>
@@ -30,9 +31,9 @@ class ServerConnexion {
 
         std::string     getSocketPort(int sockfd);
         std::string     getSocketIp(int sockfd);
-        void            handleResponse(std::string client_req, int fd);
+        void            handleResponse(std::vector<char> client_req, int fd);
         void            handleDefaultError(ErrorException & e, int fd);
-        bool            is_size_chunk(std::string chunk);
+        bool            is_size_chunk(std::vector<char> chunk);
 
     protected:
         Config			m_config;

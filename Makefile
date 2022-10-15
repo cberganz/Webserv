@@ -6,7 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/10 15:57:46 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/15 19:31:25 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/response/HttpCodes.cpp					\
 			  srcs/response/Response.cpp					\
 			  srcs/response/ResponseMaker.cpp				\
-			  srcs/response/ResponseHandler.cpp			
+			  srcs/response/ResponseHandler.cpp				\
+			  srcs/tools/utility.cpp
 
 
 #SRC_DIR		= srcs/

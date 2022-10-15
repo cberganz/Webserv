@@ -21,34 +21,17 @@ Chunks &Chunks::operator=(const Chunks &copy) {
 
 /** CHUNKED REQUEST FUNCTIONS **/
 
-void    Chunks::add_chunk_request(int fd, std::string chunk) {
-    std::map<int, std::string>::iterator it = m_chunked_requests.find(fd);
+void    Chunks::add_chunk_request(int fd, std::vector<char> chunk) {
+    std::map<int, std::vector<char> >::iterator it = m_chunked_requests.find(fd);
 
     if (is_chunked_header(fd))
         m_chunked_requests.insert(std::make_pair(fd, chunk));
     else 
-        it->second += chunk.substr(0, chunk.size() - 2);
+        it->second.insert(it->second.end(), chunk.begin(), chunk.end() - 2);
 }
 
-std::string     Chunks::get_unchunked_request(int fd) {
+std::vector<char>     Chunks::get_unchunked_request(int fd) {
     return (m_chunked_requests.find(fd)->second);
-}
-
-bool            Chunks::request_body_is_whole(int fd) {
-    if (!findChunkedReq(fd))
-        return (false);
-    std::string req = m_chunked_requests.find(fd)->second;
-    if (req.size() == 0)
-        return (true);
-    std::string size_str = req.substr(req.find("Content-Length: ") + 16, 
-                        req.find("\r\n", req.find("Content-Length:")) - req.find("Content-Length: ") - 16);
-    size_t  size = ft::lexical_cast<size_t>(size_str);
-    std::string body = req.substr(req.find("\r\n\r\n") + 4);
-
-    std::cout << "CONTENT LENGTH=" << size << " et BODY LENGTH=" << body.size() << std::endl;
-    if (body.size() == size)
-        return (true);
-    return (false);
 }
 
 
@@ -96,7 +79,7 @@ bool            Chunks::findChunkedReq(int fd) {
 bool            Chunks::is_chunk_encoding(int fd) {
     if (!findChunkedReq(fd))
         return (false);
-    if (m_chunked_requests.find(fd)->second.find("Transfer-Encoding: chunked") != std::string::npos)
+    if (ft::search_vector_char(m_chunked_requests.find(fd)->second, "Transfer-Encoding: chunked", 0) != -1)
         return (true);
     return (false);
 }

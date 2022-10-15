@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 03:27:11 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/15 19:32:43 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,13 @@
 # include <sstream>
 # include <stdio.h>
 # include <time.h>
+# include <cstring>
+# include <vector>
+# include <algorithm>
 
 namespace ft {
+
+int	search_vector_char(std::vector<char> tab, const char *to_find, size_t index);
 
 /*
 **	@brief Perform type conversion from any type to the type specified as T1.
@@ -48,6 +53,7 @@ inline std::string getTimeFormated()
 	strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
 	return buf;
 }
+
 
 }; // NAMESPACE FT
 

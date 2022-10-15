@@ -74,7 +74,7 @@ class PollingManager {
         int                                 wait_for_connexions();
         bool                                is_existing_socket_fd(int fd);
         int                                 accept_connexion(int ready_fd);
-        std::pair<int, std::string>         receive_request(int client_socket);
+        std::pair<int, std::vector<char> >  receive_request(int client_socket);
         void                                send_request(std::string request, int client_socket);
         void                                close_epfd();
         struct epoll_event                  get_ready_event( int index ) const;

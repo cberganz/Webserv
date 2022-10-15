@@ -84,9 +84,9 @@ std::string ServerConnexion::getSocketIp(int sockfd)
     return (ss.str());
 }
 
-void    ServerConnexion::handleResponse(std::string client_req, int fd)
+void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 {
-    m_rep_handler.setClientRequest(client_req);
+    m_rep_handler.setClientRequest(std::string(&client_req[0]));
     std::string reponse_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
@@ -122,30 +122,30 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 }
 
 void    ServerConnexion::read_from_client(int fd) {
-    bool                        is_chunk    = true;
-    std::pair<int, std::string> client_req  = m_polling.receive_request(fd);
+    bool                                is_chunk    = true;
+    std::pair<int, std::vector<char> >  client_req  = m_polling.receive_request(fd);
 
-    if (client_req.second == "")
+    if (client_req.second[0] == '\0')
         return ;
-    if (client_req.first < MAXBUF && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos) {
+    if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
         m_chunks.add_chunk_request(fd, client_req.second);
-        /////////////
-        m_chunks.request_body_is_whole(fd);
-        //////////////
         is_chunk = false;
         client_req.second = m_chunks.get_unchunked_request(fd);
     }
     else {
-        if (m_chunks.is_chunk_encoding(fd) && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos)
+        if (m_chunks.is_chunk_encoding(fd) && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1)
             client_req = m_polling.receive_request(fd);
         m_chunks.add_chunk_request(fd, client_req.second);
-        if ((client_req.second == "\r\n" || client_req.second.find("0\r\n") != std::string::npos) && m_chunks.is_chunk_encoding(fd)) {
+        if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
+            || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd)) {
             is_chunk = false;
             client_req.second = m_chunks.get_unchunked_request(fd);
         }
     }
     if (!is_chunk) {
-        // std::cout << "\n\nREQUETE CLIENT: " << client_req.second << std::endl;
+        std::cout << "\n\nREQUETE CLIENT: " << std::endl;
+        for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
+            std::cout << *it;
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {
