@@ -31,10 +31,15 @@ void    ServerConnexion::write_to_client(std::string chunk, int fd) {
     ss << std::hex << chunk.size();
     ss >> size_chunk;
 
-    m_polling.send_request(size_chunk + "\r\n", fd);
-    m_polling.send_request(chunk + "\r\n", fd);
-    if (chunk == "") 
-        m_polling.edit_socket_in_epoll(fd, EPOLLIN);
+    try {
+        m_polling.send_request(size_chunk + "\r\n", fd);
+        m_polling.send_request(chunk + "\r\n", fd);
+        if (chunk == "") 
+            m_polling.edit_socket_in_epoll(fd, EPOLLIN);
+    }
+    catch (...) {
+        close(fd);
+    }
 }
 
 // a DELETE
@@ -79,15 +84,20 @@ std::string ServerConnexion::getSocketIp(int sockfd)
     return (ss.str());
 }
 
-void    ServerConnexion::handleResponse(std::string client_req, int fd)
+void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 {
-    m_rep_handler.setClientRequest(client_req);
+    m_rep_handler.setClientRequest(std::string(&client_req[0]));
     std::string reponse_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
-    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
-        reponse_msg), fd);
-    m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+    try {
+        m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
+            reponse_msg), fd);
+        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+    }
+    catch (...) {
+        close(fd);
+    }
 }
 
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
@@ -102,36 +112,40 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
         error_page = error_page.replace(error_page.find("$STATUS"),  7, ft::itostr(e.getCode()));
         error_page = error_page.replace(error_page.find("$MESSAGE"),  8, http_code[e.getCode()]);
     }
-    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
-    m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
-
+    try {
+        m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
+        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+    }
+    catch (...) {
+        close(fd);
+    }
 }
 
 void    ServerConnexion::read_from_client(int fd) {
-    bool                        is_chunk    = true;
-    std::pair<int, std::string> client_req  = m_polling.receive_request(fd);
+    bool                                is_chunk    = true;
+    std::pair<int, std::vector<char> >  client_req  = m_polling.receive_request(fd);
 
-    if (client_req.first < MAXBUF && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos) {
+    if (client_req.second[0] == '\0')
+        return ;
+    if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
         m_chunks.add_chunk_request(fd, client_req.second);
         is_chunk = false;
         client_req.second = m_chunks.get_unchunked_request(fd);
     }
     else {
-        if (m_chunks.is_chunk_encoding(fd) && client_req.second.find("Transfer-Encoding: chunked") == std::string::npos)
+        if (m_chunks.is_chunk_encoding(fd) && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1)
             client_req = m_polling.receive_request(fd);
         m_chunks.add_chunk_request(fd, client_req.second);
-        if ((client_req.second == "\r\n" || client_req.second.find("0\r\n") != std::string::npos) && m_chunks.is_chunk_encoding(fd)) {
+        if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
+            || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd)) {
             is_chunk = false;
             client_req.second = m_chunks.get_unchunked_request(fd);
         }
     }
-    if (!is_chunk && client_req.second == "") {
-        m_chunks.delete_chunk_request(fd);
-        close(fd);
-        return ;
-    }
     if (!is_chunk) {
-        std::cout << "\n\nREQUETE CLIENT: " << client_req.second << std::endl;
+        std::cout << "\n\nREQUETE CLIENT: " << std::endl;
+        for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
+            std::cout << *it;
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {
@@ -142,6 +156,10 @@ void    ServerConnexion::read_from_client(int fd) {
         }
         m_chunks.delete_chunk_request(fd);
     }
+}
+
+void    sigpipe_handler(int signal) {
+    std::cout << "BROKEN PIPE\n";
 }
 
 void    ServerConnexion::connexion_loop()
@@ -155,9 +173,11 @@ void    ServerConnexion::connexion_loop()
 		for(int i = 0; i < nfds; i++) {
             struct epoll_event  event;
 
+            signal(SIGPIPE, sigpipe_handler);
             event = m_polling.get_ready_event(i);
-            if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) ||
-                (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))) 
+            if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
+                || (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))
+                || (event.events & EPOLLRDHUP)) 
                 close (event.data.fd);
             else if (m_polling.is_existing_socket_fd(event.data.fd))
                 m_polling.new_client_connexion(event.data.fd);

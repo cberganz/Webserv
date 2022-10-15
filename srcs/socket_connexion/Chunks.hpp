@@ -2,17 +2,20 @@
 # define CHUNKS_HPP
 
 # include <map>
+# include <vector>
+# include <algorithm>
 # include <string>
 # include <iostream>
 # include <sstream>
 # include <iostream>
+# include "../tools/utility.hpp"
 
 # define MAX_CHUNK_LEN  1024
 
 class Chunks {
     private:
-        std::map<int, std::string>  m_chunked_requests;
-        std::map<int, std::string>  m_chunked_responses;
+        std::map<int, std::vector<char> >   m_chunked_requests;
+        std::map<int, std::string>          m_chunked_responses;
 
     public:
         Chunks();
@@ -21,8 +24,8 @@ class Chunks {
         Chunks &operator=(const Chunks &copy);
 
         /** REQUEST **/
-        void            add_chunk_request(int fd, std::string chunk);
-        std::string     get_unchunked_request(int fd);
+        void                add_chunk_request(int fd, std::vector<char> chunk);
+        std::vector<char>   get_unchunked_request(int fd);
 
         /** RESPONSE **/
         std::string     add_headerless_response_to_chunk(int fd, std::string response);

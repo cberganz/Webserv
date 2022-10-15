@@ -137,8 +137,6 @@ void               PollingManager::new_client_connexion(int fd) {
 }
 
 int             PollingManager::wait_for_connexions() {
-    std::cout << "\rPolling init_epoll_events() for input: " << std::flush;
-
     int nfds = epoll_wait(m_epfd, m_ready_events, MAX_EVENTS, 5000); // check timeoout et MAX_EVENTS -> que mettre ?
 
     if (nfds == -1) 
@@ -154,17 +152,16 @@ int            PollingManager::accept_connexion(int ready_fd) {
     return (new_socket);
 }
 
-std::pair<int, std::string>     PollingManager::receive_request(int client_socket) {
-    char    buffer[MAXBUF + 1];
+std::pair<int, std::vector<char> >     PollingManager::receive_request(int client_socket) {
+    std::vector<char>  buffer(MAXBUF, '\0');
     int     ret;
 
-    if ((ret = recv(client_socket, &buffer, MAXBUF, 0)) < 0) 
+    if ((ret = recv(client_socket, &buffer[0], buffer.size(), 0)) < 0) 
     {
         close(client_socket); // pas sur, peut etre renvoyer une reponse au client
         throw (SocketCreationException(RECEIVEERR));
-    }
-    buffer[ret] = '\0';
-    return (std::make_pair(ret, std::string(buffer)));
+    }    
+    return (std::make_pair(ret, buffer));
 }
 
 void            PollingManager::send_request(std::string request, int client_socket) {
