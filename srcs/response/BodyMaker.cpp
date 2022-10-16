@@ -6,11 +6,12 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 03:58:30 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/16 18:34:16 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BodyMaker.hpp"
+#include "../tools/cgiHelpers.hpp"
 
 BodyMaker::BodyMaker()
 {
@@ -56,7 +57,7 @@ bool isDirectory(const std::string &path)
 	return false;
 }
 
-const std::string	&BodyMaker::getMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -69,7 +70,10 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 	if (access(path.c_str(), F_OK) == -1 or isDirectory(path))// voir si Nginx gere pareil
 		throw ErrorException(404);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
-		executeCGI(client_req, context, path);
+	{
+		executeCGI(path, generateEnvp(client_req, context, path));
+		response.setCGI(true);
+	}
 	else
 		readFile(path);
 	return (m_body);
@@ -103,7 +107,7 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 	}
 }
 
-const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
 			return (m_body);// voir quel retour utiliser
@@ -115,7 +119,7 @@ const std::string	&BodyMaker::postMethod(const Context& context, std::string pat
 	return (m_body);// voir quel retour utiliser
 }
 
-const std::string	&BodyMaker::deleteMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	(void) context;
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
@@ -126,11 +130,11 @@ const std::string	&BodyMaker::deleteMethod(const Context& context, std::string p
 	return (m_body);// voir quel retour utiliser
 }
 
-const std::string &BodyMaker::createBody(const Response& response)
+const std::string &BodyMaker::createBody(Response& response)
 {
 	m_body.clear();
 	MethodFunctions fp = m_method_fcts[response.getClientRequest().getMethod()];
-	return (this->*fp)(response.getContext(), response.getPath(), response.getClientRequest());
+	return (this->*fp)(response, response.getContext(), response.getPath(), response.getClientRequest());
 }
 
 bool BodyMaker::requiresCGI(const std::string &path)
@@ -161,67 +165,7 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-std::string joinStrVector(const std::vector<std::string> &v, std::string delim)
-{
-    std::stringstream ss;
-    std::copy(v.begin(), v.end(),
-        std::ostream_iterator<std::string>(ss, delim.c_str()));
-    return ss.str();
-}
-
-char** mapToEnvp(const std::map<std::string, std::string>& m)
-{
-	std::vector<std::string> v;
-	for (std::map<std::string, std::string>::const_iterator it = m.begin() ; it != m.end() ; it++)
-		v.push_back(it->first + "=" + it->second);
-	char** arr = (char**)malloc((v.size() + 1) * sizeof(*arr));
-	if (arr == NULL)
-		exit(501);
-	std::vector<std::string>::size_type index = 0;
-	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; it++)
-	{
-		arr[index] = strdup(it->c_str());
-		if (arr[index] == NULL)
-			exit(501);
-		index++;
-	}
-	arr[index] = NULL;
-	return arr;
-}
-
-
-char** BodyMaker::generateEnvp(const ClientRequest &client_req, const Context &context, const std::string &path)
-{
-	std::map<std::string, std::string> envp;
-	// SERVER VARIABLES
-	envp["SERVER_SOFTWARE"] = "WEBSERV/42.0";
-	envp["SERVER_NAME"] = *context.getDirective("ip").begin();
-	envp["GATEWAY_INTERFACE"] = "CGI/1.1";
-	// REQUEST DEFINED VARIABLES
-	envp["SERVER_PROTOCOL"] = "HTTP/1.1";
-	envp["SERVER_PORT"] = *context.getDirective("port").begin();
-	envp["REQUEST_METHOD"] = client_req.getMethod();
-	envp["REDIRECT_STATUS"] = ft::itostr(200);
-	//envp["PATH_INFO"] = "";
-	//envp["PATH_TRANSLATED"] = "";
-	envp["SCRIPT_FILENAME"] = path;
-	envp["QUERY_STRING"] = ""; // client_req.getQuery(); -> need query in client_req
-	if (client_req.getHeader().find("host") != client_req.getHeader().end())
-		envp["REMOTE_HOST"] = joinStrVector(client_req.getHeader().find("host")->second, ";");
-	else
-		envp["REMOTE_HOST"] = "";
-	// envp["REMOTE_ADDR"] -> IP DU CLIENT necessary ?
-	// envp["AUTH_TYPE"]
-	// envp["REMOTE_USER"]
-	if (client_req.getHeader().find("content-type") != client_req.getHeader().end())
-		envp["CONTENT_TYPE"] = joinStrVector(client_req.getHeader().find("content-type")->second, ";");
-	envp["CONTENT_LENGTH"] = client_req.getBody().size();
-	// CLIENT VARIABLES
-	//envp[""] = client_req.getHeader()[""];
-	return mapToEnvp(envp);
-}
-
-void BodyMaker::executeCGI(const ClientRequest& client_req, const Context& context, const std::string &path)
+void BodyMaker::executeCGI(const std::string &path, char **envp)
 {
 	int pid, stat, fd[2];
 
@@ -242,7 +186,6 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const Context& conte
 		char* binPath = strdup(getProgName(path).c_str());
 		char* progPath = strdup(path.c_str());
 		char* argv[2] = { binPath, NULL };
-		char** envp = generateEnvp(client_req, context, path);
 		execve(binPath, argv, envp);
 		for (int i = 0 ; envp[i] != NULL ; i++)
 			free(envp[i]);

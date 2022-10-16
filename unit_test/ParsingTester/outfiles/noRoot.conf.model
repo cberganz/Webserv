@@ -4,6 +4,7 @@ cgi -> off
 	[server][443]
 	allowed_methods -> default
 	autoindex -> off
+	cgi -> off
 	client_max_body_size -> 1m
 	error_page -> default
 	ip -> 443
@@ -14,16 +15,22 @@ cgi -> off
 		[location][/path]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> index.html
+		ip -> 443
+		port -> 443
 		server_name -> cberganz.42.fr
 
 		[location][/what]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> what.html
+		ip -> 443
+		port -> 443
 		server_name -> cberganz.42.fr
 

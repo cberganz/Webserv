@@ -5,6 +5,7 @@ root -> TEST
 	[server][443]
 	allowed_methods -> default
 	autoindex -> off
+	cgi -> off
 	client_max_body_size -> 1m
 	error_page -> default
 	index -> index.php
@@ -17,18 +18,24 @@ root -> TEST
 		[location][/path sfsaf asdfsda]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> index.html
+		ip -> 443
+		port -> 443
 		root ->  Ceci 'est' un 'test'
 		server_name -> cberganz.42.fr
 
 		[location][/what]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> what.html
+		ip -> 443
+		port -> 443
 		root -> 'Blorp' 'baba'
 		server_name -> cberganz.42.fr
 
