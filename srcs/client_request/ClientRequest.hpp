@@ -13,7 +13,7 @@ class ClientRequest {
 		std::string											m_method;
 		std::string											m_path;
 		std::string											m_http_version;
-		std::string											m_body;
+		std::vector<char>									m_body;
 		std::map<std::string, std::vector<std::string> > 	m_header;
 
 
@@ -39,7 +39,7 @@ class ClientRequest {
 		const std::string
 		getHttpVersion() const;
 
-		const std::string
+		const std::vector<char>
 		getBody() const;
 
 		const std::map<std::string, std::vector<std::string> >
@@ -58,7 +58,7 @@ class ClientRequest {
 		setHttpVersion(std::string http_version);
 
 		void
-		setBody(std::string body);
+		setBody(std::vector<char> body);
 
 		void
 		setHeader(std::map<std::string, std::vector<std::string> > header);

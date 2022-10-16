@@ -24,7 +24,7 @@ class Chunks {
         Chunks &operator=(const Chunks &copy);
 
         /** REQUEST **/
-        void                add_chunk_request(int fd, std::vector<char> chunk);
+        void                add_chunk_request(int fd, std::pair<int, std::vector<char> > chunk);
         std::vector<char>   get_unchunked_request(int fd);
 
         /** RESPONSE **/
@@ -36,6 +36,7 @@ class Chunks {
         bool            is_chunk_encoding(int fd);
         bool            is_chunked_header(int fd);
         void            delete_chunk_request(int fd);
+        bool            body_is_whole(int fd);
 };
 
 #endif

@@ -86,7 +86,7 @@ std::string ServerConnexion::getSocketIp(int sockfd)
 
 void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 {
-    m_rep_handler.setClientRequest(std::string(&client_req[0]));
+    m_rep_handler.setClientRequest(client_req);
     std::string reponse_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
@@ -128,14 +128,16 @@ void    ServerConnexion::read_from_client(int fd) {
     if (client_req.second[0] == '\0')
         return ;
     if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
-        m_chunks.add_chunk_request(fd, client_req.second);
-        is_chunk = false;
-        client_req.second = m_chunks.get_unchunked_request(fd);
+        m_chunks.add_chunk_request(fd, client_req);
+        if (m_chunks.body_is_whole(fd)) {
+            is_chunk = false;
+            client_req.second = m_chunks.get_unchunked_request(fd);
+        }
     }
     else {
         if (m_chunks.is_chunk_encoding(fd) && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1)
             client_req = m_polling.receive_request(fd);
-        m_chunks.add_chunk_request(fd, client_req.second);
+        m_chunks.add_chunk_request(fd, client_req);
         if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
             || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd)) {
             is_chunk = false;
@@ -143,9 +145,9 @@ void    ServerConnexion::read_from_client(int fd) {
         }
     }
     if (!is_chunk) {
-        std::cout << "\n\nREQUETE CLIENT: " << std::endl;
-        for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
-            std::cout << *it;
+        // std::cout << "\n\nREQUETE CLIENT: " << std::endl;
+        // for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
+        //     std::cout << *it;
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {

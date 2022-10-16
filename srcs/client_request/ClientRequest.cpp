@@ -38,7 +38,7 @@ const std::string	ClientRequest::getMethod() const
 const std::string	ClientRequest::getHttpVersion() const
 { return (m_http_version); }
 
-const std::string	ClientRequest::getBody() const
+const std::vector<char>	ClientRequest::getBody() const
 { return (m_body); }
 
 const std::map<std::string, std::vector<std::string> >	ClientRequest::getHeader() const
@@ -57,7 +57,7 @@ void	ClientRequest::setMethod(std::string method)
 void	ClientRequest::setHttpVersion(std::string http_version)
 { m_http_version =  http_version; }
 
-void	ClientRequest::setBody(std::string body)
+void	ClientRequest::setBody(std::vector<char> body)
 { m_body =  body; }
 
 void	ClientRequest::setHeader(std::map<std::string, std::vector<std::string> > header)
@@ -78,5 +78,8 @@ void	ClientRequest::print()
 			std::cout << it->second[i];
 		std::cout << std::endl;
 	}
-	std::cout << "\n\nBody:\n" << m_body << std::endl;
+	std::cout << "\n\nBody:\n";
+	for (std::vector<char>::iterator it = m_body.begin(); it != m_body.end(); it++)
+		std::cout << *it;
+	std::cout << std::endl;
 }

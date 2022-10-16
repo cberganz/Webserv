@@ -28,7 +28,7 @@ ResponseHandler  &ResponseHandler::operator=(const ResponseHandler &copy)
 	return (*this);
 }
 
-void	ResponseHandler::setClientRequest(std::string client_request)
+void	ResponseHandler::setClientRequest(std::vector<char> client_request)
 { m_client_req_parser.setRequest(client_request); }
 
 std::string ResponseHandler::createResponseMessage(const std::string &ip, const std::string &port)

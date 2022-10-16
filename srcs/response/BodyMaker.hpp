@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 19:21:06 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/16 14:53:59 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ private:
 	const std::string	&postMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&deleteMethod(const Context& context, std::string path, const ClientRequest& client_req);
 	void				post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path);
-	void				createFile(std::string filename, std::string content, std::string path);
+	void				createFile(std::string filename, std::vector<char> content, std::string path);
 
 	// void	post_urlencoded()
 

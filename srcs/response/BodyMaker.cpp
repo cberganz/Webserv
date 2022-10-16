@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/15 20:49:08 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/16 19:26:35 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,31 +64,39 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 	return (m_body);
 }
 
-void	BodyMaker::createFile(std::string filename, std::string content, std::string path) {
+void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path) {
+	if (*path.end() != '/') {
+		int	i = path.length();
+		while (i > 0 && path[i] != '/')
+			i--;
+		path = path.substr(0, i);
+	}
 	filename = path + filename;
 	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
-
 	out.clear();
-	for (size_t i = 0; i < content.length(); i++)
-		out.put(content[i]);
+	for (std::vector<char>::iterator it = content.begin(); it != content.end(); it++)
+		out.put(*it);
 }
 
 void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
-	std::string	boundary = client_req.getHeader().at("Content-Type")[0].substr(30);
-	std::string body = client_req.getBody();
-	int			i = 0;
+	std::string			boundary = client_req.getHeader().at("Content-Type")[0].substr(30);
+	std::vector<char>	body = client_req.getBody();
+	int					i = 0;
 
-	while ((i = body.find(boundary, i)) != std::string::npos) {
+	while ((i = ft::search_vector_char(body, boundary.c_str(), i)) != -1) {
 		i += boundary.length() + 1;
-		if (body.find("filename=", i) == std::string::npos)
+		if (ft::search_vector_char(body, "filename=", i) == -1)
 			break ;
-		if (body.find("filename=", i) > body.find(boundary, i)
-			|| body[body.find("filename=", i) + 10] == '\"')
+		if (ft::search_vector_char(body, "filename=", i) > ft::search_vector_char(body, boundary.c_str(), i)
+			|| body[ft::search_vector_char(body, "filename=", i) + 10] == '\"')
 			continue ;
-		i = body.find("filename=", i) + 10;
-		createFile(body.substr(i, body.find("\"", i) - i), 
-				body.substr(body.find("\r\n\r\n", i) + 4, body.find("\r\n--" + boundary, i) - body.find("\r\n\r\n", i) - 4),
-				path);
+		i = ft::search_vector_char(body, "filename=", i) + 10;
+
+		std::string			filename(body.begin() + i, body.begin() + ft::search_vector_char(body, "\"", i));
+		std::vector<char>	content(body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4,
+									body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4 + 
+									ft::search_vector_char(body, ("\r\n--" + boundary).c_str(), i) - ft::search_vector_char(body, "\r\n\r\n", i) - 4);
+		createFile(filename, content, path);
 	}
 }
 

@@ -4,7 +4,7 @@
 ClientRequestParser::ClientRequestParser(): m_request()
 {}
 
-ClientRequestParser::ClientRequestParser(std::string client_request): m_request(client_request)
+ClientRequestParser::ClientRequestParser(std::vector<char> client_request): m_request(client_request)
 {}
 
 ClientRequestParser::ClientRequestParser(const ClientRequestParser &copy)
@@ -99,22 +99,10 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 	return (header);
 }
 
-std::string	ClientRequestParser::parse_body(std::string str)
+std::vector<char>	ClientRequestParser::parse_body(std::vector<char> str)
 {
-	std::string					line;
-	int							header_length = 0;
-	std::istringstream 			str_stream(str);
-
-	while (std::getline(str_stream, line, '\r'))
-	{
-		header_length += line.length() + 1;
-		this->trimBegin(line, "\r\n");
-		if (line.empty())
-			break ;
-	}
-	std::getline(str_stream, line);
-	header_length += line.length() + 1;
-	return (str.erase(0, header_length));
+	int	start_body = ft::search_vector_char(str, "\r\n\r\n", 0) + 4;
+	return (std::vector<char>(str.begin() + start_body, str.end()));
 }
 
 void	ClientRequestParser::trimBegin(std::string &request, std::string charset)
@@ -196,23 +184,25 @@ void	ClientRequestParser::replace_encode_char(std::string &str)
 ClientRequest	*ClientRequestParser::makeClientRequest()
 {
 	// check si string vide
-	std::string			request_copy =	m_request;
-	trimBegin(request_copy, "\r\n");
+	std::string			request_string(&m_request[0]);
+	request_string = request_string.substr(0, request_string.find("\r\n\r\n"));
+	trimBegin(request_string, "\r\n");
 
 	std::string			line;
-	std::istringstream 	str_stream(request_copy);
+	std::istringstream 	str_stream(request_string);
 	ClientRequest		*client_req = new ClientRequest();
 
 	std::getline(str_stream, line);
 	trimEnd(line, "\r\n");// voir comment traiter les \r fin de la ligne possible multiple \r ? 
 	parse_request_line(line, *client_req);
+
 	if (!is_request_line_correct(*client_req))
 		throw ErrorException(400);
-	request_copy.erase(0, line.length() + 1); // verifier comportement si pas de \n a la fin
-	client_req->setHeader(parse_header(request_copy));
-	client_req->setBody(parse_body(request_copy));
+	request_string.erase(0, line.length() + 1); // verifier comportement si pas de \n a la fin
+	client_req->setHeader(parse_header(request_string));
+	client_req->setBody(parse_body(m_request));
 	return (client_req);
 }
 
-void	ClientRequestParser::setRequest(std::string	request)
+void	ClientRequestParser::setRequest(std::vector<char> request)
 { m_request = request; }

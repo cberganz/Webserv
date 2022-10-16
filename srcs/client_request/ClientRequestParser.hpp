@@ -5,24 +5,27 @@
 # include <vector>
 # include <string>
 # include <iostream>
+# include <fstream>
 # include <sstream>
 # include <utility>
+# include <algorithm>
 # include "ClientRequest.hpp"
 # include "../tools/ErrorException.hpp"
+# include "../tools/utility.hpp"
 
 class ClientRequestParser {
 	protected:
-		std::string	m_request;
+		std::vector<char>	m_request;
 
 	public:
 		ClientRequestParser();
-		ClientRequestParser(const std::string client_request);
+		ClientRequestParser(const std::vector<char> client_request);
 		ClientRequestParser(const ClientRequestParser &copy);
 		~ClientRequestParser();
 		ClientRequestParser	&operator=(const ClientRequestParser &copy);
 
 		void
-		setRequest(std::string	request);
+		setRequest(std::vector<char> request);
 
 		ClientRequest*
 		makeClientRequest();
@@ -58,8 +61,8 @@ class ClientRequestParser {
 		std::map<std::string, std::vector<std::string> >
 		parse_header(std::string str);
 
-		std::string
-		parse_body(std::string str);
+		std::vector<char>
+		parse_body(std::vector<char> str);
 };
 
 #endif

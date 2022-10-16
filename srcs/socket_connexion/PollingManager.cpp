@@ -160,7 +160,8 @@ std::pair<int, std::vector<char> >     PollingManager::receive_request(int clien
     {
         close(client_socket); // pas sur, peut etre renvoyer une reponse au client
         throw (SocketCreationException(RECEIVEERR));
-    }    
+    }
+    // std::cout << "RET=" << ret << std::endl;
     return (std::make_pair(ret, buffer));
 }
 

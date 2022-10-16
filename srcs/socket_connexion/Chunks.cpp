@@ -21,13 +21,17 @@ Chunks &Chunks::operator=(const Chunks &copy) {
 
 /** CHUNKED REQUEST FUNCTIONS **/
 
-void    Chunks::add_chunk_request(int fd, std::vector<char> chunk) {
+void    Chunks::add_chunk_request(int fd, std::pair<int, std::vector<char> > chunk) {
     std::map<int, std::vector<char> >::iterator it = m_chunked_requests.find(fd);
 
     if (is_chunked_header(fd))
-        m_chunked_requests.insert(std::make_pair(fd, chunk));
-    else 
-        it->second.insert(it->second.end(), chunk.begin(), chunk.end() - 2);
+        m_chunked_requests.insert(std::make_pair(fd, chunk.second));
+    else {
+        if (is_chunk_encoding(fd))
+            it->second.insert(it->second.end(), chunk.second.begin(), chunk.second.begin() + chunk.first - 2);
+        else
+            it->second.insert(it->second.end(), chunk.second.begin(), chunk.second.begin() + chunk.first);
+    }
 }
 
 std::vector<char>     Chunks::get_unchunked_request(int fd) {
@@ -62,6 +66,28 @@ std::string     Chunks::get_next_chunk(int fd) {
 }
 
 /** UTILS **/
+
+bool    Chunks::body_is_whole(int fd) {
+    if (!findChunkedReq(fd))
+        return (false);
+    std::vector<char> req = m_chunked_requests.find(fd)->second;
+    std::string content_length = "Content-Length: ";
+    std::string saut_ligne = "\r\n\r\n";
+    size_t size_begin = ft::search_vector_char(req, content_length.c_str(), 0) + 16;
+    if (size_begin == 15)
+        return (true);
+    size_t size_end = ft::search_vector_char(req, saut_ligne.c_str(), size_begin);
+    std::string size_str(req.begin() + size_begin, req.begin() + size_end);
+    size_t  size = ft::lexical_cast<size_t>(size_str);
+    size_t  size_body = 0;
+    for (std::vector<char>::iterator it = req.begin() + ft::search_vector_char(req, "\r\n\r\n", 0) + 4; it != req.end(); it++)
+        size_body++;
+
+    std::cout << "CONTENT LENGTH=" << size << " et BODY LENGTH=" << size_body << std::endl;
+    if (size_body >= size)
+        return (true);
+    return (false);
+}
 
 bool            Chunks::is_chunked_header(int fd) {
     if (m_chunked_requests.find(fd) == m_chunked_requests.end())
