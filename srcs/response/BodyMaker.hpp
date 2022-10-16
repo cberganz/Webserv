@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/15 18:04:19 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 00:13:19 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ private:
 	const std::string &getProgName(const std::string &path);
 	bool requiresCGI(const std::string &path);
 	void readFile(const std::string &path);
-	void executeCGI(std::string &path);
+	void executeCGI(const ClientRequest& client_req, const Context& context, const std::string &path);
+	char** generateEnvp(const ClientRequest &client_req, const Context &context, const std::string &path);
 	const std::string &autoIndex(std::string &path);
 
 	/** METHODS **/

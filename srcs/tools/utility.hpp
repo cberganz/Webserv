@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 19:53:21 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/16 00:14:09 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 # include <stdio.h>
 # include <time.h>
 # include <sys/stat.h>
+# include <unistd.h>
+# include <algorithm>
+# include <sstream>
+# include <iterator>
+# include <cstring>
 
 namespace ft {
 

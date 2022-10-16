@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/15 14:31:00 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 02:35:17 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ const t_extension extensionsTable[MAX_EXT] =
 	/*.Ext......isCGI.......prog............MIMEType....................................................................*/
 	{ "",		false,		"",				"text/html"																	},
 	{ "html",	false,		"",				"text/html"																	},
-	{ "php",	true,		"/usr/bin/php",	"application/x-httpd-php"													},
+	{ "php",	true,		"/usr/bin/php-cgi",	"application/x-httpd-php"													},
 	{ "aac",	false,		"",				"audio/aac"																	},
 	{ "abw",	false,		"",				"application/x-abiword"														},
 	{ "arc",	false,		"",				"application/x-freearc"														},

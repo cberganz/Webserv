@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:30 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 02:16:24 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 01:07:15 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,24 @@ void Parser::setServersIpsAndPorts(Context &context)
 {
 	for (contextsIterator it = context.getContexts().begin() ; it != context.getContexts().end() ; it++)
 	{
-		if ((*it).second.getContextName() == "server")
+		if (it->second.getContextName() == "server")
 		{
-			std::string s = *(*it).second.getDirective("listen").begin();
+			std::string s = *it->second.getDirective("listen").begin();
 			std::vector<std::string> tmp;
 			tmp.push_back(s.substr(0, s.find(":")));
-			(*it).second.getDirectives().insert(std::make_pair("ip", tmp));
+			it->second.getDirectives().insert(std::make_pair("ip", tmp));
 			tmp.clear();
 			tmp.push_back(s.substr(s.find(":") + 1, s.size()));
-			(*it).second.getDirectives().insert(std::make_pair("port", tmp));
+			it->second.getDirectives().insert(std::make_pair("port", tmp));
+			for (contextsIterator it2 = it->second.getContexts().begin() ; it2 != it->second.getContexts().end() ; it2++)
+			{
+				tmp.clear();
+				tmp.push_back(s.substr(0, s.find(":")));
+				it2->second.getDirectives().insert(std::make_pair("ip", tmp));
+				tmp.clear();
+				tmp.push_back(s.substr(s.find(":") + 1, s.size()));
+				it2->second.getDirectives().insert(std::make_pair("port", tmp));
+			}
 		}
 	}
 }

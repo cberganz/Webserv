@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/15 20:43:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 03:58:30 by charles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,10 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 			return autoIndex(path);
 		}
 	}
-	if (access(path.c_str(), F_OK) == -1 || isDirectory(path))// voir si Nginx gere pareil
+	if (access(path.c_str(), F_OK) == -1 or isDirectory(path))// voir si Nginx gere pareil
 		throw ErrorException(404);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
-		executeCGI(path);
+		executeCGI(client_req, context, path);
 	else
 		readFile(path);
 	return (m_body);
@@ -161,35 +161,67 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-//char* BodyMaker::generateEnvp(const ClientRequest &client_req, const Response &response, const std::string &path)
-//{
-//	std::map<std::string, std::string> envp;
-//	// SERVER VARIABLES
-//	envp["SERVER_SOFTWARE"] = "WEBSERV/42.0";
-//	envp["SERVER_NAME"] = response.getContext().getDirective("ip");
-//	envp["GATEWAY_INTERFACE"] = "CGI/1.1";
-//	// REQUEST DEFINED VARIABLES
-//	envp["SERVER_PROTOCOL"] = "HTTP/1.1";
-//	envp["SERVER_PORT"] = response.getContext().getDirective("port");
-//	envp["REQUEST_METHOD"] = client_req.getMethod();
-//	// envp["PATH_INFO"]
-//	// envp["PATH_TRANSLATED"]
-//	envp["SCRIPT_NAME"] = path;
-//	envp["QUERY_STRING"] = client_req.getQuery();
-//	if (client_req.getHeader().find("host") != client_req.getHeader().end())
-//		envp["REMOTE_HOST"] = client_req.getHeader()["host"]; 
-//	else
-//		envp["REMOTE_HOST"] = "";
-//	// envp["REMOTE_ADDR"] -> IP DU CLIENT necessary ?
-//	// envp["AUTH_TYPE"]
-//	// envp["REMOTE_USER"]
-//	envp["CONTENT_TYPE"] = client_req.getHeader()["content-type"];
-//	envp["CONTENT_LENGTH"] = client_req.getBody().size();
-//	// CLIENT VARIABLES
-//	envp[""] = client_req.getHeader()[""];
-//}
+std::string joinStrVector(const std::vector<std::string> &v, std::string delim)
+{
+    std::stringstream ss;
+    std::copy(v.begin(), v.end(),
+        std::ostream_iterator<std::string>(ss, delim.c_str()));
+    return ss.str();
+}
 
-void BodyMaker::executeCGI(std::string &path)
+char** mapToEnvp(const std::map<std::string, std::string>& m)
+{
+	std::vector<std::string> v;
+	for (std::map<std::string, std::string>::const_iterator it = m.begin() ; it != m.end() ; it++)
+		v.push_back(it->first + "=" + it->second);
+	char** arr = (char**)malloc((v.size() + 1) * sizeof(*arr));
+	if (arr == NULL)
+		exit(501);
+	std::vector<std::string>::size_type index = 0;
+	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; it++)
+	{
+		arr[index] = strdup(it->c_str());
+		if (arr[index] == NULL)
+			exit(501);
+		index++;
+	}
+	arr[index] = NULL;
+	return arr;
+}
+
+
+char** BodyMaker::generateEnvp(const ClientRequest &client_req, const Context &context, const std::string &path)
+{
+	std::map<std::string, std::string> envp;
+	// SERVER VARIABLES
+	envp["SERVER_SOFTWARE"] = "WEBSERV/42.0";
+	envp["SERVER_NAME"] = *context.getDirective("ip").begin();
+	envp["GATEWAY_INTERFACE"] = "CGI/1.1";
+	// REQUEST DEFINED VARIABLES
+	envp["SERVER_PROTOCOL"] = "HTTP/1.1";
+	envp["SERVER_PORT"] = *context.getDirective("port").begin();
+	envp["REQUEST_METHOD"] = client_req.getMethod();
+	envp["REDIRECT_STATUS"] = ft::itostr(200);
+	//envp["PATH_INFO"] = "";
+	//envp["PATH_TRANSLATED"] = "";
+	envp["SCRIPT_FILENAME"] = path;
+	envp["QUERY_STRING"] = ""; // client_req.getQuery(); -> need query in client_req
+	if (client_req.getHeader().find("host") != client_req.getHeader().end())
+		envp["REMOTE_HOST"] = joinStrVector(client_req.getHeader().find("host")->second, ";");
+	else
+		envp["REMOTE_HOST"] = "";
+	// envp["REMOTE_ADDR"] -> IP DU CLIENT necessary ?
+	// envp["AUTH_TYPE"]
+	// envp["REMOTE_USER"]
+	if (client_req.getHeader().find("content-type") != client_req.getHeader().end())
+		envp["CONTENT_TYPE"] = joinStrVector(client_req.getHeader().find("content-type")->second, ";");
+	envp["CONTENT_LENGTH"] = client_req.getBody().size();
+	// CLIENT VARIABLES
+	//envp[""] = client_req.getHeader()[""];
+	return mapToEnvp(envp);
+}
+
+void BodyMaker::executeCGI(const ClientRequest& client_req, const Context& context, const std::string &path)
 {
 	int pid, stat, fd[2];
 
@@ -200,7 +232,7 @@ void BodyMaker::executeCGI(std::string &path)
 	pid = fork();
 	if (pid == -1)
 		throw ErrorException(500);
-	else if (pid == 0) // child process
+	if (pid == 0) // child process
 	{
 		close(fd[0]);
 		close(STDOUT_FILENO);
@@ -209,8 +241,12 @@ void BodyMaker::executeCGI(std::string &path)
 		close(fd[1]);
 		char* binPath = strdup(getProgName(path).c_str());
 		char* progPath = strdup(path.c_str());
-		char* argv[3] = { binPath, progPath, NULL };
-		execve(binPath, argv, NULL);
+		char* argv[2] = { binPath, NULL };
+		char** envp = generateEnvp(client_req, context, path);
+		execve(binPath, argv, envp);
+		for (int i = 0 ; envp[i] != NULL ; i++)
+			free(envp[i]);
+		free(envp);
 		free(binPath);
 		free(progPath);
 		exit(1);
