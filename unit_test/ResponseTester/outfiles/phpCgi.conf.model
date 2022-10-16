@@ -1,9 +1,9 @@
 HTTP/1.1 200 OK
-date: Fri, 14 Oct 2022 14:36:05 GMT
+date: Sun, 16 Oct 2022 20:05:29 GMT
 server: cberganz.42.fr
 retry-after: 120
 transfer-encoding: chunked
-content-type: application/x-httpd-php; charset=utf-8
+Content-type: text/html; charset=UTF-8
 
 <!DOCTYPE html>
 <html>

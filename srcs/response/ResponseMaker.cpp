@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/14 16:34:26 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 22:03:42 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ ResponseMaker::ResponseMaker(const Config &config)
 	: m_httpCodes(),
 	  m_config(config),
 	  m_headerMaker(),
-	  m_bodyMaker()
+	  m_bodyMaker(config)
 {}
 
 ResponseMaker::~ResponseMaker()
@@ -135,8 +135,8 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 			return response;
 		}
 
-		(*response).append(m_bodyMaker.createBody(*response));
-		(*response).insert(0, m_headerMaker.createHeader(client_req, *response));
+		response->append(m_bodyMaker.createBody(*response));
+		response->insert(0, m_headerMaker.createHeader(client_req, *response));
 		return response;
 	} catch (ErrorException &e) {
 		Context	context =

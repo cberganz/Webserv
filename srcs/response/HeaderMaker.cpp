@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/14 16:14:40 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/16 22:02:19 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ std::string HeaderMaker::createHeader(const ClientRequest &client_req, const Res
 			m_header += NEWLINE;
 		}
 	}
-	m_header += NEWLINE;
+	if (not response.isCGI())
+		m_header += NEWLINE;
 	return m_header;
 }
 
@@ -112,7 +113,7 @@ bool HeaderMaker::condition_transfert_encoding(const ClientRequest &client_req, 
 { return true; }
 
 bool HeaderMaker::condition_content_type(const ClientRequest &client_req, const Response &response)
-{ return true; }
+{ return (response.isCGI() ? false : true); }
 
 bool HeaderMaker::condition_content_lenght(const ClientRequest &client_req, const Response &response)
 { return false; }

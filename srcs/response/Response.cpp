@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:56 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 20:26:24 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/16 18:27:23 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Response::Response()
 {}
 
 Response::Response(const ClientRequest &client_req, const Context &context, const std::string &longest_location)
-: m_httpCode(200), m_response(), m_path(), m_location(), m_context(context), m_client_req(client_req)
+: m_httpCode(200), m_response(), m_path(), m_location(), m_context(context), m_client_req(client_req), m_isCGI(false)
 {
 	this->setPath(longest_location);
 }
@@ -62,6 +62,9 @@ const Context	&Response::getContext() const
 const ClientRequest	&Response::getClientRequest() const
 { return m_client_req; }
 
+bool Response::isCGI() const
+{ return m_isCGI; }
+
 void Response::append(const std::string &str)
 { this->m_response += str; }
 
@@ -84,10 +87,13 @@ void Response::setPath(const std::string &longest_location)
 }
 
 void Response::setContext(const Context &context)
-{ m_context = context; }
+{ this->m_context = context; }
 
 void Response::setClientRequest(const ClientRequest &client_req)
-{ m_client_req = client_req; }
+{ this->m_client_req = client_req; }
 
 void Response::setLocation(const std::string &location)
-{ m_location = location; }
+{ this->m_location = location; }
+
+void Response::setCGI(bool isCGI)
+{ this->m_isCGI = isCGI; }

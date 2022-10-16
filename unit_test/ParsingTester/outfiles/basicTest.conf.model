@@ -1,9 +1,11 @@
 [global][global]
+cgi -> off
 root -> TEST
 
 	[server][8080]
 	allowed_methods -> default
 	autoindex -> off
+	cgi -> off
 	client_max_body_size -> 1m
 	error_page -> default
 	ip -> 8080
@@ -15,18 +17,24 @@ root -> TEST
 		[location][/path]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> index.html
+		ip -> 8080
+		port -> 8080
 		root -> TEST
 		server_name -> cberganz.42.fr
 
 		[location][/what]
 		allowed_methods -> default
 		autoindex -> off
+		cgi -> off
 		client_max_body_size -> 1m
 		error_page -> default
 		index -> what.html
+		ip -> 8080
+		port -> 8080
 		root -> TEST
 		server_name -> cberganz.42.fr
 

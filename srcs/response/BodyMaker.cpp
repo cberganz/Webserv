@@ -6,13 +6,22 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 19:26:35 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/16 22:13:48 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BodyMaker.hpp"
+#include "../tools/cgiHelpers.hpp"
 
 BodyMaker::BodyMaker()
+{
+	m_method_fcts["GET"]	= &BodyMaker::getMethod;
+	m_method_fcts["POST"]	= &BodyMaker::postMethod;
+	m_method_fcts["DELETE"]	= &BodyMaker::deleteMethod;
+}
+
+BodyMaker::BodyMaker(const Config &config)
+	: m_config(config)
 {
 	m_method_fcts["GET"]	= &BodyMaker::getMethod;
 	m_method_fcts["POST"]	= &BodyMaker::postMethod;
@@ -29,7 +38,10 @@ BodyMaker::~BodyMaker()
 BodyMaker &BodyMaker::operator=(const BodyMaker &rhs)
 {
 	if (this != &rhs)
+	{
 		this->m_body = rhs.m_body;
+		this->m_config = rhs.m_config;
+	}
 	return *this;
 }
 
@@ -39,13 +51,13 @@ bool isDirectory(const std::string &path)
 {
 	struct stat s;
 
-	if ( lstat(path.c_str(), &s) == 0 )
-		if ( S_ISDIR(s.st_mode) )
+	if (lstat(path.c_str(), &s) == 0)
+		if (S_ISDIR(s.st_mode))
 			return true;
 	return false;
 }
 
-const std::string	&BodyMaker::getMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -55,10 +67,13 @@ const std::string	&BodyMaker::getMethod(const Context& context, std::string path
 			return autoIndex(path);
 		}
 	}
-	if (access(path.c_str(), F_OK) == -1 || isDirectory(path))// voir si Nginx gere pareil
+	if (access(path.c_str(), F_OK) == -1 or isDirectory(path))// voir si Nginx gere pareil
 		throw ErrorException(404);
-	if (requiresCGI(path))
-		executeCGI(path);
+	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
+	{
+		executeCGI(path, generateEnvp(client_req, context, path));
+		response.setCGI(true);
+	}
 	else
 		readFile(path);
 	return (m_body);
@@ -100,7 +115,7 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 	}
 }
 
-const std::string	&BodyMaker::postMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
 			return (m_body);// voir quel retour utiliser
@@ -112,7 +127,7 @@ const std::string	&BodyMaker::postMethod(const Context& context, std::string pat
 	return (m_body);// voir quel retour utiliser
 }
 
-const std::string	&BodyMaker::deleteMethod(const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	(void) context;
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
@@ -123,11 +138,11 @@ const std::string	&BodyMaker::deleteMethod(const Context& context, std::string p
 	return (m_body);// voir quel retour utiliser
 }
 
-const std::string &BodyMaker::createBody(const Response& response)
+const std::string &BodyMaker::createBody(Response& response)
 {
 	m_body.clear();
 	MethodFunctions fp = m_method_fcts[response.getClientRequest().getMethod()];
-	return (this->*fp)(response.getContext(), response.getPath(), response.getClientRequest());
+	return (this->*fp)(response, response.getContext(), response.getPath(), response.getClientRequest());
 }
 
 bool BodyMaker::requiresCGI(const std::string &path)
@@ -158,7 +173,7 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-void BodyMaker::executeCGI(std::string &path)
+void BodyMaker::executeCGI(const std::string &path, char **envp)
 {
 	int pid, stat, fd[2];
 
@@ -167,6 +182,8 @@ void BodyMaker::executeCGI(std::string &path)
 	if (pipe(fd) != 0)
 		throw ErrorException(503);
 	pid = fork();
+	if (pid == -1)
+		throw ErrorException(500);
 	if (pid == 0) // child process
 	{
 		close(fd[0]);
@@ -174,27 +191,33 @@ void BodyMaker::executeCGI(std::string &path)
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 			exit(1);
 		close(fd[1]);
-		char* binPath = strdup(getProgName(path).c_str()); // generate bin path ??
+		char* binPath = strdup(getProgName(path).c_str());
 		char* progPath = strdup(path.c_str());
-		char* argv[3] = { binPath, progPath, NULL };
-		execve(binPath, argv, NULL);
+		char* argv[2] = { binPath, NULL };
+		execve(binPath, argv, envp);
+		for (int i = 0 ; envp[i] != NULL ; i++)
+			free(envp[i]);
+		free(envp);
 		free(binPath);
 		free(progPath);
 		exit(1);
 	}
-	waitpid(pid, &stat, 0);
-	stat = WEXITSTATUS(stat);
-	if (stat != 0)
-		throw ErrorException(500);
-	close(fd[1]);
-	int	 ret = 0;
-	char buff[1024];
-	memset(buff, 0, 1024);
-	while ((ret = read(fd[0], buff, 1024)) > 0)
-		m_body += buff;
-	if (ret < 0)
-		throw ErrorException(500);
-	close(fd[0]);
+	else // parent process
+	{
+		waitpid(pid, &stat, 0);
+		stat = WEXITSTATUS(stat);
+		if (stat != 0)
+			throw ErrorException(500);
+		close(fd[1]);
+		int	 ret = 0;
+		char buff[1024];
+		memset(buff, 0, 1024);
+		while ((ret = read(fd[0], buff, 1024)) > 0)
+			m_body += buff;
+		if (ret < 0)
+			throw ErrorException(500);
+		close(fd[0]);
+	}
 }
 
 const std::string &BodyMaker::autoIndex(std::string &path)

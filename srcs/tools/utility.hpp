@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/15 20:46:26 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/16 22:12:53 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
 # include <stdio.h>
 # include <time.h>
 # include <sys/stat.h>
-# include <cstring>
 # include <vector>
+# include <unistd.h>
 # include <algorithm>
+# include <sstream>
+# include <iterator>
+# include <cstring>
 
 namespace ft {
 

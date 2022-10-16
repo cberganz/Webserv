@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:33 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/13 20:26:46 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/16 18:27:08 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,14 @@ public:
 	const Context		&getContext() const;
 	const ClientRequest	&getClientRequest() const;
 	const std::string	&getLocation() const;
+	bool				isCGI() const;
 
 	void setHttpCode(const int &code);
 	void setPath(const std::string &longest_location);
 	void setContext(const Context &context);
 	void setClientRequest(const ClientRequest &client_req);
 	void setLocation(const std::string &location);
+	void setCGI(bool isCGI);
 
 	void append(const std::string &str);
 	void insert(std::string::size_type index, const std::string &str);
@@ -50,6 +52,7 @@ private:
 	std::string 	m_location;
 	Context 		m_context;
 	ClientRequest 	m_client_req;
+	bool			m_isCGI;
 
 }; // class Response
 
