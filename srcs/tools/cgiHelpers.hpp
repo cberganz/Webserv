@@ -67,30 +67,32 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 	envp["SERVER_PORT"] = *context.getDirective("port").begin();
 	envp["REQUEST_METHOD"] = client_req.getMethod();
 	envp["REDIRECT_STATUS"] = ft::itostr(200); // Security variable: php does not accept exec if not set. How to handle it ?
-	envp["PATH_INFO"] = ""; //to parse in clientRequest?
-	envp["PATH_TRANSLATED"] = "";
+	envp["PATH_INFO"] = path; //to parse in clientRequest?
+	envp["PATH_TRANSLATED"] = path;
+	envp["SCRIPT_NAME"] = path; // script_name or script_filename ?
 	envp["SCRIPT_FILENAME"] = path; // script_name or script_filename ?
 	envp["QUERY_STRING"] = ""; // client_req.getQuery(); -> need query in client_req
-	if (client_req.getHeader().count("host"))
-		envp["REMOTE_HOST"] = joinStrVector(client_req.getHeader().find("host")->second, ",");
-	// envp["REMOTE_ADDR"] -> IP DU CLIENT necessary ?
-	// envp["AUTH_TYPE"]
-	// envp["REMOTE_USER"]
+	// if (client_req.getHeader().count("host"))
+	envp["REMOTE_HOST"] = ""/* joinStrVector(client_req.getHeader().find("host")->second, ",") */;
+	envp["REMOTE_ADDR"] = "";/* -> IP DU CLIENT necessary ? */
+	envp["AUTH_TYPE"] = "";
+	envp["REMOTE_USER"] = "";
 	envp["CONTENT_TYPE"] = getMime(path);
-	envp["CONTENT_LENGTH"] = ft::itostr(client_req.getBody().size());
+	envp["CONTENT_LENGTH"] = ft::itostr(0);//client_req.getBody().size());
 
 	// CLIENT VARIABLES
-	if (client_req.getHeader().count("accept"))
-		envp["HTTP_ACCEPT"] = joinStrVector(client_req.getHeader().find("accept")->second, ",");
-	if (client_req.getHeader().count("accept-language"))
-		envp["HTTP_ACCEPT_LANGUAGE"] = joinStrVector(client_req.getHeader().find("accept-language")->second, ",");
+	// if (client_req.getHeader().count("accept"))
+	envp["HTTP_ACCEPT"] = "*/*";//joinStrVector(client_req.getHeader().find("accept")->second, ",");
+	// if (client_req.getHeader().count("accept-language"))
+	envp["HTTP_ACCEPT_LANGUAGE"] = "en-US,en";//joinStrVector(client_req.getHeader().find("accept-language")->second, ",");
 	if (client_req.getHeader().count("user-agent"))
 		envp["HTTP_USER_AGENT"] = joinStrVector(client_req.getHeader().find("user-agent")->second, ",");
-	if (client_req.getHeader().count("cookies")) // GET GOOD NAME FOR COOKIES ?
-		envp["HTTP_COOKIE"] = joinStrVector(client_req.getHeader().find("cookies")->second, ",");
+	if (client_req.getHeader().count("cookie"))
+		envp["HTTP_COOKIE"] = joinStrVector(client_req.getHeader().find("cookie")->second, ",");
+	envp["HTTP_REFERER"] = "";
 	
-	//for (std::map<std::string, std::string>::iterator it = envp.begin() ; it != envp.end() ; it++)
-	//	std::cout << it->first << " -> " << it->second << std::endl;
+	// for (std::map<std::string, std::string>::iterator it = envp.begin() ; it != envp.end() ; it++)
+	// 	std::cout << it->first << " -> " << it->second << std::endl;
 	return mapToEnvp(envp);
 }
 

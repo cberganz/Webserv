@@ -148,6 +148,8 @@ void    ServerConnexion::read_from_client(int fd) {
         // std::cout << "\n\nREQUETE CLIENT: " << std::endl;
         // for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
         //     std::cout << *it;
+		// std::cout << "\n\nREQU SIZE: "<< client_req.second.size() << "\n";
+		
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {

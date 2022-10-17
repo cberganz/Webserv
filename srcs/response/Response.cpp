@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:56 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 18:27:23 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/17 20:51:07 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,10 @@ void Response::setPath(const std::string &longest_location)
 	m_path.clear();
 	if (m_context.directiveExist("root"))
 		m_path = *m_context.getDirective("root").begin();
-	m_path += m_client_req.getPath();
 	if (file_in_location.empty())
 		m_path += "/" + *m_context.getDirective("index").begin();
+	else
+		m_path += "/" + file_in_location;
 }
 
 void Response::setContext(const Context &context)

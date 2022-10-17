@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 22:13:48 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/17 20:50:51 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,13 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 }
 
 const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+	
+	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
+	{
+		executeCGI(path, generateEnvp(client_req, context, path));
+		response.setCGI(true);
+		return (m_body);
+	}
 	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
 			return (m_body);// voir quel retour utiliser
@@ -193,7 +200,7 @@ void BodyMaker::executeCGI(const std::string &path, char **envp)
 		close(fd[1]);
 		char* binPath = strdup(getProgName(path).c_str());
 		char* progPath = strdup(path.c_str());
-		char* argv[2] = { binPath, NULL };
+		char* argv[3] = { binPath, progPath, NULL };
 		execve(binPath, argv, envp);
 		for (int i = 0 ; envp[i] != NULL ; i++)
 			free(envp[i]);
