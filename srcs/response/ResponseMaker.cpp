@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 22:03:42 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/17 20:13:51 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ void	ResponseMaker::handleErrorPageDirective(const Context &context, int error_s
 
 	std::string error_file_path = path + "/" + *(error_it + 1);
 
-	std::cout << "\n\n"+error_file_path+"\n\n" << std::endl;
 	if (access(error_file_path.c_str(), F_OK ) != -1
 		&& access(error_file_path.c_str(), R_OK ) != -1)
 			throw ErrorException(error_status, error_file_path);

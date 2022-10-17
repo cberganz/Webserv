@@ -73,7 +73,6 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 	std::map<std::string, std::vector<std::string> >	header;
 
 	
-	// std::getline(str_stream, line);
 	while (std::getline(str_stream, line, '\r'))
 	{
 		if (line.empty())
@@ -102,7 +101,8 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 std::vector<char>	ClientRequestParser::parse_body(std::vector<char> str)
 {
 	int	start_body = ft::search_vector_char(str, "\r\n\r\n", 0) + 4;
-	return (std::vector<char>(str.begin() + start_body, str.end()));
+	str.erase(str.begin(), str.begin() + start_body);
+	return (str);
 }
 
 void	ClientRequestParser::trimBegin(std::string &request, std::string charset)
@@ -198,7 +198,8 @@ ClientRequest	*ClientRequestParser::makeClientRequest()
 
 	if (!is_request_line_correct(*client_req))
 		throw ErrorException(400);
-	request_string.erase(0, line.length() + 1); // verifier comportement si pas de \n a la fin
+	request_string.erase(0, line.length()); // verifier comportement si pas de \n a la fin
+	trimBegin(request_string, "\r\n");
 	client_req->setHeader(parse_header(request_string));
 	client_req->setBody(parse_body(m_request));
 	return (client_req);
