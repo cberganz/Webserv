@@ -129,7 +129,7 @@ void    ServerConnexion::read_from_client(int fd) {
         return ;
     if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
         m_chunks.add_chunk_request(fd, client_req);
-        if (m_chunks.body_is_whole(fd)) {
+        if (m_chunks.body_is_whole(fd) || m_chunks.boundary_reached(fd, client_req.second)) {
             is_chunk = false;
             client_req.second = m_chunks.get_unchunked_request(fd);
         }

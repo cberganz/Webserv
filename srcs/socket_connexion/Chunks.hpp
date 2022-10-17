@@ -37,6 +37,7 @@ class Chunks {
         bool            is_chunked_header(int fd);
         void            delete_chunk_request(int fd);
         bool            body_is_whole(int fd);
+        bool            boundary_reached(int fd, std::vector<char> chunk);
 };
 
 #endif
