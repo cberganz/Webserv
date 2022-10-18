@@ -31,6 +31,7 @@
 					)
 					.then((response) => response.json())
 					.then((data) => console.log(data));
+					// window.location.reload()
 				}
 			</script>
 			<div class="wrap">
