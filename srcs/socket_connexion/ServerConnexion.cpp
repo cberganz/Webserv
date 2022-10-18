@@ -125,7 +125,7 @@ void    ServerConnexion::read_from_client(int fd) {
     bool                                is_chunk    = true;
     std::pair<int, std::vector<char> >  client_req  = m_polling.receive_request(fd);
 
-    if (client_req.second[0] == '\0')
+    if (!client_req.second.size())
         return ;
     if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
         m_chunks.add_chunk_request(fd, client_req);
