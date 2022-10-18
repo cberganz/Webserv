@@ -26,7 +26,7 @@
 
 class ServerConnexion {
     private:
-        void    write_to_client(std::string chunk, int fd);
+        void    write_to_client(int fd);
         void    read_from_client(int fd);
 
         std::string     getSocketPort(int sockfd);
@@ -34,6 +34,7 @@ class ServerConnexion {
         void            handleResponse(std::vector<char> client_req, int fd);
         void            handleDefaultError(ErrorException & e, int fd);
         bool            is_size_chunk(std::vector<char> chunk);
+        bool            is_last_request_chunk(std::pair<int, std::vector<char> > client_req, int fd);
 
     protected:
         Config			m_config;

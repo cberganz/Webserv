@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 15:58:05 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/18 21:09:34 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <sstream>
 # include <iterator>
 # include <cstring>
+# include <iostream>
 
 namespace ft {
 
