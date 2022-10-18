@@ -162,7 +162,7 @@ std::pair<int, std::vector<char> >     PollingManager::receive_request(int clien
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer.resize(ret);
-    std::cout << "RET=" << ret << " & SIZE BUFFER=" << buffer.size() << std::endl;
+    // std::cout << "RET=" << ret << " & SIZE BUFFER=" << buffer.size() << std::endl;
     return (std::make_pair(ret, buffer));
 }
 
