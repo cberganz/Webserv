@@ -6,7 +6,7 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/17 16:55:45 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/18 02:56:01 by charles          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,6 +74,7 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out ./config_files/cookies.conf
+	#./a.out ./config_files/cookies.conf
+	./a.out ./config_files/demo.conf
 
 .PHONY : all clean fclean test re server_connexion
