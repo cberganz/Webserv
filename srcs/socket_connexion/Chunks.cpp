@@ -34,8 +34,27 @@ void    Chunks::add_chunk_request(int fd, std::pair<int, std::vector<char> > chu
     }
 }
 
+int Chunks::go_to_end_of_line(std::vector<char> req, int i) {
+    while (i + 1 < req.size() && req[i] == '\r' && req[i + 1] == '\n')
+        i += 2;
+    return (i);
+}
+
 std::vector<char>     Chunks::get_unchunked_request(int fd) {
-    return (m_chunked_requests.find(fd)->second);
+    std::vector<char>   req = m_chunked_requests.find(fd)->second;
+    int                 i = ft::search_vector_char(req, "\r\n\r\n", 0);
+
+    if (ft::search_vector_char_until(req, "Transfer-Encoding: chunked", i) == -1)
+        return (req);
+    i += 4;
+    int j = ft::search_vector_char(req, "\r\n", i) + 2;
+    
+    while (j != 1) {
+        req.erase(req.begin() + i, req.begin() + j);
+        i = go_to_end_of_line(req, ft::search_vector_char(req, "\r\n", i));
+        j = ft::search_vector_char(req, "\r\n", i) + 2;
+    }
+    return (req);
 }
 
 /** CHUNK RESPONSE FUNCTIONS **/
@@ -45,23 +64,26 @@ std::string     Chunks::add_headerless_response_to_chunk(int fd, std::string res
     size_t        end_header = response.find("\r\n\r\n");
     std::string   header = response.substr(0, end_header + 4);
 
-    m_chunked_responses.insert(std::make_pair(fd, response.substr(end_header + 4)));
+    m_chunked_responses.insert(std::make_pair(fd, std::make_pair(2, response.substr(end_header + 4))));
     return (header);
 }
 
 std::string     Chunks::get_next_chunk(int fd) {
-    std::string response = (m_chunked_responses.find(fd))->second;
+    std::string response = (m_chunked_responses.find(fd))->second.second;
+    int         size_turn = (m_chunked_responses.find(fd))->second.first;
     std::string chunk = "";
     
     if (response.size())
         chunk = response.substr(0, MAX_CHUNK_LEN);
+    // if (size_turn % 2 == 0)
+    //     return (chunk);
     if (response.size() >= MAX_CHUNK_LEN)
         response = response.substr(MAX_CHUNK_LEN); 
     else
         response = "";
     m_chunked_responses.erase(fd);
     if (chunk.size())
-        m_chunked_responses.insert(std::make_pair(fd, response));
+        m_chunked_responses.insert(std::make_pair(fd, std::make_pair(size_turn, response)));
     return (chunk);
 }
 
@@ -83,7 +105,6 @@ bool    Chunks::body_is_whole(int fd) {
     for (std::vector<char>::iterator it = req.begin() + ft::search_vector_char(req, "\r\n\r\n", 0) + 4; it != req.end(); it++)
         size_body++;
 
-    std::cout << "CONTENT LENGTH=" << size << " et BODY LENGTH=" << size_body << std::endl;
     if (size_body >= size)
         return (true);
     return (false);
@@ -113,6 +134,10 @@ void            Chunks::delete_chunk_request(int fd) {
     m_chunked_requests.erase(fd);
 }
 
+void            Chunks::delete_chunk_response(int fd) {
+    m_chunked_responses.erase(fd);
+}
+
 bool            Chunks::boundary_reached(int fd, std::vector<char> chunk) {
     std::vector<char> req = m_chunked_requests.find(fd)->second;
     size_t  boundary_position = ft::search_vector_char_until(req, "boundary=", ft::search_vector_char(req, "\r\n\r\n", 0));
@@ -124,4 +149,12 @@ bool            Chunks::boundary_reached(int fd, std::vector<char> chunk) {
     if (ft::search_vector_char(chunk, boundary.c_str(), 0) == -1)
         return (false);
     return (true);
+}
+
+void            Chunks::increment_size_turn(int fd) {
+    m_chunked_responses.find(fd)->second.first++;
+}
+
+int             Chunks::get_size_return(int fd) {
+    return (m_chunked_responses.find(fd)->second.first);
 }

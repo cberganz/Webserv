@@ -25,23 +25,6 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
     return (*this);
 }
 
-void    ServerConnexion::write_to_client(std::string chunk, int fd) {
-    std::stringstream   ss;
-    std::string         size_chunk; 
-    ss << std::hex << chunk.size();
-    ss >> size_chunk;
-
-    try {
-        m_polling.send_request(size_chunk + "\r\n", fd);
-        m_polling.send_request(chunk + "\r\n", fd);
-        if (chunk == "") 
-            m_polling.edit_socket_in_epoll(fd, EPOLLIN);
-    }
-    catch (...) {
-        close(fd);
-    }
-}
-
 // a DELETE
 std::string	create_response(std::string file, std::string status_code, std::string msg) {
 	std::ifstream       fs(file);
@@ -93,7 +76,6 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
     try {
         m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
             reponse_msg), fd);
-        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
     }
     catch (...) {
         close(fd);
@@ -114,11 +96,21 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
     }
     try {
         m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
-        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
     }
     catch (...) {
         close(fd);
     }
+}
+
+bool            ServerConnexion::is_last_request_chunk(std::pair<int, std::vector<char> > client_req, int fd) {
+    if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
+        if (m_chunks.body_is_whole(fd) || m_chunks.boundary_reached(fd, client_req.second))
+            return (true);
+    }
+    if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
+        || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd))
+        return (true);
+    return (false);
 }
 
 void    ServerConnexion::read_from_client(int fd) {
@@ -127,29 +119,12 @@ void    ServerConnexion::read_from_client(int fd) {
 
     if (!client_req.second.size())
         return ;
-    if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
-        m_chunks.add_chunk_request(fd, client_req);
-        if (m_chunks.body_is_whole(fd) || m_chunks.boundary_reached(fd, client_req.second)) {
-            is_chunk = false;
-            client_req.second = m_chunks.get_unchunked_request(fd);
-        }
+    m_chunks.add_chunk_request(fd, client_req);
+    if (is_last_request_chunk(client_req, fd)) {
+        is_chunk = false;
+        client_req.second = m_chunks.get_unchunked_request(fd);
     }
-    else {
-        if (m_chunks.is_chunk_encoding(fd) && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1)
-            client_req = m_polling.receive_request(fd);
-        m_chunks.add_chunk_request(fd, client_req);
-        if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
-            || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd)) {
-            is_chunk = false;
-            client_req.second = m_chunks.get_unchunked_request(fd);
-        }
-    }
-    if (!is_chunk) {
-        // std::cout << "\n\nREQUETE CLIENT: " << std::endl;
-        // for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
-        //     std::cout << *it;
-		// std::cout << "\n\nREQU SIZE: "<< client_req.second.size() << "\n";
-		
+    if (!is_chunk) {		
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {
@@ -158,8 +133,34 @@ void    ServerConnexion::read_from_client(int fd) {
             // else
                 // handle error with setted error page
         }
+        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
         m_chunks.delete_chunk_request(fd);
     }
+}
+
+void    ServerConnexion::write_to_client(int fd) {
+    std::string chunk = m_chunks.get_next_chunk(fd);
+    int         size_return = m_chunks.get_size_return(fd);
+    std::stringstream   ss;
+    std::string         size_chunk;
+    ss << std::hex << chunk.size();
+    ss >> size_chunk;
+
+    try {
+        // if (size_return % 2 == 0)
+            m_polling.send_request(size_chunk + "\r\n", fd);
+        // else
+            m_polling.send_request(chunk + "\r\n", fd);
+        if (chunk == ""/*  && size_return % 2 == 1 */) 
+            m_polling.edit_socket_in_epoll(fd, EPOLLIN);
+    }
+    catch (...) {
+        close(fd);
+    }
+    if (chunk == ""/*  && size_return % 2 == 1 */)
+        m_chunks.delete_chunk_response(fd);
+    else
+        m_chunks.increment_size_turn(fd);
 }
 
 void    sigpipe_handler(int signal) {
@@ -188,7 +189,7 @@ void    ServerConnexion::connexion_loop()
             else if (event.events & EPOLLIN) 
                 read_from_client(event.data.fd);
             else if (event.events & EPOLLOUT)
-                write_to_client(m_chunks.get_next_chunk(event.data.fd), event.data.fd);
+                write_to_client(event.data.fd);
 		}
     }
 	m_polling.close_epfd();
