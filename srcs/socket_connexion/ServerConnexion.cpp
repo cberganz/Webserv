@@ -1,6 +1,6 @@
 #include "ServerConnexion.hpp"
 
-ServerConnexion::ServerConnexion() : m_polling(), m_config() {}
+ServerConnexion::ServerConnexion() : m_config(), m_polling() {}
 
 ServerConnexion::ServerConnexion(const std::string &path)
 	: m_config(path),
@@ -44,10 +44,10 @@ void    ServerConnexion::write_to_client(std::string chunk, int fd) {
 
 // a DELETE
 std::string	create_response(std::string file, std::string status_code, std::string msg) {
-	std::ifstream       fs(file);
+	std::ifstream       fs(file.c_str());
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 	std::string header("HTTP/1.1 " + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
-	header += std::to_string(file_content.length());
+	header += ft::itostr(file_content.length());
 	std::string http_request = header + "\r\n\r\n" + file_content;
 
 	return (http_request);
@@ -149,7 +149,7 @@ void    ServerConnexion::read_from_client(int fd) {
         // for (std::vector<char>::iterator it = client_req.second.begin(); it != client_req.second.end(); it++)
         //     std::cout << *it;
 		// std::cout << "\n\nREQU SIZE: "<< client_req.second.size() << "\n";
-		
+
         try {
             handleResponse(client_req.second, fd);
         } catch (ErrorException & e) {
@@ -163,6 +163,7 @@ void    ServerConnexion::read_from_client(int fd) {
 }
 
 void    sigpipe_handler(int signal) {
+	(void) signal;
     std::cout << "BROKEN PIPE\n";
 }
 

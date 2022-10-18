@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/17 20:50:51 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/18 16:30:55 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	BodyMaker::createFile(std::string filename, std::vector<char> content, std:
 }
 
 void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
-	std::string			boundary = client_req.getHeader().at("Content-Type")[0].substr(30);
+	std::string			boundary = client_req.getHeader().at("content-type")[0].substr(30);
 	std::vector<char>	body = client_req.getBody();
 	int					i = 0;
 
@@ -123,13 +123,13 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 		response.setCGI(true);
 		return (m_body);
 	}
-	if (client_req.getHeader().find("Content-Type")// voir quoi fare si pas de content-type
+	if (client_req.getHeader().find("content-type")// voir quoi fare si pas de content-type
 		== client_req.getHeader().end())
 			return (m_body);// voir quel retour utiliser
-	else if (client_req.getHeader().at("Content-Type")[0] == "application/x-www-form-urlencoded")
+	else if (client_req.getHeader().at("content-type")[0] == "application/x-www-form-urlencoded")
 		return (m_body);// voir quel retour utiliser
 
-	else if (!client_req.getHeader().at("Content-Type")[0].compare(0, 30,"multipart/form-data; boundary="))
+	else if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
 		return (post_multipart_form(client_req, context, path), m_body);// voir quel retour utiliser
 	return (m_body);// voir quel retour utiliser
 }

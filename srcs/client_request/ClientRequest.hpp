@@ -15,6 +15,7 @@ class ClientRequest {
 		std::string											m_http_version;
 		std::vector<char>									m_body;
 		std::map<std::string, std::vector<std::string> > 	m_header;
+		std::string											m_query;
 
 
 	public:
@@ -45,6 +46,9 @@ class ClientRequest {
 		const std::map<std::string, std::vector<std::string> >
 		getHeader() const;
 
+		const std::string
+		getQuery() const;
+
 		/*
 		**	SETTER
 		*/
@@ -62,6 +66,9 @@ class ClientRequest {
 
 		void
 		setHeader(std::map<std::string, std::vector<std::string> > header);
+
+		void
+		setQuery(std::string qery);
 };
 
 #endif

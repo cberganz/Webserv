@@ -34,6 +34,9 @@ class ClientRequestParser {
 		std::vector<std::string>
 		tokenise(std::string str, char sep);
 
+		std::string
+		strToLower(std::string str);
+
 		void
 		trimBegin(std::string &str, std::string charset);
 
