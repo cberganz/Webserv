@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/17 20:50:51 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/18 21:03:38 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	BodyMaker::createFile(std::string filename, std::vector<char> content, std:
 		int	i = path.length();
 		while (i > 0 && path[i] != '/')
 			i--;
-		path = path.substr(0, i);
+		path = path.substr(0, i + 1);
 	}
 	filename = path + filename;
 	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);

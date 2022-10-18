@@ -147,17 +147,17 @@ void    ServerConnexion::write_to_client(int fd) {
     ss >> size_chunk;
 
     try {
-        // if (size_return % 2 == 0)
+        if (size_return % 2 == 0)
             m_polling.send_request(size_chunk + "\r\n", fd);
-        // else
+        else
             m_polling.send_request(chunk + "\r\n", fd);
-        if (chunk == ""/*  && size_return % 2 == 1 */) 
+        if (chunk == "" && size_return % 2 == 1) 
             m_polling.edit_socket_in_epoll(fd, EPOLLIN);
     }
     catch (...) {
         close(fd);
     }
-    if (chunk == ""/*  && size_return % 2 == 1 */)
+    if (chunk == "" && size_return % 2 == 1)
         m_chunks.delete_chunk_response(fd);
     else
         m_chunks.increment_size_turn(fd);
@@ -181,7 +181,6 @@ void    ServerConnexion::connexion_loop()
             signal(SIGPIPE, sigpipe_handler);
             event = m_polling.get_ready_event(i);
             if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
-                || (!(event.events & EPOLLIN) && !(event.events & EPOLLOUT))
                 || (event.events & EPOLLRDHUP)) 
                 close (event.data.fd);
             else if (m_polling.is_existing_socket_fd(event.data.fd))

@@ -70,20 +70,19 @@ std::string     Chunks::add_headerless_response_to_chunk(int fd, std::string res
 
 std::string     Chunks::get_next_chunk(int fd) {
     std::string response = (m_chunked_responses.find(fd))->second.second;
-    int         size_turn = (m_chunked_responses.find(fd))->second.first;
+    int         size_return = (m_chunked_responses.find(fd))->second.first;
     std::string chunk = "";
     
     if (response.size())
         chunk = response.substr(0, MAX_CHUNK_LEN);
-    // if (size_turn % 2 == 0)
-    //     return (chunk);
+    if (size_return % 2 == 0)
+        return (chunk);
     if (response.size() >= MAX_CHUNK_LEN)
         response = response.substr(MAX_CHUNK_LEN); 
     else
         response = "";
     m_chunked_responses.erase(fd);
-    if (chunk.size())
-        m_chunked_responses.insert(std::make_pair(fd, std::make_pair(size_turn, response)));
+    m_chunked_responses.insert(std::make_pair(fd, std::make_pair(size_return, response)));
     return (chunk);
 }
 
