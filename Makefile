@@ -6,7 +6,11 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2022/10/18 21:08:19 by cdine            ###   ########.fr        #
+=======
+#    Updated: 2022/10/18 16:31:14 by cberganz         ###   ########.fr        #
+>>>>>>> session_management
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,6 +78,8 @@ re: fclean all
 
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out ./config_files/delete_method.conf
+	#./a.out ./config_files/delete_method.conf
+	#./a.out ./config_files/cookies.conf
+	./a.out ./config_files/demo.conf
 
 .PHONY : all clean fclean test re server_connexion

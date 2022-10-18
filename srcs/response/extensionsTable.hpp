@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 02:35:17 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/18 20:27:31 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ const t_extension extensionsTable[MAX_EXT] =
 	{ "",		false,		"",				"text/html"																	},
 	{ "html",	false,		"",				"text/html"																	},
 	{ "php",	true,		"/usr/bin/php-cgi",	"application/x-httpd-php"													},
+	{ "js",		false,		"",				"text/javascript"															},
 	{ "aac",	false,		"",				"audio/aac"																	},
 	{ "abw",	false,		"",				"application/x-abiword"														},
 	{ "arc",	false,		"",				"application/x-freearc"														},
@@ -54,7 +55,6 @@ const t_extension extensionsTable[MAX_EXT] =
 	{ "jar",	false,		"",				"application/java-archive"													},
 	{ "jpg",	false,		"",				"image/jpeg"																},
 	{ "jpeg",	false,		"",				"image/jpeg"																},
-	{ "js",		false,		"",				"text/javascript"															},
 	{ "json",	false,		"",				"application/json"															},
 	{ "jsonld",	false,		"",				"application/ld+json"														},
 	{ "midi",	false,		"",				"audio/midi audio/x-midi"													},
