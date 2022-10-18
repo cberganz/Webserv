@@ -62,8 +62,29 @@ void	ClientRequestParser::parse_request_line(std::string request_line, ClientReq
 		throw ErrorException(400);
 	this->replace_encode_char(attributes[1]);
 	client_req.setMethod(attributes[0]);
-	client_req.setPath(attributes[1]);
+	if (attributes[1].find('?', 0) != std::string::npos)
+	{
+		client_req.setPath(this->strToLower(std::string(attributes[1].begin(),
+			attributes[1].begin() + attributes[1].find('?', 0))));
+		std::cout << "\n\nTEST PATH: " + client_req.getPath() + "\n";
+		client_req.setQuery(std::string(attributes[1].begin() + attributes[1].find('?', 0) + 1,
+			attributes[1].end()));
+	}
+	else
+	{
+		client_req.setPath(attributes[1]);
+		client_req.setQuery(std::string());
+	}
 	client_req.setHttpVersion(attributes[2]);
+}
+
+std::string	ClientRequestParser::strToLower(std::string str)
+{
+	std::string copy(str);
+
+	for (std::string::iterator it = copy.begin(); it != copy.end(); it++)
+		*it = std::tolower(*it);
+	return (copy);
 }
 
 std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_header(std::string str)
@@ -92,7 +113,7 @@ std::map<std::string, std::vector<std::string> >	ClientRequestParser::parse_head
 			throw ErrorException(400);
 		this->trimBegin(header_value, " \f\t\n\r\v");
 		this->trimEnd(header_value, " \f\t\n\r\v");
-		header[header_key] = tokenise(header_value, ',');
+		header[strToLower(header_key)] = tokenise(header_value, ',');
 		std::getline(str_stream, line);
 	}
 	return (header);
@@ -107,7 +128,7 @@ std::vector<char>	ClientRequestParser::parse_body(std::vector<char> str)
 
 void	ClientRequestParser::trimBegin(std::string &request, std::string charset)
 {
-	int last_new_line = 0;
+	size_t last_new_line = 0;
 
 	while (last_new_line < request.length()
 			&& (charset.find(request[last_new_line]) != std::string::npos))
@@ -171,7 +192,7 @@ void	ClientRequestParser::replace_encode_char(std::string &str)
 
 	for (int i = 0; i < PRINTABLE_CHAR_COUNT; i++)
 	{
-		int pos = 0;
+		size_t pos = 0;
 		charset_to_replace = "%" + printable_char[i].hexa_code;
 		while ((pos = str.find(charset_to_replace, pos) ) != std::string::npos)
 		{

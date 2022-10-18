@@ -1,6 +1,6 @@
 #include "ClientRequest.hpp"
 
-ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_header(), m_body()
+ClientRequest::ClientRequest(): m_method(), m_path(), m_http_version(), m_body(), m_header()
 {}
 
 ClientRequest::ClientRequest(const ClientRequest &copy)
@@ -44,6 +44,9 @@ const std::vector<char>	ClientRequest::getBody() const
 const std::map<std::string, std::vector<std::string> >	ClientRequest::getHeader() const
 { return (m_header); }
 
+const std::string	ClientRequest::getQuery() const
+{ return (m_query); }
+
 /*
 ** Setter
 */
@@ -63,13 +66,19 @@ void	ClientRequest::setBody(std::vector<char> body)
 void	ClientRequest::setHeader(std::map<std::string, std::vector<std::string> > header)
 { m_header =  header; }
 
+void	ClientRequest::setQuery(std::string query)
+{ m_query = query; }
+
 /*
 ** To Delete
 */
 
 void	ClientRequest::print()
 {
-	std::cout << "METHOD: " + m_method + "\n" + "PATH: " + m_path + "\n" + "VERSION: " + m_http_version << std::endl;
+	std::cout << "METHOD: " + m_method
+				+ "\n" + "PATH: " + m_path + "\n"
+				+ "\n" + "Query: " + m_query + "\n"
+				+ "VERSION: " + m_http_version << std::endl;
 	std::cout << "\nHEADER:" << std::endl;
 	for (std::map<std::string, std::vector<std::string> >::iterator it = m_header.begin(); it != m_header.end(); it++)
 	{

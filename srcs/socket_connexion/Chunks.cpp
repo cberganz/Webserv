@@ -115,7 +115,7 @@ void            Chunks::delete_chunk_request(int fd) {
 
 bool            Chunks::boundary_reached(int fd, std::vector<char> chunk) {
     std::vector<char> req = m_chunked_requests.find(fd)->second;
-    size_t  boundary_position = ft::search_vector_char_until(req, "boundary=", ft::search_vector_char(req, "\r\n\r\n", 0));
+    int  boundary_position = ft::search_vector_char_until(req, "boundary=", ft::search_vector_char(req, "\r\n\r\n", 0));
     if (boundary_position == -1)
         return (true);
     std::string saut_ligne = "\r\n";
