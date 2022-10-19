@@ -21,16 +21,16 @@ Chunks &Chunks::operator=(const Chunks &copy) {
 
 /** CHUNKED REQUEST FUNCTIONS **/
 
-void    Chunks::add_chunk_request(int fd, std::pair<int, std::vector<char> > chunk) {
+void    Chunks::add_chunk_request(int fd, std::vector<char> chunk) {
     std::map<int, std::vector<char> >::iterator it = m_chunked_requests.find(fd);
 
     if (is_chunked_header(fd))
-        m_chunked_requests.insert(std::make_pair(fd, chunk.second));
+        m_chunked_requests.insert(std::make_pair(fd, chunk));
     else {
         if (is_chunk_encoding(fd))
-            it->second.insert(it->second.end(), chunk.second.begin(), chunk.second.begin() + chunk.first - 2);
+            it->second.insert(it->second.end(), chunk.begin(), chunk.begin() + chunk.size() - 2);
         else
-            it->second.insert(it->second.end(), chunk.second.begin(), chunk.second.begin() + chunk.first);
+            it->second.insert(it->second.end(), chunk.begin(), chunk.begin() + chunk.size());
     }
 }
 

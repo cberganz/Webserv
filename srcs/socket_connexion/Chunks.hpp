@@ -10,7 +10,7 @@
 # include <iostream>
 # include "../tools/utility.hpp"
 
-# define MAX_CHUNK_LEN  3
+# define MAX_CHUNK_LEN  1028
 
 class Chunks {
     private:
@@ -24,7 +24,7 @@ class Chunks {
         Chunks &operator=(const Chunks &copy);
 
         /** REQUEST **/
-        void                add_chunk_request(int fd, std::pair<int, std::vector<char> > chunk);
+        void                add_chunk_request(int fd, std::vector<char> chunk);
         std::vector<char>   get_unchunked_request(int fd);
 
         /** RESPONSE **/

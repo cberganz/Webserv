@@ -34,7 +34,7 @@ class ServerConnexion {
         void            handleResponse(std::vector<char> client_req, int fd);
         void            handleDefaultError(ErrorException & e, int fd);
         bool            is_size_chunk(std::vector<char> chunk);
-        bool            is_last_request_chunk(std::pair<int, std::vector<char> > client_req, int fd);
+        bool            is_last_request_chunk(std::vector<char> client_req, int fd);
 
     protected:
         Config			m_config;

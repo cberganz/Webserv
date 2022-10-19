@@ -152,7 +152,7 @@ int            PollingManager::accept_connexion(int ready_fd) {
     return (new_socket);
 }
 
-std::pair<int, std::vector<char> >     PollingManager::receive_request(int client_socket) {
+std::vector<char>     PollingManager::receive_request(int client_socket) {
     std::vector<char>  buffer(MAXBUF, '\0');
     int     ret;
 
@@ -162,7 +162,7 @@ std::pair<int, std::vector<char> >     PollingManager::receive_request(int clien
         throw (SocketCreationException(RECEIVEERR));
     }
     buffer.resize(ret);
-    return (std::make_pair(ret, buffer));
+    return (buffer);
 }
 
 void            PollingManager::send_request(std::string request, int client_socket) {

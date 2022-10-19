@@ -25,7 +25,6 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
     return (*this);
 }
 
-// a DELETE
 std::string	create_response(std::string file, std::string status_code, std::string msg) {
 	std::ifstream       fs(file.c_str());
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
@@ -102,31 +101,31 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
     }
 }
 
-bool            ServerConnexion::is_last_request_chunk(std::pair<int, std::vector<char> > client_req, int fd) {
-    if (client_req.first < MAXBUF && ft::search_vector_char(client_req.second, "Transfer-Encoding: chunked", 0) == -1) {
-        if (m_chunks.body_is_whole(fd) || m_chunks.boundary_reached(fd, client_req.second))
+bool            ServerConnexion::is_last_request_chunk(std::vector<char> client_req, int fd) {
+    if (client_req.size() < MAXBUF && ft::search_vector_char(client_req, "Transfer-Encoding: chunked", 0) == -1) {
+        if (m_chunks.body_is_whole(fd) || m_chunks.boundary_reached(fd, client_req))
             return (true);
     }
-    if (((ft::search_vector_char(client_req.second, "\r\n", 0) == 0 && client_req.second.size() == 2) 
-        || ft::search_vector_char(client_req.second, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd))
+    if (((ft::search_vector_char(client_req, "\r\n", 0) == 0 && client_req.size() == 2) 
+        || ft::search_vector_char(client_req, "0\r\n", 0) != -1) && m_chunks.is_chunk_encoding(fd))
         return (true);
     return (false);
 }
 
 void    ServerConnexion::read_from_client(int fd) {
-    bool                                is_chunk    = true;
-    std::pair<int, std::vector<char> >  client_req  = m_polling.receive_request(fd);
+    bool                is_chunk    = true;
+    std::vector<char>   client_req  = m_polling.receive_request(fd);
 
-    if (!client_req.second.size())
+    if (!client_req.size())
         return ;
     m_chunks.add_chunk_request(fd, client_req);
     if (is_last_request_chunk(client_req, fd)) {
         is_chunk = false;
-        client_req.second = m_chunks.get_unchunked_request(fd);
+        client_req = m_chunks.get_unchunked_request(fd);
     }
     if (!is_chunk) {		
         try {
-            handleResponse(client_req.second, fd);
+            handleResponse(client_req, fd);
         } catch (ErrorException & e) {
             // if ( default error pages not set )
             handleDefaultError(e, fd);
