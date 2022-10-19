@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 22:13:22 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/19 12:57:42 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ private:
 	const std::string	&deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req);
 	void				post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path);
 	void				createFile(std::string filename, std::vector<char> content, std::string path);
+	bool				check_end_boundary(std::string boundary, std::vector<char> &body);
 
 	// void	post_urlencoded()
 

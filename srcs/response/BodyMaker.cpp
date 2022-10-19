@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 21:08:14 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/19 12:59:33 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,21 @@ void	BodyMaker::createFile(std::string filename, std::vector<char> content, std:
 		out.put(*it);
 }
 
+bool				BodyMaker::check_end_boundary(std::string boundary, std::vector<char> &body) {
+	boundary = "--" + boundary + "--";
+	if (ft::search_vector_char(body, boundary.c_str(), body.size() - boundary.length() - 10) == -1)
+		return (false);
+	return (true);
+}
+
+
 void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
 	std::string			boundary = client_req.getHeader().at("content-type")[0].substr(30);
 	std::vector<char>	body = client_req.getBody();
 	int					i = 0;
 
+	if (!check_end_boundary(boundary, body))
+		throw ErrorException(400);
 	while ((i = ft::search_vector_char(body, boundary.c_str(), i)) != -1) {
 		i += boundary.length() + 1;
 		if (ft::search_vector_char(body, "filename=", i) == -1)
@@ -123,15 +133,9 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 		response.setCGI(true);
 		return (m_body);
 	}
-	if (client_req.getHeader().find("content-type")// voir quoi fare si pas de content-type
-		== client_req.getHeader().end())
-			return (m_body);// voir quel retour utiliser
-	else if (client_req.getHeader().at("content-type")[0] == "application/x-www-form-urlencoded")
-		return (m_body);// voir quel retour utiliser
-
-	else if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
-		return (post_multipart_form(client_req, context, path), m_body);// voir quel retour utiliser
-	return (m_body);// voir quel retour utiliser
+	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
+		return (post_multipart_form(client_req, context, path), m_body);
+	return (m_body);
 }
 
 const std::string	&BodyMaker::deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
@@ -142,7 +146,7 @@ const std::string	&BodyMaker::deleteMethod(Response& response, const Context& co
 		throw (ErrorException(403));
 	if (std::remove(path.c_str())) 
 		throw (ErrorException(500));
-	return (m_body);// voir quel retour utiliser
+	return (m_body);
 }
 
 const std::string &BodyMaker::createBody(Response& response)
