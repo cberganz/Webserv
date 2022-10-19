@@ -6,7 +6,7 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/19 16:06:52 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/19 17:03:12 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,8 +75,8 @@ re: fclean all
 server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
 	#./a.out ./config_files/delete_method.conf
-	#./a.out ./config_files/cookies.conf
+	./a.out ./config_files/cookies.conf
 	# ./a.out ./config_files/demo.conf
-	./a.out ./config_files/form.conf
+	# ./a.out ./config_files/form.conf
 
 .PHONY : all clean fclean test re server_connexion
