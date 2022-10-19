@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 12:57:42 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/19 16:06:46 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ private:
 	const std::string &getProgName(const std::string &path);
 	bool requiresCGI(const std::string &path);
 	void readFile(const std::string &path);
-	void executeCGI(const std::string &path, char **envp);
+	void executeCGI(const ClientRequest& client_req, const std::string &path, char **envp);
 	const std::string &autoIndex(std::string &path);
 
 	/** METHODS **/
