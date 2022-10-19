@@ -23,15 +23,17 @@
 			<script>
 				function send_del_req() {
 					//get ip et port value
-					var path = 'http://127.0.0.1:8080/file_to_delete/' 
-							+ document.getElementById("select_file").value;
-					fetch(path, {
-						method: 'DELETE'
-						}
-					)
-					.then((response) => response.json())
-					.then((data) => console.log(data));
-					// window.location.reload()
+					var url = window.location.href;
+					var path = url.substring(0, url.indexof('/', url.indexOf('://') + 4)) + "/file_to_delete/"; 
+					console.log(path)
+					// 		+ document.getElementById("select_file").value;
+					// fetch(path, {
+					// 	method: 'DELETE'
+					// 	}
+					// )
+					// .then((response) => response.json())
+					// .then((data) => console.log(data));
+					// // window.location.reload()
 				}
 			</script>
 			<div class="wrap">

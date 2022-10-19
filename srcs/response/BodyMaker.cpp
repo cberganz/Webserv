@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 21:08:14 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/19 16:03:56 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ const std::string	&BodyMaker::getMethod(Response& response, const Context& conte
 		throw ErrorException(404);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
-		executeCGI(path, generateEnvp(client_req, context, path));
+		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
 	}
 	else
@@ -119,7 +119,7 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 	
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
-		executeCGI(path, generateEnvp(client_req, context, path));
+		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
 		return (m_body);
 	}
@@ -180,7 +180,7 @@ void BodyMaker::readFile(const std::string &path)
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
-void BodyMaker::executeCGI(const std::string &path, char **envp)
+void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &path, char **envp)
 {
 	int pid, stat, fd[2];
 
@@ -195,6 +195,18 @@ void BodyMaker::executeCGI(const std::string &path, char **envp)
 	{
 		close(fd[0]);
 		close(STDOUT_FILENO);
+	
+		std::vector<char> copy(client_req.getBody());
+		copy.push_back('\0');
+		std::FILE* tmpf = std::tmpfile();
+		std::fputs(&copy[0], tmpf);
+		 char buf[49];
+		std::fgets(buf, sizeof(buf), tmpf);
+		std::cout << buf << '\n';
+		if (dup2(fileno(tmpf), STDIN_FILENO) == -1)
+			exit(1);
+
+
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 			exit(1);
 		close(fd[1]);
@@ -217,9 +229,9 @@ void BodyMaker::executeCGI(const std::string &path, char **envp)
 			throw ErrorException(500);
 		close(fd[1]);
 		int	 ret = 0;
-		char buff[1024];
-		memset(buff, 0, 1024);
-		while ((ret = read(fd[0], buff, 1024)) > 0)
+		char buff[4096];
+		memset(buff, 0, 4096);
+		while ((ret = read(fd[0], buff, 4096)) > 0)
 			m_body += buff;
 		if (ret < 0)
 			throw ErrorException(500);
