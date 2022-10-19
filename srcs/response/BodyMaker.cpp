@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 12:59:33 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/19 17:10:47 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,17 @@ const std::string	&BodyMaker::getMethod(Response& response, const Context& conte
 	return (m_body);
 }
 
-void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path) {
+void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path, const Context& context) {
 	if (*path.end() != '/') {
 		int	i = path.length();
 		while (i > 0 && path[i] != '/')
 			i--;
 		path = path.substr(0, i + 1);
+	}
+	if (*context.getDirective("upload_folder").begin() != ".") {
+		path = *context.getDirective("upload_folder").begin();
+		if (path[path.length()] != '/')
+			path += "/";
 	}
 	filename = path + filename;
 	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
@@ -121,12 +126,11 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 		std::vector<char>	content(body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4,
 									body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4 + 
 									ft::search_vector_char(body, ("\r\n--" + boundary).c_str(), i) - ft::search_vector_char(body, "\r\n\r\n", i) - 4);
-		createFile(filename, content, path);
+		createFile(filename, content, path, context);
 	}
 }
 
 const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
-	
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
 		executeCGI(path, generateEnvp(client_req, context, path));
