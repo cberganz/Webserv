@@ -2,13 +2,14 @@
 	<title>Webserv</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/delete_method.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
-	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<link rel="stylesheet" href="assets/css/delete_method.css">
+	<script src="assets/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<div id="navbar"></div>
-	<script>$(function(){ $("#navbar").load("navbar.html"); });</script>
+	<?php
+		echo file_get_contents("navbar.html");
+	?>
 	<div class="container">
 		<div>
 			<h2 style="color:white;text-align: center;">DELETE METHOD !</h2>
