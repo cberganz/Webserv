@@ -80,7 +80,7 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 	envp["CONTENT_TYPE"] = getMime(path);
 	envp["CONTENT_LENGTH"] = ft::itostr(/* 49);// */client_req.getBody().size());
 
-	std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";
+	// std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";
 	// CLIENT VARIABLES
 	// if (client_req.getHeader().count("accept"))
 	envp["HTTP_ACCEPT"] = "*/*";//joinStrVector(client_req.getHeader().find("accept")->second, ",");

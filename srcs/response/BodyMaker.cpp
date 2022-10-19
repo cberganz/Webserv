@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 17:22:25 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/19 19:22:03 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,10 +135,10 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 	{
 		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
-		return (m_body);
 	}
 	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
-		return (post_multipart_form(client_req, context, path), m_body);
+		post_multipart_form(client_req, context, path);
+	m_body = "<html><head><script>function Previous() {window.history.back()}</script></head><body><script>Previous()</script></body></html>";
 	return (m_body);
 }
 
