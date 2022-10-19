@@ -8,7 +8,6 @@
         <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
         <link rel="stylesheet" href="https://rawgit.com/LeshikJanz/libraries/master/Bootstrap/baguetteBox.min.css">
         <link rel="stylesheet" href="./assets/css/upload_file.css">
-        <link rel="stylesheet" href="./assets/css/form.css">
           
             <title>Upload files</title>
         </head>
@@ -16,43 +15,49 @@
         
         <div class="container gallery-container">
         
-            <h1>File list</h1>
+            <h1>Photo gallery</h1>
         
             <p class="page-description text-center">
-                <a href="index.php"><u>Photo gallery</u></a>
+                <a href="upload.html"><u>Upload files</u></a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="delete_files.php"><u>Delete files</u></a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="upload.html"><u>File upload</u></a>
+                <a href="file_list.php"><u>File list</u></a>
             </p>
             
-            <?php
-                if ($handle = opendir('./files')) {
-
-                    while (false !== ($entry = readdir($handle))) {
-                
-                        if ($entry != "." && $entry != "..") {
-                
-                            echo "- $entry<br>";
-                            
-                        }
+            <div class="tz-gallery">
+        
+                <div class="row">
+        
+                    <?php 
+                    $dirname = "./files/";
+                    $images = glob($dirname."*.jpg");
+                    
+                    foreach($images as $image) {
+                        echo "<div class=\"col-sm-12 col-md-4\">";
+                        echo '<a class="lightbox" href="'.$image.'">';
+                        echo '<img src="'.$image.'">';
+                        echo "</a></div>";
                     }
-                
-                    closedir($handle);
-                }
-            ?>
+                    ?>
+
+
+                    
+                    <!-- <div class="col-sm-6 col-md-4">
+                        <a class="lightbox" href="https://raw.githubusercontent.com/LeshikJanz/libraries/master/Related%20images/Bootstrap%20example/coast.jpg">
+                            <img src="https://raw.githubusercontent.com/LeshikJanz/libraries/master/Related%20images/Bootstrap%20example/coast.jpg" alt="Rails">
+                        </a>
+                    </div> -->
+        
+                </div>
+        
+            </div>
+        
         </div>
         
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
         <script>
             baguetteBox.run('.tz-gallery');
-
-            $(document).ready(function(){
-            $('form input').change(function () {
-                $('form p').text(this.files.length + " file(s) selected");
-            });
-            });
         </script>
-    </body>
-</html>
+        </body>
+        </html>

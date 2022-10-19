@@ -19,16 +19,18 @@
             <h1>Upload files</h1>
         
             <p class="page-description text-center">
-                <a href="index.html"><u>Photo gallery</u></a>
+                <a href="index.php"><u>Photo gallery</u></a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="delete_files.php"><u>Delete files</u></a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="file_list.php"><u>File list</u></a>
             </p>
-            
+             
             <form method="post" enctype="multipart/form-data">
-                <input type="file" name="file1" accept="image/*" multiple>
+                <input type="file" name="file1" multiple>
                 <p>Drag your files here or click in this area.</p>
                 <br /><br />
-                <button type="submit">Submit</button>
+                <button type="submit" href="http://127.0.0.1:8080">Submit</button>
             </form>
         </div>
         

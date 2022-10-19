@@ -85,8 +85,7 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 		envp["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
 	envp["CONTENT_LENGTH"] = ft::itostr(client_req.getBody().size());
 
-	std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";
-	std::cout << "\nBODY: " << &client_req.getBody()[0] << "\n";
+	// std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";
 	// CLIENT VARIABLES
 	// if (client_req.getHeader().count("accept"))
 	envp["HTTP_ACCEPT"] = "*/*";//joinStrVector(client_req.getHeader().find("accept")->second, ",");
