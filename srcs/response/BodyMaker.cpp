@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 17:13:16 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/19 17:22:25 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,10 +237,13 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 			throw ErrorException(500);
 		close(fd[1]);
 		int	 ret = 0;
-		char buff[4096];
-		memset(buff, 0, 4096);
-		while ((ret = read(fd[0], buff, 4096)) > 0)
+		char buff[1025];
+		memset(buff, 0, 1025);
+		while ((ret = read(fd[0], buff, 1024)) > 0)
+		{
+			buff[ret] = '\0';
 			m_body += buff;
+		}
 		if (ret < 0)
 			throw ErrorException(500);
 		close(fd[0]);
