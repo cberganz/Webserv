@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keywordsTable.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:12 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 22:08:32 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/19 16:04:00 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct s_keywords {
 **	@warning This MUST be changed when adding new keywords to the table.
 */
 
-# define MAX_KEYWORDS 12
+# define MAX_KEYWORDS 13
 
 /*
 **	@brief Two dimensional array containing possible and/or mandatory directives
@@ -116,6 +116,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "allowed_methods",		true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines allowed http methods...........
 	{ "cgi",					true,	true,	true,	false,	false,	false,	"off"			 }, //.Defines whether response should be construct from CGI.
 	{ "rewrite",				false,	true,	true,	false,	false,	true,	""		 		 }, 
+	{ "upload_folder",			true,	true,	true,	false,	false,	false,	"."		 		 }, //.Define default file upload folder.....................
 	{ "",						false,	false,	false,	false,	false,	false,	""				 }, //.Default settings if keyword was not found.............
 },
 	/*....................................LOCATION CONTEXT.......................................*/
@@ -129,6 +130,7 @@ const t_keywords keywords[CONTEXTS_COUNT][MAX_KEYWORDS] = {
 	{ "allowed_methods",		true,	true,	true,	false,	false,	true,	"default"		 }, //.Determines allowed http methods...........
 	{ "cgi",					true,	true,	true,	false,	false,	false,	"off"			 }, //.Defines whether response should be construct from CGI.
 	{ "rewrite",				false,	true,	true,	false,	false,	true,	""		 		 }, 
+	{ "upload_folder",			true,	true,	true,	false,	false,	false,	"."		 		 }, // Define default file upload folder
 	{ "",						false,	false,	false,	false,	false,	false,	""			 	 }, //.Default settings if keyword was not found.............
 },
 
