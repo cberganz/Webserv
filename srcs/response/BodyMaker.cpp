@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 17:22:25 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/19 19:52:01 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,14 +203,13 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 	{
 		close(fd[0]);
 		close(STDOUT_FILENO);
+		close(STDIN_FILENO);
 	
 		std::vector<char> copy(client_req.getBody());
 		copy.push_back('\0');
 		std::FILE* tmpf = std::tmpfile();
 		std::fputs(&copy[0], tmpf);
-		 char buf[49];
-		std::fgets(buf, sizeof(buf), tmpf);
-		std::cout << buf << '\n';
+		std::rewind(tmpf);
 		if (dup2(fileno(tmpf), STDIN_FILENO) == -1)
 			exit(1);
 

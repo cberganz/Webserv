@@ -1,26 +1,11 @@
 <!DOCTYPE html>
 <?php
-	// $cookie_name = "first_name";
-	// $cookie_value = $_POST['input_last_name'];
-	function detectRequestBody() {
-		$rawInput = fopen('php://input', 'r');
-		$tempStream = fopen('php://temp', 'r+');
-		stream_copy_to_stream($rawInput, $tempStream);
-		rewind($tempStream);
-	
-		return $tempStream;
-	}
-	$i = 0;
-	echo getenv("SCRIPT_NAME");
-	echo "\nfile content: ";
-	echo detectRequestBody();
-	// var_dump($HTTP_RAW_POST_DATA);
-
-	while ($i < count($_POST))
-	{
-		echo "$_POST[$i]\n";
-	}
-	// setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+	$cookie_name1 = "last_name";
+	$cookie_value1 = $_POST['input_last_name'];
+	$cookie_name2 = "first_name";
+	$cookie_value2 = $_POST['input_first_name'];
+	setcookie($cookie_name1, $cookie_value1, time() + (86400 * 30), "/");
+	setcookie($cookie_name2, $cookie_value2, time() + (86400 * 30), "/");
 ?>
 <!-- <html>    
     <body>

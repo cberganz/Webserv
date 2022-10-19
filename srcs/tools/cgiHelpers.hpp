@@ -71,16 +71,22 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 	envp["PATH_TRANSLATED"] = path;
 	envp["SCRIPT_NAME"] = path; // script_name or script_filename ?
 	envp["SCRIPT_FILENAME"] = path; // script_name or script_filename ?
-	envp["QUERY_STRING"] = ""; // client_req.getQuery(); -> need query in client_req
+	envp["QUERY_STRING"] = client_req.getQuery();
 	// if (client_req.getHeader().count("host"))
 	envp["REMOTE_HOST"] = ""/* joinStrVector(client_req.getHeader().find("host")->second, ",") */;
 	envp["REMOTE_ADDR"] = "";/* -> IP DU CLIENT necessary ? */
 	envp["AUTH_TYPE"] = "";
 	envp["REMOTE_USER"] = "";
-	envp["CONTENT_TYPE"] = getMime(path);
-	envp["CONTENT_LENGTH"] = ft::itostr(/* 49);// */client_req.getBody().size());
+
+
+	if (client_req.getHeader().count("content-type"))
+		envp["CONTENT_TYPE"] = client_req.getHeader().find("content-type")->second[0];
+	else
+		envp["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+	envp["CONTENT_LENGTH"] = ft::itostr(client_req.getBody().size());
 
 	std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";
+	std::cout << "\nBODY: " << &client_req.getBody()[0] << "\n";
 	// CLIENT VARIABLES
 	// if (client_req.getHeader().count("accept"))
 	envp["HTTP_ACCEPT"] = "*/*";//joinStrVector(client_req.getHeader().find("accept")->second, ",");
