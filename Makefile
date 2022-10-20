@@ -12,7 +12,7 @@
 
 NAME		= libWebserv.a
 
-CC			= g++
+CC			= clang++
 
 INCLUDE		= include/
 
@@ -73,10 +73,10 @@ fclean: clean
 re: fclean all
 
 server_connexion: all
-	g++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
+	clang++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
 	#./a.out ./config_files/delete_method.conf
-	./a.out ./config_files/cookies.conf
-	# ./a.out ./config_files/demo.conf
+	#./a.out ./config_files/cookies.conf
+	./a.out ./config_files/demo.conf
 	#./a.out ./config_files/form.conf
 	# ./a.out ./config_files/upload_file.conf
 	rm a.out
