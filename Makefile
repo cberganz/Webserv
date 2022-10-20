@@ -6,7 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/19 20:16:18 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/20 04:33:14 by charles          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,8 +76,9 @@ server_connexion: all
 	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
 	#./a.out ./config_files/delete_method.conf
 	#./a.out ./config_files/cookies.conf
-	#./a.out ./config_files/demo.conf
+	./a.out ./config_files/demo.conf
 	#./a.out ./config_files/form.conf
-	./a.out ./config_files/upload_file.conf
+	#./a.out ./config_files/upload_file.conf
+	rm a.out
 
 .PHONY : all clean fclean test re server_connexion
