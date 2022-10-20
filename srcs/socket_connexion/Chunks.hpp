@@ -39,7 +39,7 @@ class Chunks {
         void            delete_chunk_response(int fd);
         bool            body_is_whole(int fd);
         bool            boundary_reached(int fd, std::vector<char> chunk);
-        int             go_to_end_of_line(std::vector<char> req, int i);
+        int             go_to_end_of_line(std::vector<char> req, size_t i);
         void            increment_size_turn(int fd);
         int             get_size_return(int fd);
 };

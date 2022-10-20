@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HeaderMaker.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 22:02:19 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/20 16:07:18 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,67 +88,100 @@ void HeaderMaker::head(const Response &response)
 	m_header += NEWLINE;
 }
 
-bool HeaderMaker::condition_date(const ClientRequest &client_req, const Response &response)
-{ return true; }
+bool HeaderMaker::condition_date(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return true; 
+}
 
-bool HeaderMaker::condition_server(const ClientRequest &client_req, const Response &response)
-{ return response.getContext().directiveExist("server_name"); }
+bool HeaderMaker::condition_server(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	return response.getContext().directiveExist("server_name"); 
+}
 
-bool HeaderMaker::condition_location(const ClientRequest &client_req, const Response &response)
-{ return (response.getHttpCode() > 300 && response.getHttpCode() < 400 ? true : false); }// checker les bons stATuscode
+bool HeaderMaker::condition_location(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	return (response.getHttpCode() > 300 && response.getHttpCode() < 400 ? true : false); 
+}// checker les bons stATuscode
 
-bool HeaderMaker::condition_connection(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_connection(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-bool HeaderMaker::condition_retry_after(const ClientRequest &client_req, const Response &response)
-{ return true; }
+bool HeaderMaker::condition_retry_after(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return true;
+}
 
-bool HeaderMaker::condition_last_modified(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_last_modified(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-bool HeaderMaker::condition_www_authenticate(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_www_authenticate(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-bool HeaderMaker::condition_transfert_encoding(const ClientRequest &client_req, const Response &response)
-{ return true; }
+bool HeaderMaker::condition_transfert_encoding(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return true;
+}
 
-bool HeaderMaker::condition_content_type(const ClientRequest &client_req, const Response &response)
-{ return (response.isCGI() ? false : true); }
+bool HeaderMaker::condition_content_type(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	return (response.isCGI() ? false : true); 
+}
 
-bool HeaderMaker::condition_content_lenght(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_content_lenght(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-bool HeaderMaker::condition_content_location(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_content_location(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-bool HeaderMaker::condition_content_language(const ClientRequest &client_req, const Response &response)
-{ return false; }
+bool HeaderMaker::condition_content_language(const ClientRequest &client_req, const Response &response) {
+	(void) client_req;
+	(void) response; 
+	return false;
+}
 
-void HeaderMaker::date(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::date(const ClientRequest &, const Response &)
 { m_header += ft::getTimeFormated(); }
 
-void HeaderMaker::server(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::server(const ClientRequest &, const Response &response)
 { m_header += *response.getContext().getDirective("server_name").begin(); }
 
-void HeaderMaker::location(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::location(const ClientRequest &, const Response &response)
 { m_header += response.getLocation(); }
 
-void HeaderMaker::connection(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::connection(const ClientRequest &, const Response &)
 { m_header += ""; }
 
-void HeaderMaker::retry_after(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::retry_after(const ClientRequest &, const Response &)
 { m_header += "120"; }
 
-void HeaderMaker::last_modified(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::last_modified(const ClientRequest &, const Response &)
 { m_header += ""; }
 
-void HeaderMaker::www_authenticate(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::www_authenticate(const ClientRequest &, const Response &)
 { m_header += ""; }
 
-void HeaderMaker::transfert_encoding(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::transfert_encoding(const ClientRequest &, const Response &)
 { m_header += "chunked"; }
 
-void HeaderMaker::content_type(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::content_type(const ClientRequest &, const Response &response)
 {
 	std::string extension = response.getPath().substr(response.getPath().find_last_of(".") + 1, response.getPath().size());
 	for (int i = 0 ; i < MAX_EXT ; i++)
@@ -163,11 +196,11 @@ void HeaderMaker::content_type(const ClientRequest &client_req, const Response &
 	m_header += "text/html; charset=utf-8";
 }
 
-void HeaderMaker::content_lenght(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::content_lenght(const ClientRequest &, const Response &response)
 { m_header += ft::itostr(response.getResponse().size()); }
 
-void HeaderMaker::content_location(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::content_location(const ClientRequest &, const Response &)
 { m_header += ""; }
 
-void HeaderMaker::content_language(const ClientRequest &client_req, const Response &response)
+void HeaderMaker::content_language(const ClientRequest &, const Response &)
 { m_header += ""; }

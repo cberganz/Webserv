@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:30 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 01:07:15 by charles          ###   ########.fr       */
+/*   Updated: 2022/10/20 15:54:48 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Parser::Parser()
 {}
 
 Parser::Parser(const Parser &src)
+	: Lexer()
 { *this = src; }
 
 Parser::Parser(const std::string &fileName)

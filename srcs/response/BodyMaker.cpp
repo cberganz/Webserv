@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 20:16:27 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/20 16:15:25 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ bool isDirectory(const std::string &path)
 }
 
 const std::string	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
-	if (path.back() == '/' and *context.getDirective("autoindex").begin() == "on")
+	if (path[path.size() - 1] == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
 		if (access(path.c_str(), F_OK) == -1)
@@ -142,11 +142,11 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 	return (m_body);
 }
 
-const std::string	&BodyMaker::deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::string	&BodyMaker::deleteMethod(Response&, const Context& context, std::string path, const ClientRequest&) {
 	(void) context;
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
-	if (path.back() == '/' || access(path.c_str(), W_OK) == -1)
+	if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
 		throw (ErrorException(403));
 	if (std::remove(path.c_str())) 
 		throw (ErrorException(500));
@@ -182,7 +182,7 @@ void BodyMaker::readFile(const std::string &path)
 {
 	if (access(path.c_str(), R_OK) == -1)
 		throw ErrorException(403);
-	std::ifstream file(path);
+	std::ifstream file(path.c_str());
 	if (not file.good())
 		throw ErrorException(503);
 	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());

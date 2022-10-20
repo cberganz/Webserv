@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseMaker.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/17 20:13:51 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/20 16:07:57 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 		throw ErrorException(500);
 	
 	std::string max_body_size = context.getDirective("client_max_body_size")[0];
-	if (std::toupper(max_body_size.back()) != 'M')
+	if (std::toupper(max_body_size[max_body_size.size() - 1]) != 'M')
 		throw ErrorException(500); // erreur sur le format de la valeur max body size voir quoi faire
 	for (size_t i = 0; i < max_body_size.length() - 1; i++)
 		if (!std::isdigit(max_body_size[i]))
@@ -107,6 +107,7 @@ std::string	ResponseMaker::findLongestLocation(Context context, std::string uri)
 			return (uri);
 		uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
 	}
+
 	if (context.contextExist("/"))
 		return ("/");
 	return (uri);

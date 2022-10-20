@@ -99,6 +99,7 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 	
 	// for (std::map<std::string, std::string>::iterator it = envp.begin() ; it != envp.end() ; it++)
 	// 	std::cout << it->first << " -> " << it->second << std::endl;
+
 	return mapToEnvp(envp);
 }
 

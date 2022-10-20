@@ -140,7 +140,7 @@ void	ClientRequestParser::trimEnd(std::string &request, std::string charset)
 {
 	int last_new_line = 0;
 
-	for (size_t i = request.length() - 1; i >= 0; i--)
+	for (int i = static_cast<int>(request.length() - 1); i >= 0; i--)
 	{
 		if (charset.find(request[i]) == std::string::npos)
 			break ;

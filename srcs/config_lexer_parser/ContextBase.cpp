@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ContextBase.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/14 16:17:34 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/20 15:55:45 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ ContextBase::ContextBase()
 **	@brief ContextBase copy contructor.
 */
 
-ContextBase::ContextBase(const ContextBase &src)
+ContextBase::ContextBase(const ContextBase &src) :
+	ParserConfig()
 { *this = src; }
 
 /*

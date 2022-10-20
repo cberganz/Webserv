@@ -6,17 +6,17 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/20 04:33:14 by charles          ###   ########.fr        #
+#    Updated: 2022/10/20 16:16:05 by cdine            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= libWebserv.a
 
-CC			= clang++
+CC			= g++
 
 INCLUDE		= include/
 
-CFLAGS		= -fPIC #-Wall -Wextra -Werror -std=c++98 -g
+CFLAGS		= -Wall -Wextra -Werror -std=c++98 -g #-fPIC
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/config_lexer_parser/Parser.cpp			\
@@ -73,12 +73,12 @@ fclean: clean
 re: fclean all
 
 server_connexion: all
-	c++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
+	g++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
 	#./a.out ./config_files/delete_method.conf
-	#./a.out ./config_files/cookies.conf
-	./a.out ./config_files/demo.conf
+	./a.out ./config_files/cookies.conf
+	# ./a.out ./config_files/demo.conf
 	#./a.out ./config_files/form.conf
-	#./a.out ./config_files/upload_file.conf
+	# ./a.out ./config_files/upload_file.conf
 	rm a.out
 
 .PHONY : all clean fclean test re server_connexion

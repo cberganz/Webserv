@@ -34,7 +34,7 @@ void    Chunks::add_chunk_request(int fd, std::vector<char> chunk) {
     }
 }
 
-int Chunks::go_to_end_of_line(std::vector<char> req, int i) {
+int Chunks::go_to_end_of_line(std::vector<char> req, size_t i) {
     while (i + 1 < req.size() && req[i] == '\r' && req[i + 1] == '\n')
         i += 2;
     return (i);

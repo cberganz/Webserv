@@ -60,7 +60,7 @@
                         .then(file_deleted())
                     }
                     function file_deleted() {
-                        sleep(1)
+                        sleep(3)
                         document.location.reload(true)
                     }
                 </script>
