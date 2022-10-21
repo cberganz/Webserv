@@ -20,7 +20,7 @@
 		<link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
 		<link rel="stylesheet" href="assets/css/session.css">
 		<?php
-			if ($_SESSION['theme'] == 'true')
+			if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 			else
 				echo '<link rel="stylesheet" href="assets/css/delete_method.css">';

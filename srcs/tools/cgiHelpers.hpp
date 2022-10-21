@@ -31,13 +31,13 @@ char** mapToEnvp(const std::map<std::string, std::string>& m)
 		v.push_back(it->first + "=" + it->second);
 	char** arr = (char**)malloc((v.size() + 1) * sizeof(*arr));
 	if (arr == NULL)
-		exit(501);
+		exit(500);
 	std::vector<std::string>::size_type index = 0;
 	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; it++)
 	{
 		arr[index] = strdup(it->c_str());
 		if (arr[index] == NULL)
-			exit(501);
+			exit(500);
 		index++;
 	}
 	arr[index] = NULL;

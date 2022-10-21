@@ -7,9 +7,9 @@ int main(int argc, char const *argv[])
 		std::cerr << "Invalid arguments count !" << std::endl;
 		return 1;
 	}
-	ServerConnexion server(argv[1]);
 	try
 	{
+		ServerConnexion server(argv[1]);
 		server.connexion_loop();
 	}
 	catch(const std::exception& e)

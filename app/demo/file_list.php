@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="./assets/css/upload_file.css">
         <link rel="stylesheet" href="./assets/css/form.css">
 		<?php
-			if ($_SESSION['theme'] === 'true')
+			if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 			else
 				echo '<link rel="stylesheet" href="assets/css/delete_method.css">';

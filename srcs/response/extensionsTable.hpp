@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   extensionsTable.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 20:27:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/21 14:55:01 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXTENSIONSTABLE_HPP
 # define EXTENSIONSTABLE_HPP
 
-# define MAX_EXT 77
+# define MAX_EXT 78
 
 typedef struct s_extension {
 	std::string	extension;
@@ -102,6 +102,7 @@ const t_extension extensionsTable[MAX_EXT] =
 	{ "3gp",	false,		"",				"video/3gpp; audio/3gpp"													},
 	{ "3g2",	false,		"",				"video/3gpp2; audio/3gpp2"													},
 	{ "7z",		false,		"",				"application/x-7z-compressed"												},
+	{ "bla",	true,		"./ubuntu_cgi_tester",				"text/html"												},
 }; // MIMETypes
 
 #endif

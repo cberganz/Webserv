@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="./assets/css/upload_file.css">
         <link rel="stylesheet" href="./assets/css/form.css">
 		<?php
-			if ($_SESSION['theme'] == 'true')
+			if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 			else
 				echo '<link rel="stylesheet" href="assets/css/delete_method.css">';
@@ -27,11 +27,8 @@
 
 		<div id="navbar"></div>
 		<script>$(function(){ $("#navbar").load("navbar.html"); });</script>
-        
         <div class="container gallery-container">
-        
-            <h1>Upload files</h1>
-        
+			<h1>Upload files</h1>
             <form method="post" enctype="multipart/form-data">
                 <input type="file" name="file1" multiple>
                 <p>Drag your files here or click in this area.</p>

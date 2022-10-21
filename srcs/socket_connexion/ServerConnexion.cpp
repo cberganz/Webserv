@@ -127,10 +127,7 @@ void    ServerConnexion::read_from_client(int fd) {
         try {
             handleResponse(client_req, fd);
         } catch (ErrorException & e) {
-            // if ( default error pages not set )
             handleDefaultError(e, fd);
-            // else
-                // handle error with setted error page
         }
         m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
         m_chunks.delete_chunk_request(fd);
@@ -170,26 +167,26 @@ void    sigpipe_handler(int signal) {
 void    ServerConnexion::connexion_loop()
 {
     m_polling.init_epoll_events();
-    while(1)
-    {
-        int nfds;
-        nfds = m_polling.wait_for_connexions();// throw?
+	while(1)
+	{
+		int nfds;
+		nfds = m_polling.wait_for_connexions();// throw?
 
 		for(int i = 0; i < nfds; i++) {
-            struct epoll_event  event;
+			struct epoll_event  event;
 
-            signal(SIGPIPE, sigpipe_handler);
-            event = m_polling.get_ready_event(i);
-            if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
-                || (event.events & EPOLLRDHUP)) 
-                close (event.data.fd);
-            else if (m_polling.is_existing_socket_fd(event.data.fd))
-                m_polling.new_client_connexion(event.data.fd);
-            else if (event.events & EPOLLIN) 
-                read_from_client(event.data.fd);
-            else if (event.events & EPOLLOUT)
-                write_to_client(event.data.fd);
+			signal(SIGPIPE, sigpipe_handler);
+			event = m_polling.get_ready_event(i);
+			if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
+				|| (event.events & EPOLLRDHUP)) 
+				close (event.data.fd);
+			else if (m_polling.is_existing_socket_fd(event.data.fd))
+				m_polling.new_client_connexion(event.data.fd);
+			else if (event.events & EPOLLIN) 
+				read_from_client(event.data.fd);
+			else if (event.events & EPOLLOUT)
+				write_to_client(event.data.fd);
 		}
-    }
+	}
 	m_polling.close_epfd();
 }
