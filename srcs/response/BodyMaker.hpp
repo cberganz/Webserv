@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/19 19:22:05 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/21 14:26:37 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <dirent.h>
 # include <cstdio>
 # include <filesystem>
+# include <sys/stat.h>
 # include "../tools/ErrorException.hpp"
 # include "../config_lexer_parser/Context.hpp"
 # include "../config_lexer_parser/Config.hpp"
@@ -60,9 +61,10 @@ private:
 	const std::string	&getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req);
 	const std::string	&deleteMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req);
-	void				post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path);
-	void				createFile(std::string filename, std::vector<char> content, std::string path, const Context& context);
+	void				post_multipart_form(Response& response, const ClientRequest& client_req, std::string path);
+	void				createFile(std::string filename, std::vector<char> content, std::string path);
 	bool				check_end_boundary(std::string boundary, std::vector<char> &body);
+	void				getPostPath(const Context& context, std::string &path);
 
 	// void	post_urlencoded()
 

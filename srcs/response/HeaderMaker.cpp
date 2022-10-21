@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/20 16:07:18 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/21 14:47:51 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,74 +88,41 @@ void HeaderMaker::head(const Response &response)
 	m_header += NEWLINE;
 }
 
-bool HeaderMaker::condition_date(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return true; 
-}
+bool HeaderMaker::condition_date(const ClientRequest &, const Response &) 
+{ return true; }
 
-bool HeaderMaker::condition_server(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	return response.getContext().directiveExist("server_name"); 
-}
+bool HeaderMaker::condition_server(const ClientRequest &, const Response &response) 
+{ return response.getContext().directiveExist("server_name"); }
 
-bool HeaderMaker::condition_location(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	return (response.getHttpCode() > 300 && response.getHttpCode() < 400 ? true : false); 
-}// checker les bons stATuscode
+bool HeaderMaker::condition_location(const ClientRequest &, const Response &response) 
+{ return ((response.getHttpCode() > 300 && response.getHttpCode() < 400) || response.getHttpCode() == 201 ? true : false); }// checker les bons stATuscode
 
-bool HeaderMaker::condition_connection(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_connection(const ClientRequest &, const Response &) 
+{ return false; }
 
-bool HeaderMaker::condition_retry_after(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return true;
-}
+bool HeaderMaker::condition_retry_after(const ClientRequest &, const Response &) 
+{ return true; }
 
-bool HeaderMaker::condition_last_modified(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_last_modified(const ClientRequest &, const Response &) 
+{ return false; }
 
-bool HeaderMaker::condition_www_authenticate(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_www_authenticate(const ClientRequest &, const Response &) 
+{ return false; }
 
-bool HeaderMaker::condition_transfert_encoding(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return true;
-}
+bool HeaderMaker::condition_transfert_encoding(const ClientRequest &, const Response &) 
+{ return true; }
 
-bool HeaderMaker::condition_content_type(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	return (response.isCGI() ? false : true); 
-}
+bool HeaderMaker::condition_content_type(const ClientRequest &, const Response &response) 
+{ return (response.isCGI() ? false : true); }
 
-bool HeaderMaker::condition_content_lenght(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_content_lenght(const ClientRequest &, const Response &) 
+{ return false; }
 
-bool HeaderMaker::condition_content_location(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_content_location(const ClientRequest &, const Response &)
+{ return false; }
 
-bool HeaderMaker::condition_content_language(const ClientRequest &client_req, const Response &response) {
-	(void) client_req;
-	(void) response; 
-	return false;
-}
+bool HeaderMaker::condition_content_language(const ClientRequest &, const Response &) 
+{ return false; }
 
 void HeaderMaker::date(const ClientRequest &, const Response &)
 { m_header += ft::getTimeFormated(); }

@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/20 16:15:25 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/21 14:45:32 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,18 +79,7 @@ const std::string	&BodyMaker::getMethod(Response& response, const Context& conte
 	return (m_body);
 }
 
-void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path, const Context& context) {
-	if (*path.end() != '/') {
-		int	i = path.length();
-		while (i > 0 && path[i] != '/')
-			i--;
-		path = path.substr(0, i + 1);
-	}
-	if (*context.getDirective("upload_folder").begin() != ".") {
-		path = *context.getDirective("upload_folder").begin();
-		if (path[path.length()] != '/')
-			path += "/";
-	}
+void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path) {
 	filename = path + filename;
 	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
 	out.clear();
@@ -106,7 +95,7 @@ bool				BodyMaker::check_end_boundary(std::string boundary, std::vector<char> &b
 }
 
 
-void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Context& context, std::string path) {
+void	BodyMaker::post_multipart_form(Response& response, const ClientRequest& client_req, std::string path) {
 	std::string			boundary = client_req.getHeader().at("content-type")[0].substr(30);
 	std::vector<char>	body = client_req.getBody();
 	int					i = 0;
@@ -126,7 +115,24 @@ void	BodyMaker::post_multipart_form(const ClientRequest& client_req, const Conte
 		std::vector<char>	content(body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4,
 									body.begin() + ft::search_vector_char(body, "\r\n\r\n", i) + 4 + 
 									ft::search_vector_char(body, ("\r\n--" + boundary).c_str(), i) - ft::search_vector_char(body, "\r\n\r\n", i) - 4);
-		createFile(filename, content, path, context);
+		createFile(filename, content, path);
+		response.setHttpCode(201);
+	}
+}
+
+void	BodyMaker::getPostPath(const Context& context, std::string &path) {
+	if (path[path.size() - 1] != '/') {
+		int	i = path.length() - 1;
+		while (i > 0 && path[i] != '/')
+			i--;
+		path = path.substr(0, i + 1);
+	}
+	if (*context.getDirective("upload_folder").begin() != ".") {
+		path = *context.getDirective("upload_folder").begin();
+		if (path[path.size() - 1] != '/')
+			path += "/";
+		if (access(path.c_str(), F_OK) == -1 || access(path.c_str(), W_OK) == -1)
+			throw (ErrorException(404));
 	}
 }
 
@@ -136,20 +142,22 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
 	}
+	getPostPath(context, path);
 	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
-		post_multipart_form(client_req, context, path);
-	m_body = "<html><head><script>function Previous() {window.history.back()}</script></head><body><script>Previous()</script></body></html>";
+		post_multipart_form(response, client_req, path);
+	response.setLocation(path);
 	return (m_body);
 }
 
-const std::string	&BodyMaker::deleteMethod(Response&, const Context& context, std::string path, const ClientRequest&) {
-	(void) context;
+const std::string	&BodyMaker::deleteMethod(Response &response, const Context&, std::string path, const ClientRequest&) {
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
-	if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
+	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
 		throw (ErrorException(403));
-	if (std::remove(path.c_str())) 
+	else if (std::remove(path.c_str())) 
 		throw (ErrorException(500));
+	else
+		response.setHttpCode(204);
 	return (m_body);
 }
 
