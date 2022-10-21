@@ -61,11 +61,6 @@ void            PollingManager::set_socket(int fd) {
         close(fd);
         throw (SocketCreationException(SETSOCKOPTERR));
     }
-
-    if(fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
-        close(fd);
-        throw (SocketCreationException(FCNTLERR));
-    }
 }
 
 int PollingManager::create_socket(int port, int ip) {
