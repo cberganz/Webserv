@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/21 14:45:32 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/21 19:37:02 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void	BodyMaker::post_multipart_form(Response& response, const ClientRequest& cli
 	}
 }
 
-void	BodyMaker::getPostPath(const Context& context, std::string &path) {
+std::string	BodyMaker::getUploadFolder(const Context& context, std::string path) {
 	if (path[path.size() - 1] != '/') {
 		int	i = path.length() - 1;
 		while (i > 0 && path[i] != '/')
@@ -134,22 +134,30 @@ void	BodyMaker::getPostPath(const Context& context, std::string &path) {
 		if (access(path.c_str(), F_OK) == -1 || access(path.c_str(), W_OK) == -1)
 			throw (ErrorException(404));
 	}
+	return (path);
 }
 
 const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+	std::string upload_folder = getUploadFolder(context, path);
+
+	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
+		post_multipart_form(response, client_req, upload_folder);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
 		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
 	}
-	getPostPath(context, path);
-	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
-		post_multipart_form(response, client_req, path);
 	response.setLocation(path);
 	return (m_body);
 }
 
-const std::string	&BodyMaker::deleteMethod(Response &response, const Context&, std::string path, const ClientRequest&) {
+const std::string	&BodyMaker::deleteMethod(Response &response, const Context& context, std::string path, const ClientRequest& client_req) {
+	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
+	{
+		executeCGI(client_req, path, generateEnvp(client_req, context, path));
+		response.setCGI(true);
+		return (m_body);
+	}
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
 	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)

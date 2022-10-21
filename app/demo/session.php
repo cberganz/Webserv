@@ -81,6 +81,7 @@
 		    </div>
 		</div>
 		<script>
+			
 			function send_form() {
 				var path = 'http://127.0.0.1:8080/session.php' 
 				fetch(path, {
@@ -89,8 +90,7 @@
 					body: 'logname=' + document.getElementById('logname').value
 						  + '&logemail=' + document.getElementById('logemail').value
 				})
-				.then((response) => response.json())
-				.then((data) => console.log(data));
+				.then(reload_delay())
 			}
 			function send_pref() {
 				var path = 'http://127.0.0.1:8080/session.php' 
@@ -99,9 +99,16 @@
 					headers: {'Content-Type': "application/x-www-form-urlencoded"},
 					body: 'theme=' + document.getElementById('reg-log').checked
 				})
-				.then((response) => response.json())
-				.then((data) => console.log(data));
+				.then(reload_delay())
 			}
+			function sleep(delay) {
+				var start = new Date().getTime();
+				while (new Date().getTime() < start + delay);
+			}
+			function reload_delay() {
+				sleep(200)
+				document.location.reload(true)
+			} 
 		</script>
 	</body>
 </html>

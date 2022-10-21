@@ -83,6 +83,7 @@ char** generateEnvp(const ClientRequest &client_req, const Context &context, con
 		envp["CONTENT_TYPE"] = client_req.getHeader().find("content-type")->second[0];
 	else
 		envp["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+
 	envp["CONTENT_LENGTH"] = ft::itostr(client_req.getBody().size());
 
 	// std::cout << "\nBODY SIZE: " << ft::itostr(client_req.getBody().size()) << "\n";

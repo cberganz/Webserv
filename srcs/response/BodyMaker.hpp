@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/21 14:26:37 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/21 19:20:27 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ private:
 	void				post_multipart_form(Response& response, const ClientRequest& client_req, std::string path);
 	void				createFile(std::string filename, std::vector<char> content, std::string path);
 	bool				check_end_boundary(std::string boundary, std::vector<char> &body);
-	void				getPostPath(const Context& context, std::string &path);
+	std::string			getUploadFolder(const Context& context, std::string path);
 
 	// void	post_urlencoded()
 

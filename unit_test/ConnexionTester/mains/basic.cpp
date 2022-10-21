@@ -16,6 +16,6 @@ int main(int argc, char const *argv[])
 	{
 		std::cerr << "Exception: "<< e.what() << '\n';
 	}
-	
+
     return 0;
 }
