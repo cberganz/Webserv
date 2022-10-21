@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="./assets/css/upload_file.css">
         <link rel="stylesheet" href="./assets/css/form.css">
 		<?php
-			if ($_SESSION['theme'] == 'true')
+			if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 			else
 				echo '<link rel="stylesheet" href="assets/css/delete_method.css">';
@@ -29,55 +29,51 @@
 		<script>$(function(){ $("#navbar").load("navbar.html"); });</script>
         
         <div class="container gallery-container">
-        
-            <h1>Delete files</h1>
-         
-            <div style="align:center;">
-                <br>
+			<h1>Delete files</h1>
+            <div>
                 <p>Select file to delete:</p>
-                <select id="select_file">
-                    <?php
-                        if ($handle = opendir('./files')) {
-                            while (false !== ($entry = readdir($handle))) {
-                        
-                                if ($entry != "." && $entry != "..") {
-                                    echo "<option value=\"$entry\">$entry</option>\n";
-                                }
-                            }
-                            closedir($handle);
-                        }
-                    ?>
-                </select>
-                <script>
-                    function sleep(delay) {
-                        var start = new Date().getTime();
-                        while (new Date().getTime() < start + delay);
-                    }
-                    function send_del_req() {
-                        //get ip et port value
-                        var url = window.location.href;
-                        var path = url.substring(0, url.indexOf('/', url.indexOf('://') + 4)) + "/files/" 
-                                + document.getElementById("select_file").value;
-                        fetch(path, {
-                            method: 'DELETE'
-                            }
-                        )
-                        .then((response) => response.json())
-                        .then(file_deleted())
-                    }
-                    function file_deleted() {
-                        sleep(3)
-                        document.location.reload(true)
-                    }
-                </script>
+				<div>
+					<select id="select_file">
+						<?php
+							if ($handle = opendir('./files')) {
+								while (false !== ($entry = readdir($handle))) {
+							
+									if ($entry != "." && $entry != "..") {
+										echo "<option value=\"$entry\">$entry</option>\n";
+									}
+								}
+								closedir($handle);
+							}
+						?>
+					</select>
+				</div>
                 <div class="wrap">
-                <br>
                     <button class="button" name="button" onclick="send_del_req()">Delete</button>
                 </div>
             </div>
 
-        </div>
-        
+        </div>        
+		<script>
+			function sleep(delay) {
+				var start = new Date().getTime();
+				while (new Date().getTime() < start + delay);
+			}
+			function send_del_req() {
+				var url = window.location.href;
+				var path = url.substring(0, url.indexOf('/', url.indexOf('://') + 4)) + "/files/" 
+						+ document.getElementById("select_file").value;
+				fetch(path, {
+					method: 'DELETE'
+					}
+				)
+				.then((response) => response.json())
+				.then(file_deleted())
+			}
+			function file_deleted() {
+				sleep(3)
+				document.location.reload(true)
+			}
+		</script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
 
         </body>

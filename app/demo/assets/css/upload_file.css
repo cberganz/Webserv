@@ -10,6 +10,7 @@ a {
 }
 
 .container.gallery-container {
+	display: block;
     background-color: #fff;
     color: #35373a;
     min-height: 100vh;
