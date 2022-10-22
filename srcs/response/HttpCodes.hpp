@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpCodes.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:03:21 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/01 20:27:05 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/22 16:40:10 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ public:
 	HttpCodes();
 	HttpCodes(const HttpCodes &src);
 	~HttpCodes();
+
+	bool codeExist(int code) const;
 
 	HttpCodes &operator=(const HttpCodes &rhs);
 	const std::string &operator[](int code) const;

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
+#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/21 14:51:23 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/22 18:54:47 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,9 +74,9 @@ re: fclean all
 
 server_connexion: all
 	clang++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	#./a.out ./config_files/delete_method.conf
-	# ./a.out ./config_files/cookies.conf
-	./a.out ./config_files/demo.conf
+	./a.out ./config_files/default.conf
+	# ./a.out ./config_files/delete_method.conf
+	# ./a.out ./config_files/demo.conf
 	# ./a.out ./config_files/form.conf
 	# ./a.out ./config_files/upload_file.conf
 	rm a.out

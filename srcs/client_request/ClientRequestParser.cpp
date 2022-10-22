@@ -179,8 +179,7 @@ bool	ClientRequestParser::is_http_version_correct(std::string http_version)
 
 bool	ClientRequestParser::is_request_line_correct(ClientRequest client_req)
 {
-	if (!is_method_correct(client_req.getMethod())
-		|| !is_path_correct(client_req.getPath())
+	if (!is_path_correct(client_req.getPath())
 		|| !is_http_version_correct(client_req.getHttpVersion()))
 		return (false);
 	return (true);
@@ -217,6 +216,8 @@ ClientRequest	*ClientRequestParser::makeClientRequest()
 	trimEnd(line, "\r\n");// voir comment traiter les \r fin de la ligne possible multiple \r ? 
 	parse_request_line(line, *client_req);
 
+	if (!is_method_correct(client_req->getMethod()))
+		throw ErrorException(405);
 	if (!is_request_line_correct(*client_req))
 		throw ErrorException(400);
 	request_string.erase(0, line.length()); // verifier comportement si pas de \n a la fin

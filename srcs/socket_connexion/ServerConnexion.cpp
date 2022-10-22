@@ -181,7 +181,10 @@ void    ServerConnexion::connexion_loop()
 				|| (event.events & EPOLLRDHUP)) 
 				close (event.data.fd);
 			else if (m_polling.is_existing_socket_fd(event.data.fd))
+			{
+				std::cout << "\nNEW CLIENT\n";
 				m_polling.new_client_connexion(event.data.fd);
+			}
 			else if (event.events & EPOLLIN) 
 				read_from_client(event.data.fd);
 			else if (event.events & EPOLLOUT)

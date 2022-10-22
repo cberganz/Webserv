@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpCodes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 19:54:51 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/01 20:26:48 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/22 16:39:49 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,13 @@ HttpCodes &HttpCodes::operator=(const HttpCodes &rhs)
 			this->m_codes[i] = rhs.m_codes[i];
 	}
 	return *this;
+}
+
+bool HttpCodes::codeExist(int code) const
+{
+	if (code < 0 or code > MAX_CODE or m_codes[code].empty())
+		return false;
+	return true;
 }
 
 const std::string &HttpCodes::operator[](int code) const

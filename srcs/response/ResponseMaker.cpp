@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/21 15:08:23 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/22 16:42:23 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,10 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 			throw ErrorException(413);
 		if (context.directiveExist("rewrite"))
 		{
-			response->setHttpCode(301);
+			if (context.getDirective("rewrite").size() < 2
+				or !m_httpCodes.codeExist(ft::lexical_cast<int>(context.getDirective("rewrite")[1])))
+				throw ErrorException(500);
+			response->setHttpCode(ft::lexical_cast<int>(context.getDirective("rewrite")[1]));
 			response->setLocation(*context.getDirective("rewrite").begin());
 			(*response).insert(0, m_headerMaker.createHeader(client_req, *response));
 			return response;

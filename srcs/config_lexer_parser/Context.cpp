@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Context.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:11:59 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/20 15:55:23 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/22 16:53:55 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,10 +151,10 @@ void Context::getContextInformations()
 
 void Context::blocInserter()
 {
-	if (m_contexts.find(getKeyIdentifier()) == m_contexts.end())
-		m_contexts.insert(std::make_pair(getKeyIdentifier(), Context(*this)));
-	else if (m_contextName != "global")
+	//if (m_contexts.find(getKeyIdentifier()) == m_contexts.end())
+	if (m_contexts.find(getKeyIdentifier()) != m_contexts.end() and m_contextName != "global")
 		throwException(DUPLICATE_BLOC, getCurrentToken());
+	m_contexts.insert(std::make_pair(getKeyIdentifier(), Context(*this)));
 }
 
 /*
