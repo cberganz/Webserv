@@ -61,7 +61,7 @@
 														echo '<br><br>';
 														echo '<h4 class="mb-0 pb-3">Theme</h4>';
 														echo '<h6 class="mb-0 pb-3"><span>Light </span><span>Dark</span></h6>';
-														if ($_SESSION["theme"] == "true")
+														if (isset($_SESSION['theme']) and $_SESSION["theme"] == "true")
 										   		          	 echo '<input class="checkbox" type="checkbox" id="reg-log" name="reg-log" checked="checked"/>';
 														else
 										   		          	 echo '<input class="checkbox" type="checkbox" id="reg-log" name="reg-log" />';
@@ -81,7 +81,6 @@
 		    </div>
 		</div>
 		<script>
-			
 			function send_form() {
 				var path = 'http://127.0.0.1:8080/session.php' 
 				fetch(path, {

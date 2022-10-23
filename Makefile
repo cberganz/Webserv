@@ -6,17 +6,19 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/22 18:54:47 by rbicanic         ###   ########.fr        #
+#    Updated: 2022/10/23 16:27:29 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= libWebserv.a
+NAME		= webserv
+
+LIB_NAME	= libWebserv.a
 
 CC			= clang++
 
 INCLUDE		= include/
 
-CFLAGS		= -Wall -Wextra -Werror -std=c++98 -g #-fPIC
+FLAGS		= -Wall -Wextra -Werror -std=c++98 -g #-fPIC
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/config_lexer_parser/Parser.cpp			\
@@ -38,8 +40,7 @@ SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/tools/utility.cpp
 
 
-#SRC_DIR		= srcs/
-SRC			= ${SRC_NAME} #${addprefix ${SRC_DIR}, ${SRC_NAME}}
+SRC			= ${SRC_NAME}
 
 OBJ_DIR		= objs/
 OBJ_DIRS	= ${sort ${dir ${OBJ}}}
@@ -48,9 +49,13 @@ OBJ			= ${addprefix ${OBJ_DIR}, ${OBJ_NAME}}
 
 all: ${NAME}
 
-${NAME}: ${OBJ}
-	#$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@ar rcs ${NAME} ${OBJ}
+${NAME}: lib exec
+
+lib: ${OBJ}
+	@ar rcs ${LIB_NAME} ${OBJ}
+
+exec:
+	clang++ ${FLAGS} srcs/webserv.cpp -o ${NAME} -L. -lWebserv
 
 ${OBJ_DIRS}:
 	@mkdir -p $@
@@ -58,8 +63,15 @@ ${OBJ_DIRS}:
 ${OBJ}: | ${OBJ_DIRS}
 
 ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${FLAGS} -c $< -o $@
 
+server_connexion: all
+	./webserv
+	# ./webserv ./config_files/delete_method.conf
+	# ./webserv ./config_files/demo.conf
+	# ./webserv ./config_files/form.conf
+	# ./webserv ./config_files/upload_file.conf
+	#
 test: all
 	@make -sC ./unit_test
 
@@ -67,18 +79,10 @@ clean:
 	rm -rf ${OBJ_DIR}
 
 fclean: clean
+	rm -f ${LIB_NAME}
 	rm -f ${NAME}
 	@make fclean -sC ./unit_test
 
 re: fclean all
-
-server_connexion: all
-	clang++ unit_test/ConnexionTester/mains/basic.cpp -L. -lWebserv
-	./a.out ./config_files/default.conf
-	# ./a.out ./config_files/delete_method.conf
-	# ./a.out ./config_files/demo.conf
-	# ./a.out ./config_files/form.conf
-	# ./a.out ./config_files/upload_file.conf
-	rm a.out
 
 .PHONY : all clean fclean test re server_connexion

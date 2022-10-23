@@ -17,6 +17,14 @@
 		?>
 	</head>
 	<script>
+		function sleep(delay) {
+			var start = new Date().getTime();
+			while (new Date().getTime() < start + delay);
+		}
+		function reload_delay() {
+			sleep(200)
+			document.location.reload(true)
+		} 
 		window.onload = function() {
 			var name = "";
 			var first_name = "";
@@ -31,9 +39,6 @@
 			document.getElementById('last_name').innerHTML = name;
 			document.getElementById('first_name').innerHTML = first_name;
 		}
-		
-	</script>
-	<script>
 		function send_del_req() {
 			var url = window.location.href;
 			var path = url.substring(0, url.indexOf('/', url.indexOf('://') + 4)) + "/set_cookies"; 
@@ -50,6 +55,7 @@
 			)
 			.then((response) => response.json())
 			.then((data) => console.log(data));
+			.then(reload_delay())
 		}
 	</script>
 	<body>

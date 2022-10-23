@@ -70,7 +70,7 @@
 				.then(file_deleted())
 			}
 			function file_deleted() {
-				sleep(3)
+				sleep(200)
 				document.location.reload(true)
 			}
 		</script>
