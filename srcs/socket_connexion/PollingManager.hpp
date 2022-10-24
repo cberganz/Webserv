@@ -31,11 +31,10 @@
 # define MAXBUF 8192
 # define MAX_EVENTS 5
 
-typedef struct sockaddr_in  t_sockaddr_in;// voir la bonne position
+typedef struct sockaddr_in  t_sockaddr_in;
 
 class PollingManager {
     protected:
-
         int                 m_epfd;
         std::vector<int>    m_sockets_fds;
         struct epoll_event  m_ready_events[MAX_EVENTS];
@@ -78,7 +77,6 @@ class PollingManager {
         void                                send_request(std::vector<char> request, int client_socket);
         void                                close_epfd();
         struct epoll_event                  get_ready_event( int index ) const;
-
 };
 
 #endif
