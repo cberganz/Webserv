@@ -6,7 +6,6 @@ PollingManager::PollingManager() {}
 
 PollingManager::PollingManager(const Context::contextsContainer &container)
 {
-
     for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
     {
         m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>(*(*it).second.getDirective("port").begin()),
@@ -64,26 +63,22 @@ void            PollingManager::set_socket(int fd) {
 }
 
 int PollingManager::create_socket(int port, int ip) {
-    int    listen_fd = -1;
-	t_sockaddr_in serv_addr;
+    int             listen_fd = -1;
+	t_sockaddr_in   serv_addr;
 
     listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_fd < 0)
         throw (SocketCreationException(INITSOCKERR));
-
     set_socket(listen_fd);
-
     serv_addr = init_address_structure(port, ip);
     if (bind(listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         close(listen_fd);
         throw (SocketCreationException(BINDERR));
     }
-
     if (listen(listen_fd, 100) < 0) {
         close(listen_fd);
         throw (SocketCreationException(LISTENERR));
     }
-
     return (listen_fd);
 }
 
@@ -114,9 +109,9 @@ void                PollingManager::edit_socket_in_epoll(int fd, int event) {
 }
 
 void            PollingManager::init_epoll_events() {
-    if ((m_epfd = epoll_create(10)) < 0) {
+    if ((m_epfd = epoll_create(10)) < 0){
         throw (SocketCreationException(EPOLLCREATEERR));
-	}
+    }
 	for (size_t i = 0; i < m_sockets_fds.size(); i++)
         add_socket_to_epoll(m_sockets_fds[i]);
 }
@@ -148,8 +143,8 @@ int            PollingManager::accept_connexion(int ready_fd) {
 }
 
 std::vector<char>     PollingManager::receive_request(int client_socket) {
-    std::vector<char>  buffer(MAXBUF, '\0');
-    int     ret;
+    std::vector<char>   buffer(MAXBUF, '\0');
+    int                 ret;
 
     if ((ret = recv(client_socket, &buffer[0], buffer.size(), 0)) < 0) 
     {

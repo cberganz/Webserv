@@ -13,15 +13,11 @@ ServerConnexion::ServerConnexion(const ServerConnexion &copy) {
         *this = copy;
 }
 
-ServerConnexion::~ServerConnexion() {
-
-}
+ServerConnexion::~ServerConnexion() {}
 
 ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
     if (this != &copy)
-    {
         m_polling = copy.m_polling;
-    }
     return (*this);
 }
 
@@ -31,9 +27,10 @@ std::vector<char>	ServerConnexion::createDefaultErrorPage(std::string file,
 {
 	std::ifstream       fs(file.c_str());
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-	std::string header("HTTP/1.1 " + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
+	std::string         header("HTTP/1.1 " + status_code + " " + msg
+                                + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
 	header += ft::itostr(file_content.length());
-	std::string http_request = header + "\r\n\r\n" + file_content;
+	std::string         http_request = header + "\r\n\r\n" + file_content;
 
 	return (std::vector<char>(http_request.begin(), http_request.end()));
 }
@@ -143,9 +140,9 @@ void    ServerConnexion::write_to_client(int fd) {
     std::vector<char>   request;
     std::stringstream   ss;
     std::string         size_chunk;
+
     ss << std::hex << chunk.size();
     ss >> size_chunk;
-
     try {
         if (size_return % 2 == 0)
             request.insert(request.end(), size_chunk.begin(), size_chunk.end());

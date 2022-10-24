@@ -26,8 +26,8 @@
 
 class ServerConnexion {
     private:
-        void    write_to_client(int fd);
-        void    read_from_client(int fd);
+        void                write_to_client(int fd);
+        void                read_from_client(int fd);
 
         std::string     	getSocketPort(int sockfd);
         std::string     	getSocketIp(int sockfd);
@@ -50,7 +50,7 @@ class ServerConnexion {
         ~ServerConnexion();
         ServerConnexion &operator=(const ServerConnexion &copy);
 
-        void            connexion_loop();
+        void                connexion_loop();
 };
 
 #endif
