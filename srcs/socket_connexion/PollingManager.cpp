@@ -129,7 +129,6 @@ void               PollingManager::new_client_connexion(int fd) {
 
     set_socket(new_socket);
     add_socket_to_epoll(new_socket);
-    std::cout << "\n" << new_socket << ": NEW CLIENT\n";
 }
 
 int             PollingManager::wait_for_connexions() {

@@ -25,7 +25,10 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
     return (*this);
 }
 
-std::vector<char>	create_response(std::string file, std::string status_code, std::string msg) {
+std::vector<char>	ServerConnexion::createDefaultErrorPage(std::string file, 
+															std::string status_code,
+															std::string msg)
+{
 	std::ifstream       fs(file.c_str());
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 	std::string header("HTTP/1.1 " + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
@@ -84,7 +87,7 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 {
     HttpCodes           http_code;
-    std::vector<char>   error_page = create_response(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
+    std::vector<char>   error_page = createDefaultErrorPage(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
 
     if (e.getFile() == "./app/error_pages/template.html"
         && (ft::search_vector_char(error_page, "$STATUS", 0) != -1
@@ -157,15 +160,12 @@ void    ServerConnexion::write_to_client(int fd) {
     catch (...) {
         close(fd);
     }
-    if (!chunk.size() && size_return % 2 == 1)
+    if (!chunk.size() && size_return % 2 == 1){
         m_chunks.delete_chunk_response(fd);
+		close (fd);
+	}
     else
         m_chunks.increment_size_turn(fd);
-}
-
-void    sigpipe_handler(int signal) {
-	(void) signal;
-    std::cout << "BROKEN PIPE\n";
 }
 
 void    ServerConnexion::connexion_loop()
@@ -179,13 +179,11 @@ void    ServerConnexion::connexion_loop()
 		for(int i = 0; i < nfds; i++) {
 			struct epoll_event  event;
 
-			signal(SIGPIPE, sigpipe_handler);
 			event = m_polling.get_ready_event(i);
 			if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
 				|| (event.events & EPOLLRDHUP)) {
                 m_chunks.delete_chunk_response(event.data.fd);
 				close (event.data.fd);
-                std::cout << event.data.fd << ": Closed client connection.\n";
             }
 			else if (m_polling.is_existing_server_socket_fd(event.data.fd))
 				m_polling.new_client_connexion(event.data.fd);
