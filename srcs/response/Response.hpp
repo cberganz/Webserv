@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:33 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/16 18:27:08 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/24 12:39:54 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ public:
 
 	Response &operator=(const Response &rhs);
 
-	const std::string	&getResponse() const;
-	const int 			&getHttpCode() const;
-	const std::string	&getPath() const;
-	const Context		&getContext() const;
-	const ClientRequest	&getClientRequest() const;
-	const std::string	&getLocation() const;
-	bool				isCGI() const;
+	const std::vector<char>	&getResponse() const;
+	const int 				&getHttpCode() const;
+	const std::string		&getPath() const;
+	const Context			&getContext() const;
+	const ClientRequest		&getClientRequest() const;
+	const std::string		&getLocation() const;
+	bool					isCGI() const;
 
 	void setHttpCode(const int &code);
 	void setPath(const std::string &longest_location);
@@ -42,17 +42,17 @@ public:
 	void setLocation(const std::string &location);
 	void setCGI(bool isCGI);
 
-	void append(const std::string &str);
-	void insert(std::string::size_type index, const std::string &str);
+	void append(const std::vector<char> &str);
+	void insert(size_t index, const std::string &str);
 
 private:
-	int				m_httpCode;
-	std::string 	m_response;
-	std::string 	m_path;
-	std::string 	m_location;
-	Context 		m_context;
-	ClientRequest 	m_client_req;
-	bool			m_isCGI;
+	int					m_httpCode;
+	std::vector<char> 	m_response;
+	std::string 		m_path;
+	std::string 		m_location;
+	Context 			m_context;
+	ClientRequest 		m_client_req;
+	bool				m_isCGI;
 
 }; // class Response
 

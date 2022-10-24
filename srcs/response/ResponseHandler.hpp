@@ -20,7 +20,7 @@ class ResponseHandler {
 
 		void		setClientRequest(std::vector<char> client_request);
 
-		std::string createResponseMessage(const std::string &ip, const std::string &port);
+		std::vector<char> createResponseMessage(const std::string &ip, const std::string &port);
 
 };
 

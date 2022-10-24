@@ -25,14 +25,14 @@ ServerConnexion &ServerConnexion::operator=(const ServerConnexion &copy) {
     return (*this);
 }
 
-std::string	create_response(std::string file, std::string status_code, std::string msg) {
+std::vector<char>	create_response(std::string file, std::string status_code, std::string msg) {
 	std::ifstream       fs(file.c_str());
 	std::string         file_content((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 	std::string header("HTTP/1.1 " + status_code + " " + msg + "\nContent-Type: text/html\nTransfer-Encoding: chunked\nContent-Length:");
 	header += ft::itostr(file_content.length());
 	std::string http_request = header + "\r\n\r\n" + file_content;
 
-	return (http_request);
+	return (std::vector<char>(http_request.begin(), http_request.end()));
 }
 
 std::string ServerConnexion::getSocketPort(int sockfd)
@@ -69,12 +69,12 @@ std::string ServerConnexion::getSocketIp(int sockfd)
 void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 {
     m_rep_handler.setClientRequest(client_req);
-    std::string reponse_msg
+    std::vector<char> response_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
     try {
         m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
-            reponse_msg), fd);
+            response_msg), fd);
     }
     catch (...) {
         close(fd);
@@ -84,14 +84,14 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 {
     HttpCodes           http_code;
-    std::string         error_page = create_response(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
+    std::vector<char>   error_page = create_response(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
 
     if (e.getFile() == "./app/error_pages/template.html"
-        && (error_page.find("$STATUS") != std::string::npos
-        || error_page.find("$MESSAGE") != std::string::npos))
+        && (ft::search_vector_char(error_page, "$STATUS", 0) != -1
+        || ft::search_vector_char(error_page, "$MESSAGE", 0) != -1))
     {
-        error_page = error_page.replace(error_page.find("$STATUS"),  7, ft::itostr(e.getCode()));
-        error_page = error_page.replace(error_page.find("$MESSAGE"),  8, http_code[e.getCode()]);
+        error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$STATUS", 0),  7, ft::itostr(e.getCode()));
+        error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$MESSAGE", 0),  8, http_code[e.getCode()]);
     }
     try {
         m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
@@ -135,8 +135,9 @@ void    ServerConnexion::read_from_client(int fd) {
 }
 
 void    ServerConnexion::write_to_client(int fd) {
-    std::string chunk = m_chunks.get_next_chunk(fd);
-    int         size_return = m_chunks.get_size_return(fd);
+    std::vector<char>   chunk = m_chunks.get_next_chunk(fd);
+    int                 size_return = m_chunks.get_size_return(fd);
+    std::vector<char>   request;
     std::stringstream   ss;
     std::string         size_chunk;
     ss << std::hex << chunk.size();
@@ -144,16 +145,19 @@ void    ServerConnexion::write_to_client(int fd) {
 
     try {
         if (size_return % 2 == 0)
-            m_polling.send_request(size_chunk + "\r\n", fd);
+            request.insert(request.end(), size_chunk.begin(), size_chunk.end());
         else
-            m_polling.send_request(chunk + "\r\n", fd);
-        if (chunk == "" && size_return % 2 == 1) 
+            request = chunk;
+        request.push_back('\r');
+        request.push_back('\n');
+        m_polling.send_request(request, fd);
+        if (!chunk.size() && size_return % 2 == 1) 
             m_polling.edit_socket_in_epoll(fd, EPOLLIN);
     }
     catch (...) {
         close(fd);
     }
-    if (chunk == "" && size_return % 2 == 1)
+    if (!chunk.size() && size_return % 2 == 1)
         m_chunks.delete_chunk_response(fd);
     else
         m_chunks.increment_size_turn(fd);
@@ -178,13 +182,13 @@ void    ServerConnexion::connexion_loop()
 			signal(SIGPIPE, sigpipe_handler);
 			event = m_polling.get_ready_event(i);
 			if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
-				|| (event.events & EPOLLRDHUP)) 
+				|| (event.events & EPOLLRDHUP)) {
+                m_chunks.delete_chunk_response(event.data.fd);
 				close (event.data.fd);
-			else if (m_polling.is_existing_socket_fd(event.data.fd))
-			{
-				std::cout << "\nNEW CLIENT\n";
+                std::cout << event.data.fd << ": Closed client connection.\n";
+            }
+			else if (m_polling.is_existing_server_socket_fd(event.data.fd))
 				m_polling.new_client_connexion(event.data.fd);
-			}
 			else if (event.events & EPOLLIN) 
 				read_from_client(event.data.fd);
 			else if (event.events & EPOLLOUT)

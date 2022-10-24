@@ -3,10 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
+#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2022/10/24 14:10:56 by rbicanic         ###   ########.fr        #
+=======
+#    Updated: 2022/10/24 15:17:04 by cdine            ###   ########.fr        #
+>>>>>>> fix_server_connexion
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,10 +70,9 @@ ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
 	${CC} ${FLAGS} -c $< -o $@
 
 server_connexion: all
-	# valgrind ./webserv
-	./webserv ./config_files/default.conf
+	# ./webserv
 	# ./webserv ./config_files/delete_method.conf
-	# ./webserv ./config_files/demo.conf
+	./webserv ./config_files/demo.conf
 	# ./webserv ./config_files/form.conf
 	# ./webserv ./config_files/upload_file.conf
 	#
