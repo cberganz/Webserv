@@ -201,16 +201,22 @@ void	ClientRequestParser::replace_encode_char(std::string &str)
 	}
 }
 
+std::string	ClientRequestParser::getStringHeader()
+{
+	std::string	request_string(m_request.begin(), m_request.end());
+
+	request_string = request_string.substr(0, request_string.find("\r\n\r\n"));
+	trimBegin(request_string, "\r\n");
+	return (request_string);
+}
+
 /*
 ** PUBLIC METHODS
 */
 
 ClientRequest	*ClientRequestParser::makeClientRequest()
 {
-	std::string			request_string(m_request.begin(), m_request.end());
-	request_string = request_string.substr(0, request_string.find("\r\n\r\n"));
-	trimBegin(request_string, "\r\n");
-
+	std::string			request_string = getStringHeader();
 	std::string			line;
 	std::istringstream 	str_stream(request_string);
 	ClientRequest		*client_req = new ClientRequest();

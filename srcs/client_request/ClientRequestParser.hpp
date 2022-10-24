@@ -66,6 +66,9 @@ class ClientRequestParser {
 
 		std::vector<char>
 		parse_body(std::vector<char> str);
+
+		std::string
+		getStringHeader();
 };
 
 #endif
