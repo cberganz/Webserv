@@ -204,7 +204,7 @@ void	ClientRequestParser::replace_encode_char(std::string &str)
 ClientRequest	*ClientRequestParser::makeClientRequest()
 {
 	// check si string vide
-	std::string			request_string(&m_request[0]);
+	std::string			request_string(m_request.begin(), m_request.end());
 	request_string = request_string.substr(0, request_string.find("\r\n\r\n"));
 	trimBegin(request_string, "\r\n");
 

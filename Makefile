@@ -6,7 +6,7 @@
 #    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/23 16:27:29 by cberganz         ###   ########.fr        #
+#    Updated: 2022/10/24 14:10:56 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,7 +66,8 @@ ${OBJ_DIR}%.o: ${SRC_DIR}%.cpp
 	${CC} ${FLAGS} -c $< -o $@
 
 server_connexion: all
-	./webserv
+	# valgrind ./webserv
+	./webserv ./config_files/default.conf
 	# ./webserv ./config_files/delete_method.conf
 	# ./webserv ./config_files/demo.conf
 	# ./webserv ./config_files/form.conf
