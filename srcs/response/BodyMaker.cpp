@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/24 14:03:26 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/24 18:10:58 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,10 @@ std::string	BodyMaker::getUploadFolder(const Context& context, std::string path)
 const std::vector<char>	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	std::string upload_folder = getUploadFolder(context, path);
 
+	if (access(path.c_str(), F_OK) == -1)
+		throw (ErrorException(404));
+	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
+		throw (ErrorException(403));
 	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
 		post_multipart_form(response, client_req, upload_folder);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
@@ -153,17 +157,17 @@ const std::vector<char>	&BodyMaker::postMethod(Response& response, const Context
 }
 
 const std::vector<char>	&BodyMaker::deleteMethod(Response &response, const Context& context, std::string path, const ClientRequest& client_req) {
+	if (access(path.c_str(), F_OK) == -1)
+		throw (ErrorException(404));
+	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
+		throw (ErrorException(403));
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
 		executeCGI(client_req, path, generateEnvp(client_req, context, path));
 		response.setCGI(true);
 		return (m_body);
 	}
-	if (access(path.c_str(), F_OK) == -1)
-		throw (ErrorException(404));
-	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)
-		throw (ErrorException(403));
-	else if (std::remove(path.c_str())) 
+	if (std::remove(path.c_str())) 
 		throw (ErrorException(500));
 	else
 		response.setHttpCode(204);
@@ -253,12 +257,9 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 			throw ErrorException(500);
 		close(fd[1]);
 		int	 ret = 0;
-		char buff[1025];
-		memset(buff, 0, 1025);
-		while ((ret = read(fd[0], buff, 1024)) > 0)
-		{
-			m_body.insert(m_body.end(), &buff[0], &buff[std::strlen(buff)]);
-		}
+		std::vector<char> buff(1024, 0);
+		while ((ret = read(fd[0], &buff[0], 1024)) > 0)
+			m_body.insert(m_body.end(), buff.begin(), buff.begin() + ret);
 		if (ret < 0)
 			throw ErrorException(500);
 		close(fd[0]);

@@ -14,51 +14,48 @@
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 				else
 				echo '<link rel="stylesheet" href="assets/css/delete_method.css">';
-		?>
+				?>
 	</head>
-	<script>
-		function sleep(delay) {
-			var start = new Date().getTime();
-			while (new Date().getTime() < start + delay);
-		}
-		function reload_delay() {
-			sleep(200)
-			document.location.reload(true)
-		} 
-		window.onload = function() {
-			var name = "";
-			var first_name = "";
-			
-			var match = document.cookie.match(new RegExp('(^| )' + 'last_name' + '=([^;]+)'));
-			if (match)
-			name = match[2];
-			match = document.cookie.match(new RegExp('(^| )' + 'first_name' + '=([^;]+)'));
-			if (match)
-			first_name = match[2];
-			
-			document.getElementById('last_name').innerHTML = name;
-			document.getElementById('first_name').innerHTML = first_name;
-		}
-		function send_del_req() {
-			var url = window.location.href;
-			var path = url.substring(0, url.indexOf('/', url.indexOf('://') + 4)) + "/set_cookies"; 
-			fetch(path, 
-			{
-				method: 'POST',
-				headers: {'Content-Type': "application/x-www-form-urlencoded"},
-				body: document.getElementById('input_last_name').name
-				+ '=' + document.getElementById('input_last_name').value
-				+ '&' +
-				document.getElementById('input_first_name').name
-				+ '=' + document.getElementById('input_first_name').value
-			},
-			)
-			.then((response) => response.json())
-			.then((data) => console.log(data));
-			.then(reload_delay())
-		}
-	</script>
 	<body>
+		<script>
+			function sleep(delay) {
+				var start = new Date().getTime();
+				while (new Date().getTime() < start + delay);
+			}
+			function reload_delay() {
+				sleep(200)
+				document.location.reload(true)
+			} 
+			window.onload = function() {
+				var name = "";
+				var first_name = "";
+				
+				var match = document.cookie.match(new RegExp('(^| )' + 'last_name' + '=([^;]+)'));
+				if (match)
+				name = match[2];
+				match = document.cookie.match(new RegExp('(^| )' + 'first_name' + '=([^;]+)'));
+				if (match)
+				first_name = match[2];
+				
+				document.getElementById('last_name').innerHTML = name;
+				document.getElementById('first_name').innerHTML = first_name;
+			}
+			function send_del_req() {
+				var url = window.location.href;
+				var path = url.substring(0, url.indexOf('/', url.indexOf('://') + 4)) + "/set_cookies"; 
+				fetch(path, 
+				{
+					method: 'POST',
+					headers: {'Content-Type': "application/x-www-form-urlencoded"},
+					body: document.getElementById('input_last_name').name
+					+ '=' + document.getElementById('input_last_name').value
+					+ '&' +
+					document.getElementById('input_first_name').name
+					+ '=' + document.getElementById('input_first_name').value
+				})
+				.then(reload_delay())
+			}
+		</script>
 		<div id="navbar"></div>
 		<script>$(function(){ $("#navbar").load("navbar.html"); });</script>
 		<div class="login-box">
@@ -72,7 +69,7 @@
 					<input id="input_first_name", type="text" name="input_first_name" required="">
 					<label>First Name</label>
 				</div>
-				<a  href="#" , id="button_post", onclick="send_del_req()">
+				<a  href="#", id="button_post", onclick='send_del_req()'>
 					<span></span>
 					<span></span>
 					<span></span>

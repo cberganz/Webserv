@@ -7,8 +7,8 @@
 	setcookie($cookie_name1, $cookie_value1, time() + (86400 * 30), "/");
 	setcookie($cookie_name2, $cookie_value2, time() + (86400 * 30), "/");
 ?>
-<!-- <html>    
+<html>    
     <body>
         <h1>Cookies Setted</h1>
     </body>
-</html> -->
+</html>
