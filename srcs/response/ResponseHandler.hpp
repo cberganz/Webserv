@@ -18,9 +18,11 @@ class ResponseHandler {
 		~ResponseHandler();
 		ResponseHandler	&operator=(const ResponseHandler &copy);
 
-		void		setClientRequest(std::vector<char> client_request);
+		void
+		setClientRequest(const std::vector<char> client_request);
 
-		std::vector<char> createResponseMessage(const std::string &ip, const std::string &port);
+		std::vector<char>
+		createResponseMessage(const std::string &ip, const std::string &port);
 
 };
 

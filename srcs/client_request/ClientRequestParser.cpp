@@ -201,9 +201,12 @@ void	ClientRequestParser::replace_encode_char(std::string &str)
 	}
 }
 
+/*
+** PUBLIC METHODS
+*/
+
 ClientRequest	*ClientRequestParser::makeClientRequest()
 {
-	// check si string vide
 	std::string			request_string(m_request.begin(), m_request.end());
 	request_string = request_string.substr(0, request_string.find("\r\n\r\n"));
 	trimBegin(request_string, "\r\n");
@@ -213,19 +216,19 @@ ClientRequest	*ClientRequestParser::makeClientRequest()
 	ClientRequest		*client_req = new ClientRequest();
 
 	std::getline(str_stream, line);
-	trimEnd(line, "\r\n");// voir comment traiter les \r fin de la ligne possible multiple \r ? 
+	trimEnd(line, "\r\n");
 	parse_request_line(line, *client_req);
 
 	if (!is_method_correct(client_req->getMethod()))
 		throw ErrorException(405);
 	if (!is_request_line_correct(*client_req))
 		throw ErrorException(400);
-	request_string.erase(0, line.length()); // verifier comportement si pas de \n a la fin
+	request_string.erase(0, line.length());
 	trimBegin(request_string, "\r\n");
 	client_req->setHeader(parse_header(request_string));
 	client_req->setBody(parse_body(m_request));
 	return (client_req);
 }
 
-void	ClientRequestParser::setRequest(std::vector<char> request)
+void	ClientRequestParser::setRequest(const std::vector<char> request)
 { m_request = request; }

@@ -21,6 +21,7 @@ ClientRequest  &ClientRequest::operator=(const ClientRequest &copy)
 		m_path = copy.m_path;
 		m_header = copy.m_header;
 		m_body = copy.m_body;
+		m_query = copy.m_query;
 	}
 	return (*this);
 }
@@ -51,44 +52,20 @@ const std::string	ClientRequest::getQuery() const
 ** Setter
 */
 
-void	ClientRequest::setPath(std::string path)
+void	ClientRequest::setPath(const std::string path)
 { m_path = path; }
 
-void	ClientRequest::setMethod(std::string method)
-{ m_method =  method; }
+void	ClientRequest::setMethod(const std::string method)
+{ m_method = method; }
 
-void	ClientRequest::setHttpVersion(std::string http_version)
-{ m_http_version =  http_version; }
+void	ClientRequest::setHttpVersion(const std::string http_version)
+{ m_http_version = http_version; }
 
-void	ClientRequest::setBody(std::vector<char> body)
-{ m_body =  body; }
+void	ClientRequest::setBody(const std::vector<char> body)
+{ m_body = body; }
 
-void	ClientRequest::setHeader(std::map<std::string, std::vector<std::string> > header)
-{ m_header =  header; }
+void	ClientRequest::setHeader(const std::map<std::string, std::vector<std::string> > header)
+{ m_header = header; }
 
-void	ClientRequest::setQuery(std::string query)
+void	ClientRequest::setQuery(const std::string query)
 { m_query = query; }
-
-/*
-** To Delete
-*/
-
-void	ClientRequest::print()
-{
-	std::cout << "METHOD: " + m_method
-				+ "\n" + "PATH: " + m_path + "\n"
-				+ "\n" + "Query: " + m_query + "\n"
-				+ "VERSION: " + m_http_version << std::endl;
-	std::cout << "\nHEADER:" << std::endl;
-	for (std::map<std::string, std::vector<std::string> >::iterator it = m_header.begin(); it != m_header.end(); it++)
-	{
-		std::cout << it->first << ": ";
-		for (size_t i = 0; i < it->second.size(); i++)
-			std::cout << it->second[i];
-		std::cout << std::endl;
-	}
-	std::cout << "\n\nBody:\n";
-	for (std::vector<char>::iterator it = m_body.begin(); it != m_body.end(); it++)
-		std::cout << *it;
-	std::cout << std::endl;
-}

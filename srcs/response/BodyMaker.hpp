@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:52:22 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/24 12:42:12 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/24 19:03:26 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@
 # include "../tools/utility.hpp"
 # include "extensionsTable.hpp"
 # include "Response.hpp"
-
-# define UPLOAD_PATH "./upload"
 
 class BodyMaker {
 
@@ -65,9 +63,6 @@ private:
 	void					createFile(std::string filename, std::vector<char> content, std::string path);
 	bool					check_end_boundary(std::string boundary, std::vector<char> &body);
 	std::string				getUploadFolder(const Context& context, std::string path);
-
-	// void	post_urlencoded()
-
 };
 
 #endif // BODYMAKER_HPP

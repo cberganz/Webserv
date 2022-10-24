@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/24 18:10:58 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/24 19:00:18 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,11 @@ bool isDirectory(const std::string &path)
 	return false;
 }
 
-const std::vector<char>	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::getMethod(Response& 			response,
+											  const Context& 		context,
+											  std::string 			path,
+											  const ClientRequest&	client_req)
+{
 	if (path[path.size() - 1] == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -80,7 +84,8 @@ const std::vector<char>	&BodyMaker::getMethod(Response& response, const Context&
 	return (m_body);
 }
 
-void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path) {
+void	BodyMaker::createFile(std::string filename, std::vector<char> content, std::string path)
+{
 	filename = path + filename;
 	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
 	out.clear();
@@ -88,7 +93,7 @@ void	BodyMaker::createFile(std::string filename, std::vector<char> content, std:
 		out.put(*it);
 }
 
-bool				BodyMaker::check_end_boundary(std::string boundary, std::vector<char> &body) {
+bool 	BodyMaker::check_end_boundary(std::string boundary, std::vector<char> &body) {
 	boundary = "--" + boundary + "--";
 	if (ft::search_vector_char(body, boundary.c_str(), body.size() - boundary.length() - 10) == -1)
 		return (false);
@@ -96,7 +101,10 @@ bool				BodyMaker::check_end_boundary(std::string boundary, std::vector<char> &b
 }
 
 
-void	BodyMaker::post_multipart_form(Response& response, const ClientRequest& client_req, std::string path) {
+void	BodyMaker::post_multipart_form(Response& response,
+									   const ClientRequest& client_req,
+									   std::string path)
+{
 	std::string			boundary = client_req.getHeader().at("content-type")[0].substr(30);
 	std::vector<char>	body = client_req.getBody();
 	int					i = 0;
@@ -138,7 +146,11 @@ std::string	BodyMaker::getUploadFolder(const Context& context, std::string path)
 	return (path);
 }
 
-const std::vector<char>	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::postMethod(Response& response,
+											   const Context& context,
+											   std::string path,
+											   const ClientRequest& client_req)
+{
 	std::string upload_folder = getUploadFolder(context, path);
 
 	if (access(path.c_str(), F_OK) == -1)
@@ -156,7 +168,11 @@ const std::vector<char>	&BodyMaker::postMethod(Response& response, const Context
 	return (m_body);
 }
 
-const std::vector<char>	&BodyMaker::deleteMethod(Response &response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::deleteMethod(Response &response,
+												 const Context& context,
+												 std::string path,
+												 const ClientRequest& client_req)
+{
 	if (access(path.c_str(), F_OK) == -1)
 		throw (ErrorException(404));
 	else if (path[path.size() - 1] == '/' || access(path.c_str(), W_OK) == -1)

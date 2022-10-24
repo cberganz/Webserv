@@ -53,22 +53,22 @@ class ClientRequest {
 		**	SETTER
 		*/
 		void
-		setPath(std::string path);
+		setPath(const std::string path);
 
 		void
-		setMethod(std::string method);
+		setMethod(const std::string method);
 
 		void
-		setHttpVersion(std::string http_version);
+		setHttpVersion(const std::string http_version);
 
 		void
-		setBody(std::vector<char> body);
+		setBody(const std::vector<char> body);
 
 		void
-		setHeader(std::map<std::string, std::vector<std::string> > header);
+		setHeader(const std::map<std::string, std::vector<std::string> > header);
 
 		void
-		setQuery(std::string qery);
+		setQuery(const std::string query);
 };
 
 #endif

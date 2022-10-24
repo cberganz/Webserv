@@ -25,7 +25,7 @@ class ClientRequestParser {
 		ClientRequestParser	&operator=(const ClientRequestParser &copy);
 
 		void
-		setRequest(std::vector<char> request);
+		setRequest(const std::vector<char> request);
 
 		ClientRequest*
 		makeClientRequest();
