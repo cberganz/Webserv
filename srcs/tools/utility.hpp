@@ -6,7 +6,7 @@
 /*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:48 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/18 21:09:34 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/24 13:06:55 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ namespace ft {
 
 int	search_vector_char(std::vector<char> tab, const char *to_find, size_t index);
 int	search_vector_char_until(std::vector<char> tab, const char *to_find, size_t index);
+std::vector<char> &replace_vector_char(std::vector<char> &tab, size_t position, size_t length, std::string str);
 
 /*
 **	@brief Perform type conversion from any type to the type specified as T1.

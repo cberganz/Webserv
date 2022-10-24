@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BodyMaker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/21 19:37:02 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/24 14:03:26 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ bool isDirectory(const std::string &path)
 	return false;
 }
 
-const std::string	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::getMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (path[path.size() - 1] == '/' and *context.getDirective("autoindex").begin() == "on")
 	{
 		path += *context.getDirective("index").begin();
@@ -76,6 +76,7 @@ const std::string	&BodyMaker::getMethod(Response& response, const Context& conte
 	}
 	else
 		readFile(path);
+
 	return (m_body);
 }
 
@@ -137,7 +138,7 @@ std::string	BodyMaker::getUploadFolder(const Context& context, std::string path)
 	return (path);
 }
 
-const std::string	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::postMethod(Response& response, const Context& context, std::string path, const ClientRequest& client_req) {
 	std::string upload_folder = getUploadFolder(context, path);
 
 	if (!client_req.getHeader().at("content-type")[0].compare(0, 30,"multipart/form-data; boundary="))
@@ -151,7 +152,7 @@ const std::string	&BodyMaker::postMethod(Response& response, const Context& cont
 	return (m_body);
 }
 
-const std::string	&BodyMaker::deleteMethod(Response &response, const Context& context, std::string path, const ClientRequest& client_req) {
+const std::vector<char>	&BodyMaker::deleteMethod(Response &response, const Context& context, std::string path, const ClientRequest& client_req) {
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{
 		executeCGI(client_req, path, generateEnvp(client_req, context, path));
@@ -169,7 +170,7 @@ const std::string	&BodyMaker::deleteMethod(Response &response, const Context& co
 	return (m_body);
 }
 
-const std::string &BodyMaker::createBody(Response& response)
+const std::vector<char> &BodyMaker::createBody(Response& response)
 {
 	m_body.clear();
 	MethodFunctions fp = m_method_fcts[response.getClientRequest().getMethod()];
@@ -201,7 +202,7 @@ void BodyMaker::readFile(const std::string &path)
 	std::ifstream file(path.c_str());
 	if (not file.good())
 		throw ErrorException(503);
-	m_body = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+	m_body = std::vector<char>(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
 void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &path, char **envp)
@@ -256,8 +257,7 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 		memset(buff, 0, 1025);
 		while ((ret = read(fd[0], buff, 1024)) > 0)
 		{
-			buff[ret] = '\0';
-			m_body += buff;
+			m_body.insert(m_body.end(), &buff[0], &buff[std::strlen(buff)]);
 		}
 		if (ret < 0)
 			throw ErrorException(500);
@@ -265,33 +265,35 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 	}
 }
 
-const std::string &BodyMaker::autoIndex(std::string &path)
+const std::vector<char> &BodyMaker::autoIndex(std::string &path)
 {
 	DIR*			dir;
 	struct dirent*	dirent;
 	char			buff[1024];
+	std::string		add_str_to_body;
 
 	path.insert(0, getcwd(buff, 1024) + std::string("/"));
 	dir = opendir(path.c_str());
 	if (dir == NULL)
 		throw ErrorException(404);
-	m_body += "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<title>\n\t\t\tAUTOINDEX\n\t\t</title>\n\t</head>\n\n\t<body>\n\t\t<h2>\n\t\t\tWEBSERV AUTOINDEX: ";
-	m_body += path;
-	m_body += "\n\t\t</h2>\n";
+	add_str_to_body = "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<title>\n\t\t\tAUTOINDEX\n\t\t</title>\n\t</head>\n\n\t<body>\n\t\t<h2>\n\t\t\tWEBSERV AUTOINDEX: ";
+	add_str_to_body += path;
+	add_str_to_body += "\n\t\t</h2>\n";
     while ((dirent = readdir(dir)) != NULL)
 	{
 		if (dirent->d_type == DT_DIR)
-			m_body += "\t\t<h4 style=\"color:blue;\"><a href=\"";
+			add_str_to_body += "\t\t<h4 style=\"color:blue;\"><a href=\"";
 		else
-			m_body += "\t\t<h4 style=\"color:black;\"><a href=\"";
-		m_body += dirent->d_name;
+			add_str_to_body += "\t\t<h4 style=\"color:black;\"><a href=\"";
+		add_str_to_body += dirent->d_name;
 		if (dirent->d_type == DT_DIR)
-			m_body += "/";
-		m_body += "\">\n\t\t\t";
-		m_body += dirent->d_name;
-		m_body += "\n\t\t</a></h4>\n";
+			add_str_to_body += "/";
+		add_str_to_body += "\">\n\t\t\t";
+		add_str_to_body += dirent->d_name;
+		add_str_to_body += "\n\t\t</a></h4>\n";
 	}
 	closedir(dir);
-	m_body += "\t</body>\n</html>";
+	add_str_to_body += "\t</body>\n</html>";
+	m_body.insert(m_body.end(), add_str_to_body.begin(), add_str_to_body.end());
 	return m_body;
 }

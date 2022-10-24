@@ -93,7 +93,7 @@ void                PollingManager::add_socket_to_epoll(int fd) {
     struct epoll_event conf_event;
 
     memset((char *)&conf_event, 0, sizeof(conf_event)); 
-    conf_event.events = EPOLLIN;
+    conf_event.events = EPOLLIN | EPOLLRDHUP;
     conf_event.data.fd = fd;
     if (epoll_ctl(m_epfd, EPOLL_CTL_ADD, conf_event.data.fd, &conf_event) == -1) {
         close(fd);
@@ -105,7 +105,7 @@ void                PollingManager::edit_socket_in_epoll(int fd, int event) {
     struct epoll_event conf_event;
 
     memset((char *)&conf_event, 0, sizeof(conf_event)); 
-    conf_event.events = event;
+    conf_event.events = event | EPOLLRDHUP;
     conf_event.data.fd = fd;
     if (epoll_ctl(m_epfd, EPOLL_CTL_MOD, conf_event.data.fd, &conf_event) == -1) {
         close(fd);
@@ -129,6 +129,7 @@ void               PollingManager::new_client_connexion(int fd) {
 
     set_socket(new_socket);
     add_socket_to_epoll(new_socket);
+    std::cout << "\n" << new_socket << ": NEW CLIENT\n";
 }
 
 int             PollingManager::wait_for_connexions() {
@@ -160,8 +161,8 @@ std::vector<char>     PollingManager::receive_request(int client_socket) {
     return (buffer);
 }
 
-void            PollingManager::send_request(std::string request, int client_socket) {
-    if(send(client_socket, request.c_str(), request.length(), 0) < 0) {
+void            PollingManager::send_request(std::vector<char> request, int client_socket) {
+    if (send(client_socket, &request[0], request.size(), 0) < 0) {
         close(client_socket);
         throw (SocketCreationException(SENDERR));
     }
@@ -177,7 +178,7 @@ void           PollingManager::close_epfd() {
 struct epoll_event  PollingManager::get_ready_event( int index ) const
 { return (m_ready_events[index]); }
 
-bool                PollingManager::is_existing_socket_fd(int fd) {
+bool                PollingManager::is_existing_server_socket_fd(int fd) {
     for (std::vector<int>::iterator it = m_sockets_fds.begin(); it != m_sockets_fds.end(); it++) {
         if (fd == *it)
             return (true);

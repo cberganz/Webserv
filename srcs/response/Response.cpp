@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:19:56 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/17 20:51:07 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/24 14:03:38 by cdine            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Response &Response::operator=(const Response &rhs)
 	return *this;
 }
 
-const std::string &Response::getResponse() const
+const std::vector<char> &Response::getResponse() const
 { return m_response; }
 
 const int	&Response::getHttpCode() const
@@ -65,11 +65,13 @@ const ClientRequest	&Response::getClientRequest() const
 bool Response::isCGI() const
 { return m_isCGI; }
 
-void Response::append(const std::string &str)
-{ this->m_response += str; }
+void Response::append(const std::vector<char> &str)
+{ this->m_response.insert(m_response.end(), str.begin(), str.end()); }
 
-void Response::insert(std::string::size_type index, const std::string &str)
-{ this->m_response.insert(index, str); }
+void Response::insert(size_t index, const std::string &str)
+{
+	this->m_response.insert(m_response.begin() + index, str.begin(), str.end());
+}
 
 void Response::setHttpCode(const int &code)
 { this->m_httpCode = code; }

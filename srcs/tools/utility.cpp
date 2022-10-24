@@ -17,4 +17,13 @@ namespace ft {
             return (-1);
         return (it - tab.begin());
     }
+    
+    // replace in tab at index position for length length to put str
+    std::vector<char> &replace_vector_char(std::vector<char> &tab, size_t position, size_t length, std::string str) {
+        tab.erase(tab.begin() + position, tab.begin() + position + length);
+        tab.insert(tab.begin() + position, str.begin(), str.end());
+        return (tab);
+    }
+
 }
+

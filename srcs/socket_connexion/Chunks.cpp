@@ -60,29 +60,31 @@ std::vector<char>     Chunks::get_unchunked_request(int fd) {
 /** CHUNK RESPONSE FUNCTIONS **/
 
 // returns header which will be sent first straight after receipt of request
-std::string     Chunks::add_headerless_response_to_chunk(int fd, std::string response) {
-    size_t        end_header = response.find("\r\n\r\n");
-    std::string   header = response.substr(0, end_header + 4);
+std::vector<char>     Chunks::add_headerless_response_to_chunk(int fd, std::vector<char> response) {
+    size_t              end_header = ft::search_vector_char(response, "\r\n\r\n", 0);
+    std::vector<char>   header(response.begin(), response.begin() + end_header + 4);
 
-    m_chunked_responses.insert(std::make_pair(fd, std::make_pair(2, response.substr(end_header + 4))));
+    m_chunked_responses.insert(std::make_pair(fd, 
+        std::make_pair(2, std::vector<char>(response.begin() + end_header + 4, response.end())))); 
     return (header);
 }
 
-std::string     Chunks::get_next_chunk(int fd) {
-    std::string response = (m_chunked_responses.find(fd))->second.second;
-    int         size_return = (m_chunked_responses.find(fd))->second.first;
-    std::string chunk = "";
-    
-    if (response.size())
-        chunk = response.substr(0, MAX_CHUNK_LEN);
+std::vector<char>     Chunks::get_next_chunk(int fd) {
+    std::vector<char>   response = (m_chunked_responses.find(fd))->second.second;
+    std::vector<char>   new_response;
+    std::vector<char>   chunk;
+    int                 size_return = (m_chunked_responses.find(fd))->second.first;
+
+    if (response.size() && response.size() >= MAX_CHUNK_LEN)
+        chunk.insert(chunk.end(), response.begin(), response.begin() + MAX_CHUNK_LEN);
+    else if (response.size() && response.size() < MAX_CHUNK_LEN)
+        chunk.insert(chunk.end(), response.begin(), response.end());
     if (size_return % 2 == 0)
         return (chunk);
     if (response.size() >= MAX_CHUNK_LEN)
-        response = response.substr(MAX_CHUNK_LEN); 
-    else
-        response = "";
+        new_response.insert(new_response.end(), response.begin() + MAX_CHUNK_LEN, response.end());
     m_chunked_responses.erase(fd);
-    m_chunked_responses.insert(std::make_pair(fd, std::make_pair(size_return, response)));
+    m_chunked_responses.insert(std::make_pair(fd, std::make_pair(size_return, new_response)));
     return (chunk);
 }
 

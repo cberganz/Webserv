@@ -15,7 +15,7 @@
 class Chunks {
     private:
         std::map<int, std::vector<char> >                   m_chunked_requests;
-        std::map<int, std::pair<int, std::string> >         m_chunked_responses;
+        std::map<int, std::pair<int, std::vector<char> > >   m_chunked_responses;
 
     public:
         Chunks();
@@ -28,8 +28,8 @@ class Chunks {
         std::vector<char>   get_unchunked_request(int fd);
 
         /** RESPONSE **/
-        std::string     add_headerless_response_to_chunk(int fd, std::string response);
-        std::string     get_next_chunk(int fd);
+        std::vector<char>     add_headerless_response_to_chunk(int fd, std::vector<char> response);
+        std::vector<char>     get_next_chunk(int fd);
 
         /** UTILS **/
         bool            findChunkedReq(int fd);
