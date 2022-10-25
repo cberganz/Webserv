@@ -72,7 +72,7 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
     std::vector<char> response_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
-    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
+    m_polling.send_response(m_chunks.add_headerless_response_to_chunk(fd,
         response_msg), fd);
 }
 
@@ -88,7 +88,7 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
         error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$STATUS", 0),  7, ft::itostr(e.getCode()));
         error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$MESSAGE", 0),  8, http_code[e.getCode()]);
     }
-    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
+    m_polling.send_response(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
 }
 
 bool            ServerConnexion::is_last_request_chunk(std::vector<char> client_req, int fd) {
@@ -133,21 +133,21 @@ void    ServerConnexion::read_from_client(int fd) {
 
 void    ServerConnexion::write_to_client(int fd) {
     try {
-        std::vector<char>   chunk = m_chunks.get_next_chunk(fd);
+        std::vector<char>   chunk = m_chunks.get_next_response_chunk(fd);
         int                 size_return = m_chunks.get_size_return(fd);
-        std::vector<char>   request;
+        std::vector<char>   response;
         std::stringstream   ss;
         std::string         size_chunk;
 
         ss << std::hex << chunk.size();
         ss >> size_chunk;
         if (size_return % 2 == 0)
-            request.insert(request.end(), size_chunk.begin(), size_chunk.end());
+            response.insert(response.end(), size_chunk.begin(), size_chunk.end());
         else
-            request = chunk;
-        request.push_back('\r');
-        request.push_back('\n');
-        m_polling.send_request(request, fd);
+            response = chunk;
+        response.push_back('\r');
+        response.push_back('\n');
+        m_polling.send_response(response, fd);
         if (!chunk.size() && size_return % 2 == 1) 
             m_polling.edit_socket_in_epoll(fd, EPOLLIN);
         if (!chunk.size() && size_return % 2 == 1){
@@ -158,8 +158,8 @@ void    ServerConnexion::write_to_client(int fd) {
             m_chunks.increment_size_turn(fd);
     }
     catch (const std::exception& e) {
-        m_chunks.delete_chunk_response(fd);
         close(fd);
+        m_chunks.delete_chunk_response(fd);
 		std::cerr << "Exception: "<< e.what() << '\n';
     }
 }
@@ -179,6 +179,7 @@ void    ServerConnexion::connexion_loop()
                 event = m_polling.get_ready_event(i);
                 if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
                     || (event.events & EPOLLRDHUP)) {
+                    m_chunks.delete_chunk_request(event.data.fd);
                     m_chunks.delete_chunk_response(event.data.fd);
                     close (event.data.fd);
                 }

@@ -152,7 +152,7 @@ std::vector<char>     PollingManager::receive_request(int client_socket) {
     return (buffer);
 }
 
-void            PollingManager::send_request(std::vector<char> request, int client_socket) {
+void            PollingManager::send_response(std::vector<char> request, int client_socket) {
     if (send(client_socket, &request[0], request.size(), 0) < 0)
         throw (SocketCreationException(SENDERR));
 }

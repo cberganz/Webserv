@@ -29,6 +29,7 @@
 		<script>$(function(){ $("#navbar").load("navbar.html"); });</script>
         <div class="container gallery-container">
 			<h1>Upload files</h1>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br>
             <form method="post" enctype="multipart/form-data">
                 <input type="file" name="file1" multiple>
                 <p>Drag your files here or click in this area.</p>

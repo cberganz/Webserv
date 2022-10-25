@@ -31,8 +31,8 @@
         <div class="container gallery-container">
 			<h1>Delete files</h1>
             <div>
-                <p>Select file to delete:</p>
-				<div>
+                <p style="text-align:center">Select file to delete:</p>
+				<div style="text-align:center">
 					<select id="select_file">
 						<?php
 							if ($handle = opendir('./files')) {

@@ -33,7 +33,7 @@ class Chunks {
 
         /** RESPONSE **/
         std::vector<char>     add_headerless_response_to_chunk(int fd, std::vector<char> &response);
-        std::vector<char>     get_next_chunk(int fd);
+        std::vector<char>     get_next_response_chunk(int fd);
 
         /** UTILS **/
         bool            is_chunk_encoding(int fd);

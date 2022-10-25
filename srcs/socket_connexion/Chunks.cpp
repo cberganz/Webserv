@@ -68,7 +68,7 @@ std::vector<char>     Chunks::add_headerless_response_to_chunk(int fd, std::vect
     return (header);
 }
 
-std::vector<char>     Chunks::get_next_chunk(int fd) {
+std::vector<char>     Chunks::get_next_response_chunk(int fd) {
     std::vector<char>   response = (m_chunked_responses.find(fd))->second.second;
     std::vector<char>   new_response;
     std::vector<char>   chunk;
