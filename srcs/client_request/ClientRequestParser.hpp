@@ -27,7 +27,7 @@ class ClientRequestParser {
 		void
 		setRequest(const std::vector<char> request);
 
-		ClientRequest*
+		ClientRequest
 		makeClientRequest();
 
 	private:

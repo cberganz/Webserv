@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:00:19 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/12 18:49:37 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 16:19:57 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
 	bool		isBodySizeLimitReached(Context &context, ClientRequest &client_req);
 	void		handleErrorPageDirective(const Context &context, int error_status, const std::string path);
 
-	Response*	createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port);
+	Response	createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port);
 
 private:
 	HttpCodes	m_httpCodes;

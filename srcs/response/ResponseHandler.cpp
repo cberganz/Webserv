@@ -33,11 +33,9 @@ void	ResponseHandler::setClientRequest(const std::vector<char> client_request)
 
 std::vector<char> ResponseHandler::createResponseMessage(const std::string &ip, const std::string &port)
 {
-	ClientRequest			*client_req			= m_client_req_parser.makeClientRequest();
-	Response				*response 			= m_response_maker.createResponse(*client_req, ip, port);
-	std::vector<char>		response_message	= response->getResponse();
+	ClientRequest			client_req			= m_client_req_parser.makeClientRequest();
+	Response				response 			= m_response_maker.createResponse(client_req, ip, port);
+	std::vector<char>		response_message	= response.getResponse();
 	
-	delete client_req;
-	delete response;
 	return (response_message);
 }

@@ -214,25 +214,25 @@ std::string	ClientRequestParser::getStringHeader()
 ** PUBLIC METHODS
 */
 
-ClientRequest	*ClientRequestParser::makeClientRequest()
+ClientRequest	ClientRequestParser::makeClientRequest()
 {
 	std::string			request_string = getStringHeader();
 	std::string			line;
 	std::istringstream 	str_stream(request_string);
-	ClientRequest		*client_req = new ClientRequest();
+	ClientRequest		client_req;
 
 	std::getline(str_stream, line);
 	trimEnd(line, "\r\n");
-	parse_request_line(line, *client_req);
+	parse_request_line(line, client_req);
 
-	if (!is_method_correct(client_req->getMethod()))
+	if (!is_method_correct(client_req.getMethod()))
 		throw ErrorException(405);
-	if (!is_request_line_correct(*client_req))
+	if (!is_request_line_correct(client_req))
 		throw ErrorException(400);
 	request_string.erase(0, line.length());
 	trimBegin(request_string, "\r\n");
-	client_req->setHeader(parse_header(request_string));
-	client_req->setBody(parse_body(m_request));
+	client_req.setHeader(parse_header(request_string));
+	client_req.setBody(parse_body(m_request));
 	return (client_req);
 }
 
