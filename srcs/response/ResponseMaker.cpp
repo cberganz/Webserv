@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 16:20:38 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:05:38 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,17 @@ void	ResponseMaker::handleErrorPageDirective(const Context &context, int error_s
 	throw ErrorException(error_status);
 }
 
-std::string	ResponseMaker::findLongestLocation(Context context, std::string uri)
+std::string	ResponseMaker::findLongestLocation(const Context& context, std::string uri)
 {
 	while (!uri.empty())
 	{
 		if (context.contextExist(uri))
 			return (uri);
-		uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
-	}
-
+		if (uri[uri.size() - 1] == '/')
+			uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
+		else
+			uri = uri.erase(uri.find_last_of("/") + 1, uri.length() - uri.find_last_of("/"));
+	} // VOIR SI TOUT MARCHE POUR LES IF /
 	if (context.contextExist("/"))
 		return ("/");
 	return (uri);
@@ -115,12 +117,17 @@ std::string	ResponseMaker::findLongestLocation(Context context, std::string uri)
 
 Response ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
 {
-	std::string longest_location = findLongestLocation(m_config[ip + ":" + port], client_req.getPath());
+	Context server;
+	if (client_req.getHeader().find("host") == client_req.getHeader().end())
+		server = m_config.getServer(ip, port);
+	else
+		server = m_config.getServer(ip, port, *client_req.getHeader().at("host").begin());
+	std::string longest_location = findLongestLocation(server, client_req.getPath());
 
 	try {
-		if (not m_config[ip + ":" + port].contextExist(longest_location))
+		if (not server.contextExist(longest_location))
 			throw ErrorException(404);
-		Context 	context = m_config[ip + ":" + port].getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+		Context 	context = server.getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
 		Response	response(client_req, context, longest_location);
 
 		if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
@@ -143,7 +150,7 @@ Response ResponseMaker::createResponse(ClientRequest &client_req, const std::str
 		return response;
 	} catch (ErrorException &e) {
 		Context	context =
-			m_config[ip + ":" + port].getContext(longest_location);
+			server.getContext(longest_location);
 		handleErrorPageDirective(context, e.getCode(), *context.getDirective("root").begin());
 	}
 	return Response();

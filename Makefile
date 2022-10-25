@@ -6,7 +6,7 @@
 #    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/25 16:17:20 by cdine            ###   ########.fr        #
+#    Updated: 2022/10/25 16:43:45 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -69,7 +69,7 @@ server_connexion: all
 	# ./webserv
 	# ./webserv ./config_files/delete_method.conf
 	# ./webserv ./config_files/default.conf
-	valgrind ./webserv ./config_files/demo.conf
+	./webserv ./config_files/demo.conf
 	# ./webserv ./config_files/form.conf
 	# ./webserv ./config_files/upload_file.conf
 	#

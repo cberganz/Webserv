@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:00:19 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 16:19:57 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 16:55:06 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ private:
 	HeaderMaker	m_headerMaker;
 	BodyMaker	m_bodyMaker;
 
-	std::string	findLongestLocation(Context context, std::string uri);
+	std::string	findLongestLocation(const Context& context, std::string uri);
 
 }; // class ResponseMaker
 
