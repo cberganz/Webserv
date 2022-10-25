@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/22 16:42:23 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 16:20:38 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,15 +113,15 @@ std::string	ResponseMaker::findLongestLocation(Context context, std::string uri)
 	return (uri);
 }
 
-Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
+Response ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
 {
 	std::string longest_location = findLongestLocation(m_config[ip + ":" + port], client_req.getPath());
 
 	try {
 		if (not m_config[ip + ":" + port].contextExist(longest_location))
 			throw ErrorException(404);
-		Context context = m_config[ip + ":" + port].getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
-		Response*	response = new Response(client_req, context, longest_location);
+		Context 	context = m_config[ip + ":" + port].getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+		Response	response(client_req, context, longest_location);
 
 		if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
 			throw ErrorException(405);
@@ -132,19 +132,19 @@ Response* ResponseMaker::createResponse(ClientRequest &client_req, const std::st
 			if (context.getDirective("rewrite").size() < 2
 				or !m_httpCodes.codeExist(ft::lexical_cast<int>(context.getDirective("rewrite")[1])))
 				throw ErrorException(500);
-			response->setHttpCode(ft::lexical_cast<int>(context.getDirective("rewrite")[1]));
-			response->setLocation(*context.getDirective("rewrite").begin());
-			(*response).insert(0, m_headerMaker.createHeader(client_req, *response));
+			response.setHttpCode(ft::lexical_cast<int>(context.getDirective("rewrite")[1]));
+			response.setLocation(*context.getDirective("rewrite").begin());
+			response.insert(0, m_headerMaker.createHeader(client_req, response));
 			return response;
 		}
 
-		response->append(m_bodyMaker.createBody(*response));
-		response->insert(0, m_headerMaker.createHeader(client_req, *response));
+		response.append(m_bodyMaker.createBody(response));
+		response.insert(0, m_headerMaker.createHeader(client_req, response));
 		return response;
 	} catch (ErrorException &e) {
 		Context	context =
 			m_config[ip + ":" + port].getContext(longest_location);
 		handleErrorPageDirective(context, e.getCode(), *context.getDirective("root").begin());
 	}
-	return new Response();
+	return Response();
 }
