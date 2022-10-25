@@ -24,6 +24,10 @@ class ResponseHandler {
 		std::vector<char>
 		createResponseMessage(const std::string &ip, const std::string &port);
 
+	private:
+		void		handleErrorPageDirective(const Context &context, int error_status, const std::string path);
+		std::string	findLongestLocation(const Context& context, std::string uri);
+
 };
 
 #endif

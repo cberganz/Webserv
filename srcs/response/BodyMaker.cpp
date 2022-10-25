@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/24 19:00:18 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:19:30 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,9 @@ void BodyMaker::executeCGI(const ClientRequest& client_req, const std::string &p
 	}
 	else // parent process
 	{
+		for (int i = 0 ; envp[i] != NULL ; i++)
+			free(envp[i]);
+		free(envp);
 		waitpid(pid, &stat, 0);
 		stat = WEXITSTATUS(stat);
 		if (stat != 0)

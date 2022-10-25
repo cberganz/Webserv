@@ -38,6 +38,7 @@ do
     clang++ ${CFLAGS} ${TESTER_PATH}mains/$test -L.. -lWebserv
     ./a.out ../config_files/default.conf > /dev/null 2>&1 &
     WEBSERV_PID=$!
+	sleep 1;
     ret_curl=`curl http://localhost:8080 2>&1`
     if (( $? != 0 )); then
 		errors=$(($errors+1))

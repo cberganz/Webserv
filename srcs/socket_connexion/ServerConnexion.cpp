@@ -114,7 +114,7 @@ void    ServerConnexion::read_from_client(int fd) {
             is_chunk = false;
             client_req = m_chunks.get_unchunked_request(fd);
         }
-        if (!is_chunk) {		
+        if (!is_chunk) {
             try {
                 handleResponse(client_req, fd);
             } catch (ErrorException & e) {

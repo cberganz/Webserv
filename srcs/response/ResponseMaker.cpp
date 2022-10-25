@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 17:05:38 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/25 20:30:33 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,83 +75,30 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 	return (false);
 }
 
-void	ResponseMaker::handleErrorPageDirective(const Context &context, int error_status, const std::string path)
+Response ResponseMaker::createResponse(ClientRequest &client_req, const Context& server, const std::string& longest_location)
 {
-	ContextBase::tokensContainer error_page_tokens =
-			context.getDirective("error_page");
 
-	if (error_page_tokens.front() == "default")
-		throw ErrorException(error_status);
+	if (not server.contextExist(longest_location))
+		throw ErrorException(404);
+	Context 	context = server.getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+	Response	response(client_req, context, longest_location);
 
-	Lexer::tokensContainer::iterator error_it =
-				std::find(error_page_tokens.begin(), error_page_tokens.end(), ft::itostr(error_status));
-
-	if (error_it == error_page_tokens.end()
-		|| error_it + 1 == error_page_tokens.end())
-			throw ErrorException(error_status);
-
-	std::string error_file_path = path + "/" + *(error_it + 1);
-
-	if (access(error_file_path.c_str(), F_OK ) != -1
-		&& access(error_file_path.c_str(), R_OK ) != -1)
-			throw ErrorException(error_status, error_file_path);
-
-	throw ErrorException(error_status);
-}
-
-std::string	ResponseMaker::findLongestLocation(const Context& context, std::string uri)
-{
-	while (!uri.empty())
+	if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
+		throw ErrorException(405);
+	if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
+		throw ErrorException(413);
+	if (context.directiveExist("rewrite"))
 	{
-		if (context.contextExist(uri))
-			return (uri);
-		if (uri[uri.size() - 1] == '/')
-			uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
-		else
-			uri = uri.erase(uri.find_last_of("/") + 1, uri.length() - uri.find_last_of("/"));
-	} // VOIR SI TOUT MARCHE POUR LES IF /
-	if (context.contextExist("/"))
-		return ("/");
-	return (uri);
-}
-
-Response ResponseMaker::createResponse(ClientRequest &client_req, const std::string &ip, const std::string &port)
-{
-	Context server;
-	if (client_req.getHeader().find("host") == client_req.getHeader().end())
-		server = m_config.getServer(ip, port);
-	else
-		server = m_config.getServer(ip, port, *client_req.getHeader().at("host").begin());
-	std::string longest_location = findLongestLocation(server, client_req.getPath());
-
-	try {
-		if (not server.contextExist(longest_location))
-			throw ErrorException(404);
-		Context 	context = server.getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
-		Response	response(client_req, context, longest_location);
-
-		if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
-			throw ErrorException(405);
-		if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
-			throw ErrorException(413);
-		if (context.directiveExist("rewrite"))
-		{
-			if (context.getDirective("rewrite").size() < 2
-				or !m_httpCodes.codeExist(ft::lexical_cast<int>(context.getDirective("rewrite")[1])))
-				throw ErrorException(500);
-			response.setHttpCode(ft::lexical_cast<int>(context.getDirective("rewrite")[1]));
-			response.setLocation(*context.getDirective("rewrite").begin());
-			response.insert(0, m_headerMaker.createHeader(client_req, response));
-			return response;
-		}
-
-		response.append(m_bodyMaker.createBody(response));
+		if (context.getDirective("rewrite").size() < 2
+			or !m_httpCodes.codeExist(ft::lexical_cast<int>(context.getDirective("rewrite")[1])))
+			throw ErrorException(500);
+		response.setHttpCode(ft::lexical_cast<int>(context.getDirective("rewrite")[1]));
+		response.setLocation(*context.getDirective("rewrite").begin());
 		response.insert(0, m_headerMaker.createHeader(client_req, response));
 		return response;
-	} catch (ErrorException &e) {
-		Context	context =
-			server.getContext(longest_location);
-		handleErrorPageDirective(context, e.getCode(), *context.getDirective("root").begin());
 	}
-	return Response();
+
+	response.append(m_bodyMaker.createBody(response));
+	response.insert(0, m_headerMaker.createHeader(client_req, response));
+	return response;
 }

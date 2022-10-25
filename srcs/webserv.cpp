@@ -9,7 +9,15 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 	if (argc == 2)
+	{
 		path = argv[1];
+		if (path.find_last_of(".") == std::string::npos || path.substr(path.find_last_of("."), path.size()) != ".conf"
+			|| path.size() <= 5)
+		{
+			std::cerr << "Usage: ./webserv [path to configuration file]" << std::endl;
+			return 0;
+		}
+	}
 	if (argc == 1)
 		path = "config_files/default.conf";
 	try {

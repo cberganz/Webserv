@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cdine <cdine@student.42.fr>                +#+  +:+       +#+         #
+#    By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/18 20:42:39 by cberganz          #+#    #+#              #
-#    Updated: 2022/10/25 16:43:45 by cberganz         ###   ########.fr        #
+#    Updated: 2022/10/25 19:29:13 by rbicanic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CC			= clang++
 
 INCLUDE		= include/
 
-FLAGS		= -Wall -Wextra -Werror -std=c++98 -g #-fPIC
+FLAGS		= -Wall -Wextra -Werror -std=c++98 -g
 
 SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/config_lexer_parser/Parser.cpp			\
@@ -37,8 +37,8 @@ SRC_NAME	= srcs/config_lexer_parser/Config.cpp			\
 			  srcs/response/Response.cpp					\
 			  srcs/response/ResponseMaker.cpp				\
 			  srcs/response/ResponseHandler.cpp				\
+			  srcs/webserv.cpp								\
 			  srcs/tools/utility.cpp
-
 
 SRC			= ${SRC_NAME}
 
@@ -47,15 +47,13 @@ OBJ_DIRS	= ${sort ${dir ${OBJ}}}
 OBJ_NAME	= ${SRC_NAME:.cpp=.o}
 OBJ			= ${addprefix ${OBJ_DIR}, ${OBJ_NAME}}
 
-all: ${NAME}
+all: ${LIB_NAME} ${NAME}
 
-${NAME}: lib exec
-
-lib: ${OBJ}
-	@ar rcs ${LIB_NAME} ${OBJ}
-
-exec:
+${NAME}: ${LIB_NAME}
 	clang++ ${FLAGS} srcs/webserv.cpp -o ${NAME} -L. -lWebserv
+
+${LIB_NAME}: ${OBJ}
+	@ar rcs ${LIB_NAME} ${OBJ}
 
 ${OBJ_DIRS}:
 	@mkdir -p $@

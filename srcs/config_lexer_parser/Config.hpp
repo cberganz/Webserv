@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 19:39:47 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 16:50:55 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/25 20:04:41 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ public:
 	{
 		for (contextsContainer::const_iterator it = m_parser.getRoot().getContexts().begin() ;
 			 it != m_parser.getRoot().getContexts().end() ; it++)
-			if (it->second.getDirective("ip")[0] == ip and it->second.getDirective("port")[0] == port and it->second.getDirective("server_name")[0] == server_name)
+			if (it->second.getDirective("ip")[0] == ip and it->second.getDirective("port")[0] == port and it->second.getDirective("server_name")[0] == server_name.substr(0, server_name.find(":")))
 				return it->second;
 		for (contextsContainer::const_iterator it = m_parser.getRoot().getContexts().begin() ;
 			 it != m_parser.getRoot().getContexts().end() ; it++)

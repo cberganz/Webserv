@@ -127,7 +127,7 @@ void               PollingManager::new_client_connexion(int fd) {
 }
 
 int             PollingManager::wait_for_connexions() {
-    int nfds = epoll_wait(m_epfd, m_ready_events, MAX_EVENTS, 5000); // check timeoout et MAX_EVENTS -> que mettre ?
+    int nfds = epoll_wait(m_epfd, m_ready_events, MAX_EVENTS, 5000);
 
     if (nfds == -1) 
         throw (SocketCreationException(EPOLLWAITERR));
@@ -153,7 +153,7 @@ std::vector<char>     PollingManager::receive_request(int client_socket) {
 }
 
 void            PollingManager::send_response(std::vector<char> request, int client_socket) {
-    if (send(client_socket, &request[0], request.size(), 0) < 0)
+    if (send(client_socket, &request[0], request.size(), 0) <= 0)
         throw (SocketCreationException(SENDERR));
 }
 

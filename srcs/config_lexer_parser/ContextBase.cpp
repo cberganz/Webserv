@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ContextBase.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 11:10:02 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/20 15:55:45 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/25 20:02:21 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,15 +105,15 @@ const std::string &ContextBase::getFollowingToken(const int &offset)
 
 const std::string ContextBase::getKeyIdentifier()
 {
+	static int index;
+
 	if (contextNameRequiresURI(*tokensIt))
 		return *(tokensIt + 1);
 	else
 	{
-		for (int offset = 0 ; *(tokensIt + offset) != "}" and *(tokensIt + offset) != "" ; offset++)
-			if (*(tokensIt + offset) == "listen")
-				return (*(tokensIt + offset + 1));
+		index++;
+		return ft::itostr(index);
 	}
-	return "";
 }
 
 /*
