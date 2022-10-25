@@ -38,7 +38,7 @@
                 
                         if ($entry != "." && $entry != "..") {
                 
-                            echo "- $entry<br>";
+                            echo "- <a href=\"./files/$entry\" target=\"_blank\">$entry</a><br><br>";
                             
                         }
                     }

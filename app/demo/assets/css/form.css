@@ -2,8 +2,9 @@ body{
     background: rgba(0,0,0,0.9);
   }
   form{
-    position: absolute;
+    position: relative;
     top: 50%;
+    bottom: 50%;
     left: 50%;
     margin-top: -200px;
     margin-left: -250px;
