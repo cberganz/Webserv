@@ -50,9 +50,6 @@ class ClientRequestParser {
 		is_request_line_correct(ClientRequest client_requ);
 
 		bool
-		is_method_correct(std::string method);
-
-		bool
 		is_path_correct(std::string path);
 
 		bool

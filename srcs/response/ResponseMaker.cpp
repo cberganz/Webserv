@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:04:07 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 20:30:33 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 22:53:31 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,20 @@ ResponseMaker& ResponseMaker::operator=(const ResponseMaker &rhs)
 
 bool	ResponseMaker::isMethodAllowed(Context &context, ClientRequest &client_req)
 {
+	std::string	accepted_methods[3] = {"GET", "POST", "DELETE"};
+
 	if (context.directiveExist("allowed_methods")
-		&& context.getDirective("allowed_methods")[0] != "default")// bizarre que ca me donne default quand pas de dir persent
+		&& context.getDirective("allowed_methods")[0] != "default")
 	{
 		ContextBase::tokensContainer directives = context.getDirective("allowed_methods");
 		if (std::find(directives.begin(), directives.end(), client_req.getMethod())
 			== directives.end())
 			return (false);
 	}
-	return (true);
+	for (int i = 0; i < 3; i++)
+		if (client_req.getMethod() == accepted_methods[i])
+			return (true);
+	return (false);
 }
 
 bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &client_req)
@@ -64,12 +69,12 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 	
 	std::string max_body_size = context.getDirective("client_max_body_size")[0];
 	if (std::toupper(max_body_size[max_body_size.size() - 1]) != 'M')
-		throw ErrorException(500); // erreur sur le format de la valeur max body size voir quoi faire
+		throw ErrorException(500);
 	for (size_t i = 0; i < max_body_size.length() - 1; i++)
 		if (!std::isdigit(max_body_size[i]))
-			throw ErrorException(500); // erreur sur le format de la valeur max body size voir quoi faire
+			throw ErrorException(500);
 	
-	size_t max_size = std::atoi(max_body_size.c_str()) * 1000000;// en mega voir comment fair pour giga etc
+	size_t max_size = std::atoi(max_body_size.c_str()) * 1000000;
 	if (client_req.getBody().size() > max_size)
 		return (true);
 	return (false);
@@ -77,15 +82,14 @@ bool	ResponseMaker::isBodySizeLimitReached(Context &context, ClientRequest &clie
 
 Response ResponseMaker::createResponse(ClientRequest &client_req, const Context& server, const std::string& longest_location)
 {
-
 	if (not server.contextExist(longest_location))
 		throw ErrorException(404);
-	Context 	context = server.getContext(longest_location); // WARNING: throw error if uri is not find in server. Throw HTTP error if this case ?
+	Context 	context = server.getContext(longest_location);
 	Response	response(client_req, context, longest_location);
 
-	if (!this->isMethodAllowed(context, client_req))// verifier que directive method peut etre dans location
+	if (!this->isMethodAllowed(context, client_req))
 		throw ErrorException(405);
-	if (this->isBodySizeLimitReached(context, client_req))// verifier le bon fonctionnement de la taille
+	if (this->isBodySizeLimitReached(context, client_req))
 		throw ErrorException(413);
 	if (context.directiveExist("rewrite"))
 	{
@@ -97,7 +101,6 @@ Response ResponseMaker::createResponse(ClientRequest &client_req, const Context&
 		response.insert(0, m_headerMaker.createHeader(client_req, response));
 		return response;
 	}
-
 	response.append(m_bodyMaker.createBody(response));
 	response.insert(0, m_headerMaker.createHeader(client_req, response));
 	return response;

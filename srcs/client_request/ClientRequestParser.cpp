@@ -149,16 +149,6 @@ void	ClientRequestParser::trimEnd(std::string &request, std::string charset)
 	request.erase(request.length() - last_new_line, last_new_line);
 }
 
-bool	ClientRequestParser::is_method_correct(std::string method)
-{
-	std::string	accepted_methods[3] = {"GET", "POST", "DELETE"};
-
-	for (int i = 0; i < 3; i++)
-		if (method == accepted_methods[i])
-			return (true);
-	return (false);
-}
-
 bool	ClientRequestParser::is_path_correct(std::string path)
 {
 	std::string	accepted_charset = "-._~!$&'()*+,;=:/";
@@ -225,8 +215,6 @@ ClientRequest	ClientRequestParser::makeClientRequest()
 	trimEnd(line, "\r\n");
 	parse_request_line(line, client_req);
 
-	if (!is_method_correct(client_req.getMethod()))
-		throw ErrorException(405);
 	if (!is_request_line_correct(client_req))
 		throw ErrorException(400);
 	request_string.erase(0, line.length());

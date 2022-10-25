@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 04:00:19 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 20:29:54 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/25 22:52:03 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ public:
 
 	ResponseMaker& operator=(const ResponseMaker &rhs);
 
-	bool		isMethodAllowed(Context &context, ClientRequest &client_req);
-	bool		isBodySizeLimitReached(Context &context, ClientRequest &client_req);
+	bool	isMethodAllowed(Context &context, ClientRequest &client_req);
+	bool	isBodySizeLimitReached(Context &context, ClientRequest &client_req);
 
 	Response 	createResponse(ClientRequest &client_req, const Context& server, const std::string& longest_location);
 
