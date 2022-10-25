@@ -14,6 +14,7 @@ root -> TEST
 	port -> 443
 	root ->  Ceci 'est' un 'test'
 	server_name -> cberganz.42.fr
+	upload_folder -> .
 
 		[location][/path sfsaf asdfsda]
 		allowed_methods -> default
@@ -26,6 +27,7 @@ root -> TEST
 		port -> 443
 		root ->  Ceci 'est' un 'test'
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 
 		[location][/what]
 		allowed_methods -> default
@@ -38,4 +40,5 @@ root -> TEST
 		port -> 443
 		root -> 'Blorp' 'baba'
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 
