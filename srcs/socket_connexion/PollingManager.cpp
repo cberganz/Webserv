@@ -2,18 +2,23 @@
 
 /** NORME DE COPLIEN **/
 
-PollingManager::PollingManager() {}
+PollingManager::PollingManager()  : m_epfd(-1) {}
 
-PollingManager::PollingManager(const Context::contextsContainer &container)
+PollingManager::PollingManager(const Context::contextsContainer &container) : m_epfd(-1)
 {
-    for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
-    {
-        m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>(*(*it).second.getDirective("port").begin()),
-            getIntIp(*(*it).second.getDirective("ip").begin())));
+    try {
+        for (Config::contextsConstIterator it = container.begin() ; it != container.end() ; it++)
+        {
+            m_sockets_fds.push_back(create_socket(ft::lexical_cast<int>(*(*it).second.getDirective("port").begin()),
+                getIntIp(*(*it).second.getDirective("ip").begin())));
+        }
+    }
+    catch (const std::exception &e) {
+        throw (SocketCreationException(LISTENERR));
     }
 }
 
-PollingManager::PollingManager(const PollingManager &copy) {
+PollingManager::PollingManager(const PollingManager &copy) : m_epfd(-1) {
     if (this != &copy)
         *this = copy;
 }
@@ -57,7 +62,6 @@ void            PollingManager::set_socket(int fd) {
 
     if (setsockopt(fd, SOL_SOCKET,  SO_REUSEADDR | SO_REUSEPORT, 
                     &on, sizeof(int)) < 0) {
-        close(fd);
         throw (SocketCreationException(SETSOCKOPTERR));
     }
 }
@@ -72,11 +76,9 @@ int PollingManager::create_socket(int port, int ip) {
     set_socket(listen_fd);
     serv_addr = init_address_structure(port, ip);
     if (bind(listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        close(listen_fd);
         throw (SocketCreationException(BINDERR));
     }
     if (listen(listen_fd, 100) < 0) {
-        close(listen_fd);
         throw (SocketCreationException(LISTENERR));
     }
     return (listen_fd);
@@ -91,7 +93,6 @@ void                PollingManager::add_socket_to_epoll(int fd) {
     conf_event.events = EPOLLIN | EPOLLRDHUP;
     conf_event.data.fd = fd;
     if (epoll_ctl(m_epfd, EPOLL_CTL_ADD, conf_event.data.fd, &conf_event) == -1) {
-        close(fd);
         throw (SocketCreationException(EPOLLCTLERR));
     }
 }
@@ -103,7 +104,6 @@ void                PollingManager::edit_socket_in_epoll(int fd, int event) {
     conf_event.events = event | EPOLLRDHUP;
     conf_event.data.fd = fd;
     if (epoll_ctl(m_epfd, EPOLL_CTL_MOD, conf_event.data.fd, &conf_event) == -1) {
-        close(fd);
         throw (SocketCreationException(EPOLLCTLERR));
     }
 }
@@ -147,19 +147,14 @@ std::vector<char>     PollingManager::receive_request(int client_socket) {
     int                 ret;
 
     if ((ret = recv(client_socket, &buffer[0], buffer.size(), 0)) < 0) 
-    {
-        close(client_socket); // pas sur, peut etre renvoyer une reponse au client
         throw (SocketCreationException(RECEIVEERR));
-    }
     buffer.resize(ret);
     return (buffer);
 }
 
 void            PollingManager::send_request(std::vector<char> request, int client_socket) {
-    if (send(client_socket, &request[0], request.size(), 0) < 0) {
-        close(client_socket);
+    if (send(client_socket, &request[0], request.size(), 0) < 0)
         throw (SocketCreationException(SENDERR));
-    }
 }
 
 void           PollingManager::close_epfd() {

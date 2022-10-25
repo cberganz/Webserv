@@ -12,15 +12,13 @@ int main(int argc, char const *argv[])
 		path = argv[1];
 	if (argc == 1)
 		path = "config_files/default.conf";
-	try
-	{
+	try {
 		ServerConnexion server(path);
+	
 		server.connexion_loop();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << "Exception: "<< e.what() << '\n';
+	catch (const std::exception &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
 	}
-
     return 0;
 }

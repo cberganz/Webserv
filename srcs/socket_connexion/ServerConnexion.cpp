@@ -72,13 +72,8 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
     std::vector<char> response_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
 
-    try {
-        m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
-            response_msg), fd);
-    }
-    catch (...) {
-        close(fd);
-    }
+    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd,
+        response_msg), fd);
 }
 
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
@@ -93,12 +88,7 @@ void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
         error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$STATUS", 0),  7, ft::itostr(e.getCode()));
         error_page = ft::replace_vector_char(error_page, ft::search_vector_char(error_page, "$MESSAGE", 0),  8, http_code[e.getCode()]);
     }
-    try {
-        m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
-    }
-    catch (...) {
-        close(fd);
-    }
+    m_polling.send_request(m_chunks.add_headerless_response_to_chunk(fd, error_page), fd);
 }
 
 bool            ServerConnexion::is_last_request_chunk(std::vector<char> client_req, int fd) {
@@ -113,37 +103,44 @@ bool            ServerConnexion::is_last_request_chunk(std::vector<char> client_
 }
 
 void    ServerConnexion::read_from_client(int fd) {
-    bool                is_chunk    = true;
-    std::vector<char>   client_req  = m_polling.receive_request(fd);
+    try {
+        bool                is_chunk    = true;
+        std::vector<char>   client_req  = m_polling.receive_request(fd);
 
-    if (!client_req.size())
-        return ;
-    m_chunks.add_chunk_request(fd, client_req);
-    if (is_last_request_chunk(client_req, fd)) {
-        is_chunk = false;
-        client_req = m_chunks.get_unchunked_request(fd);
-    }
-    if (!is_chunk) {		
-        try {
-            handleResponse(client_req, fd);
-        } catch (ErrorException & e) {
-            handleDefaultError(e, fd);
+        if (!client_req.size())
+            return ;
+        m_chunks.add_chunk_request(fd, client_req);
+        if (is_last_request_chunk(client_req, fd)) {
+            is_chunk = false;
+            client_req = m_chunks.get_unchunked_request(fd);
         }
-        m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+        if (!is_chunk) {		
+            try {
+                handleResponse(client_req, fd);
+            } catch (ErrorException & e) {
+                handleDefaultError(e, fd);
+            }
+            m_polling.edit_socket_in_epoll(fd, EPOLLOUT);
+            m_chunks.delete_chunk_request(fd);
+        }
+    }
+    catch (const std::exception& e) {
+        close(fd);
         m_chunks.delete_chunk_request(fd);
+		std::cerr << "Exception: "<< e.what() << '\n';
     }
 }
 
 void    ServerConnexion::write_to_client(int fd) {
-    std::vector<char>   chunk = m_chunks.get_next_chunk(fd);
-    int                 size_return = m_chunks.get_size_return(fd);
-    std::vector<char>   request;
-    std::stringstream   ss;
-    std::string         size_chunk;
-
-    ss << std::hex << chunk.size();
-    ss >> size_chunk;
     try {
+        std::vector<char>   chunk = m_chunks.get_next_chunk(fd);
+        int                 size_return = m_chunks.get_size_return(fd);
+        std::vector<char>   request;
+        std::stringstream   ss;
+        std::string         size_chunk;
+
+        ss << std::hex << chunk.size();
+        ss >> size_chunk;
         if (size_return % 2 == 0)
             request.insert(request.end(), size_chunk.begin(), size_chunk.end());
         else
@@ -153,42 +150,48 @@ void    ServerConnexion::write_to_client(int fd) {
         m_polling.send_request(request, fd);
         if (!chunk.size() && size_return % 2 == 1) 
             m_polling.edit_socket_in_epoll(fd, EPOLLIN);
+        if (!chunk.size() && size_return % 2 == 1){
+            m_chunks.delete_chunk_response(fd);
+            close (fd);
+        }
+        else
+            m_chunks.increment_size_turn(fd);
     }
-    catch (...) {
-        close(fd);
-    }
-    if (!chunk.size() && size_return % 2 == 1){
+    catch (const std::exception& e) {
         m_chunks.delete_chunk_response(fd);
-		close (fd);
-	}
-    else
-        m_chunks.increment_size_turn(fd);
+        close(fd);
+		std::cerr << "Exception: "<< e.what() << '\n';
+    }
 }
 
 void    ServerConnexion::connexion_loop()
 {
-    m_polling.init_epoll_events();
-	while(1)
-	{
-		int nfds;
-		nfds = m_polling.wait_for_connexions();// throw?
+    try {
+        m_polling.init_epoll_events();
+	    while(1)
+        {
+            int nfds;
+            nfds = m_polling.wait_for_connexions();
 
-		for(int i = 0; i < nfds; i++) {
-			struct epoll_event  event;
+            for(int i = 0; i < nfds; i++) {
+                struct epoll_event  event;
 
-			event = m_polling.get_ready_event(i);
-			if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
-				|| (event.events & EPOLLRDHUP)) {
-                m_chunks.delete_chunk_response(event.data.fd);
-				close (event.data.fd);
+                event = m_polling.get_ready_event(i);
+                if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)
+                    || (event.events & EPOLLRDHUP)) {
+                    m_chunks.delete_chunk_response(event.data.fd);
+                    close (event.data.fd);
+                }
+                else if (m_polling.is_existing_server_socket_fd(event.data.fd))
+                    m_polling.new_client_connexion(event.data.fd);
+                else if (event.events & EPOLLIN) 
+                    read_from_client(event.data.fd);
+                else if (event.events & EPOLLOUT)
+                    write_to_client(event.data.fd);
             }
-			else if (m_polling.is_existing_server_socket_fd(event.data.fd))
-				m_polling.new_client_connexion(event.data.fd);
-			else if (event.events & EPOLLIN) 
-				read_from_client(event.data.fd);
-			else if (event.events & EPOLLOUT)
-				write_to_client(event.data.fd);
-		}
+        }
+    }
+    catch(const std::exception& e) {
+		std::cerr << "Exception: "<< e.what() << '\n';
 	}
-	m_polling.close_epfd();
 }
