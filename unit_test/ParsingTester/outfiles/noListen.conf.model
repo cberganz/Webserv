@@ -13,6 +13,7 @@ root -> TEST
 	port -> 8080
 	root -> TEST
 	server_name -> cberganz.42.fr
+	upload_folder -> .
 
 		[location][/path]
 		allowed_methods -> default
@@ -25,6 +26,7 @@ root -> TEST
 		port -> 8080
 		root -> TEST
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 
 		[location][/what]
 		allowed_methods -> default
@@ -37,4 +39,5 @@ root -> TEST
 		port -> 8080
 		root -> TEST
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 

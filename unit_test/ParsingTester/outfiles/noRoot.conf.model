@@ -11,6 +11,7 @@ cgi -> off
 	listen -> 443
 	port -> 443
 	server_name -> cberganz.42.fr
+	upload_folder -> .
 
 		[location][/path]
 		allowed_methods -> default
@@ -22,6 +23,7 @@ cgi -> off
 		ip -> 443
 		port -> 443
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 
 		[location][/what]
 		allowed_methods -> default
@@ -33,4 +35,5 @@ cgi -> off
 		ip -> 443
 		port -> 443
 		server_name -> cberganz.42.fr
+		upload_folder -> .
 

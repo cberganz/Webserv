@@ -23,8 +23,15 @@ int main(int argc, char *argv[])
 	parser.setRequest(strToVector(request));
 	Config config(argv[1]);
 	ResponseMaker responseMaker(config);
+	std::string ip = "0.0.0.0";
+	std::string port = "8080";
 	try {
-		std::cout << (*responseMaker.createResponse(*parser.makeClientRequest(), "0.0.0.0", "8080")).getResponse() << std::endl;
+		ClientRequest client_req = parser.makeClientRequest();
+		Response response = responseMaker.createResponse(client_req, ip, port);
+		std::vector<char> to_print = response.getResponse();
+		for (std::vector<char>::iterator it = to_print.begin() ; it != to_print.end() ; it++)
+			std::cout << *it;
+		std::cout << std::endl;
 	} catch (const ErrorException &e) {
 		std::cout << e.getCode() << std::endl; 
 	} catch (const std::exception &e) {
