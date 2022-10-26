@@ -1,12 +1,5 @@
 #!c:\perl\bin\perl.exe
 print "Content-type: text/html\n\n";
-# print "<HTML>";
-# print "<BODY>";
-# print "<P style=\"text-align:center\">Hello world!</P>";
-# print $ENV{'PATH_INFO'};
-# print "</BODY>";
-# print "</HTML>";
-
 
 print "
 <html>
@@ -19,25 +12,11 @@ print "
         <link href=\"https://fonts.googleapis.com/css?family=Droid+Sans:400,700\" rel=\"stylesheet\">
         <link rel=\"stylesheet\" href=\"https://rawgit.com/LeshikJanz/libraries/master/Bootstrap/baguetteBox.min.css\">
         <link rel=\"stylesheet\" href=\"./assets/css/upload_file.css\">
-        <link rel=\"stylesheet\" href=\"./assets/css/form.css\">";
+        <link rel=\"stylesheet\" href=\"./assets/css/form.css\">
+        
+        <link rel=\"stylesheet\" href=\"assets/css/delete_method.css\">
 
-no warnings 'uninitialized';
-
-print $SESSION{'theme'};
-
-# if (length $SESSION{'theme'} && $SESSION{'theme'} eq "true")
-#     print "<link rel=\"stylesheet\" href=\"assets/css/dark_theme.css\">";
-# else
-#     print "<link rel=\"stylesheet\" href=\"assets/css/delete_method.css\">";
-		
-        # <?php
-		# 	if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
-		# 		echo '<link rel=\"stylesheet\" href=\"assets/css/dark_theme.css\">';
-		# 	else
-		# 		echo '<link rel=\"stylesheet\" href=\"assets/css/delete_method.css\">';
-		# ?>
-
-print "<script src=\"https://code.jquery.com/jquery-1.10.2.js\"></script>
+        <script src=\"https://code.jquery.com/jquery-1.10.2.js\"></script>
           
             <title>Perl</title>
         </head>
