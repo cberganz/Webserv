@@ -59,12 +59,17 @@ std::vector<char>     Chunks::get_unchunked_request(int fd) {
 
 /** CHUNK RESPONSE FUNCTIONS **/
 
-std::vector<char>     Chunks::add_headerless_response_to_chunk(int fd, std::vector<char> &response) {
-    size_t              end_header = ft::search_vector_char(response, "\r\n\r\n", 0);
-    std::vector<char>   header(response.begin(), response.begin() + end_header + 4);
+std::vector<char>     Chunks::add_headerless_response_to_chunk(int fd, std::vector<char> response) {
+    int                 advance = 4;
+    int                 end_header = ft::search_vector_char(response, "\r\n\r\n", 0);
+    if (end_header == -1) {
+        end_header = ft::search_vector_char(response, "\n\n", 0);
+        advance = 2;
+    }
+    std::vector<char>   header(response.begin(), response.begin() + end_header + advance);
 
     m_chunked_responses.insert(std::make_pair(fd, 
-        std::make_pair(2, std::vector<char>(response.begin() + end_header + 4, response.end())))); 
+        std::make_pair(2, std::vector<char>(response.begin() + end_header + advance, response.end())))); 
     return (header);
 }
 

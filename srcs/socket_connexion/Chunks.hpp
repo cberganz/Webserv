@@ -32,7 +32,7 @@ class Chunks {
         std::vector<char>   get_unchunked_request(int fd);
 
         /** RESPONSE **/
-        std::vector<char>     add_headerless_response_to_chunk(int fd, std::vector<char> &response);
+        std::vector<char>     add_headerless_response_to_chunk(int fd, std::vector<char> response);
         std::vector<char>     get_next_response_chunk(int fd);
 
         /** UTILS **/

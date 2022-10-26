@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/26 13:12:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/26 13:23:26 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ const t_extension extensionsTable[MAX_EXT] =
 	{ "html",	false,		"",				"text/html"																	},
 	{ "php",	true,		"/usr/bin/php-cgi",	"application/x-httpd-php"												},
 	{ "py",		true,		"/usr/bin/python3",	"application/x-python-code"												},
+	{ "pl",		true,		"/usr/bin/perl",	"text/x-script.perl"													},
 	{ "js",		false,		"",				"text/javascript"															},
 	{ "aac",	false,		"",				"audio/aac"																	},
 	{ "abw",	false,		"",				"application/x-abiword"														},
