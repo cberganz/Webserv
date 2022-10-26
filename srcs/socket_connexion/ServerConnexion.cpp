@@ -71,7 +71,6 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
     m_rep_handler.setClientRequest(client_req);
     std::vector<char> response_msg
         = m_rep_handler.createResponseMessage(getSocketIp(fd), getSocketPort(fd));
-
     m_polling.send_response(m_chunks.add_headerless_response_to_chunk(fd,
         response_msg), fd);
 }
