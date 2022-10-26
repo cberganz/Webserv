@@ -2,7 +2,7 @@
 cgi -> off
 root -> TEST
 
-	[server][8080]
+	[server][2]
 	allowed_methods -> default
 	autoindex -> off
 	cgi -> off

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParserConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:29 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 02:10:39 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/26 13:54:58 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define PARSERCONFIG_HPP
 
 # include <string>
-# include <iostream> // TO DELETE
 # include <stdexcept>
 # include "parsingErrors.hpp"
 # include "keywordsTable.hpp"

@@ -6,7 +6,7 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 18:55:06 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/25 21:19:30 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/10/26 13:55:13 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ const std::vector<char>	&BodyMaker::getMethod(Response& 			response,
 			return autoIndex(path);
 		}
 	}
-	if (access(path.c_str(), F_OK) == -1 or isDirectory(path))// voir si Nginx gere pareil
+	if (access(path.c_str(), F_OK) == -1 or isDirectory(path))
 		throw ErrorException(404);
 	if (*context.getDirective("cgi").begin() == "on" and requiresCGI(path))
 	{

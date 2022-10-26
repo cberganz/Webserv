@@ -2,7 +2,7 @@
 cgi -> off
 root -> $default_root
 
-	[server][$listen_port]
+	[server][2]
 	allowed_methods -> default
 	autoindex -> off
 	cgi -> off

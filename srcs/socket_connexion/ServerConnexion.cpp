@@ -78,7 +78,7 @@ void    ServerConnexion::handleResponse(std::vector<char> client_req, int fd)
 void    ServerConnexion::handleDefaultError(ErrorException & e, int fd)
 {
     HttpCodes           http_code;
-    std::vector<char>   error_page = createDefaultErrorPage(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);//modifier header et status
+    std::vector<char>   error_page = createDefaultErrorPage(e.getFile(), ft::itostr(e.getCode()), http_code[e.getCode()]);
 
     if (e.getFile() == "./app/error_pages/template.html"
         && (ft::search_vector_char(error_page, "$STATUS", 0) != -1

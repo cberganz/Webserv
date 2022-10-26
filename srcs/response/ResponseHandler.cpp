@@ -65,7 +65,7 @@ std::string	ResponseHandler::findLongestLocation(const Context& context, std::st
 			uri = uri.erase(uri.find_last_of("/"), uri.length() - uri.find_last_of("/"));
 		else
 			uri = uri.erase(uri.find_last_of("/") + 1, uri.length() - uri.find_last_of("/"));
-	} // VOIR SI TOUT MARCHE POUR LES IF /
+	}
 	if (context.contextExist("/"))
 		return ("/");
 	return (uri);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tester.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 17:12:18 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/06 01:56:01 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/10/26 13:58:30 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 	}
 	try {
 		Config config(path);
-		//std::cout << "TEST: " << config["443"].getDirective("server_name") << std::endl;
 		Config::contextsContainer cont;
 		cont.insert(std::make_pair("global", config.getParser().getRoot()));
 		RContextsContainer(cont, 0);

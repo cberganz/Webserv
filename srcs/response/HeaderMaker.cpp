@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HeaderMaker.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 03:30:57 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/26 12:28:31 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/26 13:55:36 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ bool HeaderMaker::condition_server(const ClientRequest &, const Response &respon
 { return response.getContext().directiveExist("server_name"); }
 
 bool HeaderMaker::condition_location(const ClientRequest &, const Response &response) 
-{ return ((response.getHttpCode() > 300 && response.getHttpCode() < 400) || response.getHttpCode() == 201 ? true : false); }// checker les bons stATuscode
+{ return ((response.getHttpCode() > 300 && response.getHttpCode() < 400) || response.getHttpCode() == 201 ? true : false); }
 
 bool HeaderMaker::condition_connection(const ClientRequest &, const Response &) 
 { return false; }
