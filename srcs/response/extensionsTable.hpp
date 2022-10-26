@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   extensionsTable.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdine <cdine@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:12:37 by cberganz          #+#    #+#             */
-/*   Updated: 2022/10/26 13:12:29 by cdine            ###   ########.fr       */
+/*   Updated: 2022/10/26 13:23:26 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ const t_extension extensionsTable[MAX_EXT] =
 	{ "",		false,		"",				"text/html"																	},
 	{ "html",	false,		"",				"text/html"																	},
 	{ "php",	true,		"/usr/bin/php-cgi",	"application/x-httpd-php"												},
+	{ "py",		true,		"/usr/bin/python3",	"application/x-python-code"												},
 	{ "pl",		true,		"/usr/bin/perl",	"text/x-script.perl"													},
 	{ "js",		false,		"",				"text/javascript"															},
 	{ "aac",	false,		"",				"audio/aac"																	},
