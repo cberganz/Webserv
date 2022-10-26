@@ -13,7 +13,6 @@
         <link rel="stylesheet" href="https://rawgit.com/LeshikJanz/libraries/master/Bootstrap/baguetteBox.min.css">
 		<link rel="stylesheet" href="./assets/css/upload_file.css">
 		<?php
-			while(1);
 			if (isset($_SESSION['theme']) && $_SESSION['theme'] === 'true')
 				echo '<link rel="stylesheet" href="assets/css/dark_theme.css">';
 			else
