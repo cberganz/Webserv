@@ -26,7 +26,7 @@
 
 ## Usage
 ```
-git clone https://github.com/robinbnc/webserv.git
+git clone https://github.com/cberganz/webserv.git
 ```
 ```
 make
